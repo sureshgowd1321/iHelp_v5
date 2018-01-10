@@ -1,0 +1,8 @@
+{
+  "name": "ihelp-v5",
+  "app_id": "da51f031",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}
