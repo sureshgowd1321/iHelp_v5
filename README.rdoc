@@ -12,3 +12,5 @@ To Push modifications into Master:
 git add .
 git commit -m "type your commit message here"
 git push origin master
+
+Thank you
