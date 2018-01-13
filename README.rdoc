@@ -1,8 +1,14 @@
 Hi How are you ?
 
-Initial code push to Master branch in Github:
+Initial code push to Master branch in GitHub:
 git remote set-url origin https://github.com/sureshgowd1321/iHelp_v5.git
 git pull
 git add .
 git commit -m "first commit"
 git push -u origin master
+
+
+To Push modifications into Master:
+git add .
+git commit -m "type your commit message here"
+git push origin master
