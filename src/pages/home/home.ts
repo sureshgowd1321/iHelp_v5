@@ -15,16 +15,4 @@ export class HomePage {
 
   }
 
-  // Logout
-  logout() {
-    this.afAuth
-    .auth
-    .signOut().then(value => {
-      this._app.getRootNav().setRoot(LoginPage);
-    });
-    // this.authService.logout().then(value => {
-    //   this._app.getRootNav().setRoot(LoginPage);
-    // });
-  }
-
 }
