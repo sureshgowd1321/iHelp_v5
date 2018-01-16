@@ -54,6 +54,7 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
   ],
   imports: [
     BrowserModule,
+    HttpModule,
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
