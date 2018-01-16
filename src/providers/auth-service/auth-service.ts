@@ -57,4 +57,100 @@ export class AuthServiceProvider {
     })
   }
 
+  // Google Provider Login
+  googleLogin() {
+    const provider = new firebase.auth.GoogleAuthProvider()
+    return this.oAuthLogin(provider);
+  }
+
+  // Facebook Provider Login
+  facebookLogin() {
+    const provider = new firebase.auth.FacebookAuthProvider()
+    return this.oAuthLogin(provider);
+  }
+
+  // oAuth Login
+  private oAuthLogin(provider) {
+    return this.afAuth.auth.signInWithPopup(provider)
+      .then((credential) => {
+
+        this.updateUserData(credential.user);
+
+      })
+  }
+  
+  // Update User Data
+  private updateUserData(user) {
+    // Sets user data to firestore on login
+    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+    const data: User = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      nickName: '',
+      photoURL: user.photoURL,
+      totalStars: 0,
+      createdDate: new Date().toISOString(),
+      displayPostsFrom: 'world',
+      city: '',
+      country: '',
+      birthDate: null
+    }
+    userRef.set(data);
+    this.phpService.addNewOnlineUser(user.uid, user.displayName, user.email, user.photoURL);
+  }
+
+  // Signup with Username & Password
+  signupWithEmailAndPassword(email: string, password: string, name: string, nickName: string, city: string, country: string) {
+    return this.afAuth
+    .auth
+    .createUserWithEmailAndPassword(email, password)
+    .then((newUser) => {
+      this.updateUserDataEmailAndPassword(newUser, name, nickName, city, country)
+    })
+    .catch(err => {
+      console.log('Something went wrong:',err.message);
+      this.loading.dismiss().then( () => {
+        let alert = this.alertCtrl.create({
+          message: err.message,
+          buttons: [
+            {
+              text: "Ok",
+              role: 'cancel'
+            }
+          ]
+        });
+        alert.present();
+      });
+    });  
+  }
+
+  // Update User Data
+  private updateUserDataEmailAndPassword(user, name: string, nickName: string, city: string, country: string) {
+    // Sets user data to firestore on login
+    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+    const data: User = {
+      uid: user.uid,
+      email: user.email,
+      displayName: name,
+      nickName: nickName,
+      photoURL: 'https://firebasestorage.googleapis.com/v0/b/cards-unlimited.appspot.com/o/DummyImage.jpg?alt=media&token=87170396-af1c-4e59-8c4c-eb30d78279a2',
+      totalStars: 0,
+      createdDate: new Date().toISOString(),
+      displayPostsFrom: 'world',
+      city: city,
+      country: country,
+      birthDate: null
+    }
+    userRef.set(data);
+    this.phpService.addNewOnlineUser(user.uid, name, user.email, 'https://firebasestorage.googleapis.com/v0/b/cards-unlimited.appspot.com/o/DummyImage.jpg?alt=media&token=87170396-af1c-4e59-8c4c-eb30d78279a2');
+  }
+
+  // Logout
+  logout() {
+    return this.afAuth
+      .auth
+      .signOut();
+  }
+
 }
