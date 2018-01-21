@@ -1,18 +1,60 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Home Page</ion-title>
-    
-  </ion-navbar>
-</ion-header>
+    <ion-navbar>
+      <ion-title class="labelStyle">Home Page</ion-title>
+      
+      <ion-buttons end>
+          
+        <button ion-button block color="primary" (click)="gotoAddPost()">
+            <ion-icon name="add-circle"></ion-icon>
+        </button>
+  
+      </ion-buttons>
+  
+    </ion-navbar>
+  </ion-header>
+  
+  <ion-content > 
+      <ion-refresher (ionRefresh)="dorefresh($event)">
+        <ion-refresher-content pullingText="Pull to refresh"
+                        pullingIcon="arrow-dropdown"
+                        refreshingSpinner="circles"
+                        refreshingText="..fetching">
+        </ion-refresher-content>
+      </ion-refresher>
 
-<ion-content padding>
-  <h2>Welcome to Ionic!</h2>
-  <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
-  </p>
-  <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
-  </p>
-</ion-content>
+      <ion-card *ngFor="let item of posts">  
+  
+          <ion-item>
+  
+              <ion-avatar item-left>
+                <img src="{{ (userObj | async)?.photoURL }}" #imageToView (click)="displayImageFullScreen(imageToView)" />
+              </ion-avatar>
+  
+               <ion-avatar item-right (click)="modifyCardActionSheet(item.Id)">
+                  <ion-icon name="ios-arrow-down"></ion-icon>
+              </ion-avatar>
+  
+              <a class="text-primary">
+                  <h2> {{ item.Id }} </h2>
+                  <p> {{ item.createdDate  }}  </p>   <!-- | date:'MM/dd/yyyy @ h:mma' -->
+              </a>
+          </ion-item>
+   
+          <ion-card-content (click)="gotoCommentsPage(item.Id)" >
+               <p> {{ item.post }} </p>  
+          </ion-card-content>
+  
+          
+            <ion-item-options side="right" > <!-- *ngIf="comment?.commentHiddenById != currentUserUid" -->
+              <!-- <button color="danger" ion-button (click)="deleteComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById == currentUserUid"><ion-icon name="trash"> Delete</ion-icon></button>
+              <button color="danger" ion-button (click)="hideComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById != currentUserUid">Hide</button> -->
+              <button danger ion-button (click)="gotoEditPostPage(item.id)" ><ion-icon name="edit">Edit</ion-icon></button>
+            </ion-item-options> 
+       
+      </ion-card> 
+  
+      <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())" > <!-- *ngIf="hasData" -->
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+  
+  </ion-content>

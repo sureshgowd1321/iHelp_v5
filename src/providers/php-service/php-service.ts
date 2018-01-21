@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 
+//Constants
+import { constants } from '../../constants/constants';
+
 /*
   Generated class for the PhpServiceProvider provider.
 
@@ -11,7 +14,8 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class PhpServiceProvider {
 
-  private baseURI   : string  = "http://localhost/ionic-php-mysql/";
+  //private baseURI   : string  = "http://localhost/ionic-php-mysql/";
+  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public http: Http) {}
 

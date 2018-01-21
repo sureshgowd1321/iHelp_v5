@@ -97,7 +97,7 @@ export class AuthServiceProvider {
       birthDate: null
     }
     userRef.set(data);
-    this.phpService.addNewOnlineUser(user.uid, user.displayName, user.email, user.photoURL);
+   // this.phpService.addNewOnlineUser(user.uid, user.displayName, user.email, user.photoURL);
   }
 
   // Signup with Username & Password
