@@ -6,7 +6,7 @@ import * as firebase from 'firebase/app';
 
 import { Observable } from 'rxjs/Observable';
 
-// import { ImageViewerController } from 'ionic-img-viewer';
+import { ImageViewerController } from 'ionic-img-viewer';
 
 /*
   Generated class for the ProfileDataProvider provider.
@@ -25,7 +25,7 @@ export class ProfileDataProvider {
   user;
 
   constructor(private authService: AuthServiceProvider, 
-              // public imageViewerCtrl: ImageViewerController, 
+              public imageViewerCtrl: ImageViewerController, 
               private afs: AngularFirestore) {
 
     this.user = firebase.auth().currentUser; 
@@ -106,8 +106,8 @@ export class ProfileDataProvider {
   }
 
   // Display Image in Full Screen
-  // displayImageInFullScreen(imageToView) {
-  //     const viewer = this.imageViewerCtrl.create(imageToView)
-  //     viewer.present();
-  // }
+  displayImageInFullScreen(imageToView) {
+      const viewer = this.imageViewerCtrl.create(imageToView)
+      viewer.present();
+  }
 }

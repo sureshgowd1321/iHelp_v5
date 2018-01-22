@@ -5,14 +5,87 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>comments</ion-title>
-  </ion-navbar>
-
-</ion-header>
-
-
-<ion-content padding>
-
-</ion-content>
+  
+    <ion-navbar>
+      <ion-title class="labelStyle">Comments</ion-title>
+    </ion-navbar>
+  
+  </ion-header>
+  
+  
+  <ion-content >
+  
+      <ion-refresher (ionRefresh)="dorefresh($event)">
+          <ion-refresher-content pullingText="Pull to refresh"
+                          pullingIcon="arrow-dropdown"
+                          refreshingSpinner="circles"
+                          refreshingText="..fetching">
+          </ion-refresher-content>
+      </ion-refresher>
+  
+    <ion-card>
+  
+      <ion-item>
+  
+        <ion-avatar item-left>
+            <img src="{{ user?.photoURL }}" #imageToView (click)="displayImageFullScreen(imageToView)" />
+        </ion-avatar>
+  
+        <a class="text-primary">
+            <h2> {{ postObj?.Id }} </h2>
+            <p> {{ postObj?.CreatedDate }}  </p>
+        </a>
+  
+      </ion-item>
+  
+      <ion-card-content>
+        {{ postObj?.post }}
+      </ion-card-content>
+  
+    </ion-card>
+  
+     <ion-list > <!-- *ngIf="comments?.length > 0"  -->
+        <ion-list-header>
+            Comments
+        </ion-list-header>
+  
+        <ion-item-sliding *ngFor="let comment of comments">
+            <ion-item class="item-icon-left" >  <!-- *ngIf="comment?.commentHidden" -->
+              <ion-avatar item-left>
+                  <img src="{{ (userObj | async)?.photoURL }}" #imageToView (click)="displayImageFullScreen(imageToView)" />
+                  <!-- <img [src]="comment?.commentedUserProfile.profilePicture" #imageToView (click)="displayImageFullScreen(imageToView)" /> -->
+              </ion-avatar>
+  
+              <h2> {{comment?.postId}}</h2>
+              <p> {{comment?.commentedDate }} </p>   <!-- |date:'MM/dd/yyyy @ h:mma' -->
+  
+              {{comment?.comment}}
+  
+            </ion-item>
+  
+            <ion-item-options side="right" >
+              <button color="danger" ion-button (click)="deleteComment(comment?.Id)" ><ion-icon name="trash"> Delete</ion-icon></button>
+              <!-- <button color="danger" ion-button (click)="hideComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById != currentUserUid">Hide</button> -->
+             
+              <button danger ion-button (click)="editComment(comment?.Id, comment?.comment)"><ion-icon name="edit">Edit</ion-icon></button>
+            </ion-item-options>
+  
+        </ion-item-sliding>
+  
+    </ion-list>
+  
+  </ion-content>
+  
+  <ion-footer >
+      <ion-toolbar>
+     <div >
+      <ion-row class="msg-box">
+        <ion-item>
+          <ion-input type="text" placeholder="Write a comment..." [(ngModel)]="commentInput" class="input-bottom"></ion-input>
+          <button ion-button item-right (click)="postComment(commentInput)" [disabled]="commentInput?.length < 1" class="ion-send-button"><ion-icon name="send"></ion-icon></button>
+        </ion-item>
+      </ion-row>
+    </div>
+  </ion-toolbar>
+  <ion-footer>
+  

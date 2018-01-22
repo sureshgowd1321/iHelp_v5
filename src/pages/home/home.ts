@@ -166,9 +166,9 @@ export class HomePage {
     }
 
     // Display Image in Full Screen  
-    // displayImageFullScreen(imageToView) {
-    //   this.profileData.displayImageInFullScreen(imageToView);
-    // }
+    displayImageFullScreen(imageToView) {
+      this.profileData.displayImageInFullScreen(imageToView);
+    }
 
     // Action sheet on each post to modify/delete your post
     modifyCardActionSheet(postId: any) {

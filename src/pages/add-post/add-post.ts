@@ -49,9 +49,9 @@ export class AddPostPage {
   }
 
   // Display Image in Full Screen  
-	// displayImageFullScreen(imageToView) {
-	// 	this.profileData.displayImageInFullScreen(imageToView);
-  // }
+	displayImageFullScreen(imageToView) {
+		this.profileData.displayImageInFullScreen(imageToView);
+  }
   
   // Cancel the post and back to Home Page
   cancelPost() {

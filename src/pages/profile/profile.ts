@@ -212,9 +212,9 @@ export class ProfilePage {
   // }
 
   // Display Image in Full Screen  
-	// displayImageFullScreen(imageToView) {
-	// 	this.profileData.displayImageInFullScreen(imageToView);
-	// }
+	displayImageFullScreen(imageToView) {
+		this.profileData.displayImageInFullScreen(imageToView);
+	}
 
   // Logout
   logout() {

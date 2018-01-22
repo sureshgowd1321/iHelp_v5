@@ -31,7 +31,7 @@ import { CommentsPage } from '../pages/comments/comments';
 // Native plugins
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-// import { ImageViewerController } from 'ionic-img-viewer';
+import { IonicImageViewerModule } from 'ionic-img-viewer';
 
 // Providers
 import { PhpServiceProvider } from '../providers/php-service/php-service';
@@ -60,8 +60,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
-    FormsModule
-    // ImageViewerController
+    FormsModule,
+    IonicImageViewerModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
