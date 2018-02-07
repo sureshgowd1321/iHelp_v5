@@ -7,6 +7,7 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app'; 
 
+//Pages
 import { AddPostPage } from '../add-post/add-post';
 import { EditPostPage } from '../edit-post/edit-post';
 import { CommentsPage } from '../comments/comments';

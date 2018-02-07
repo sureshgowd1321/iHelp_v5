@@ -4,13 +4,17 @@ import { IonicPage, App, AlertController } from 'ionic-angular';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Observable } from 'rxjs/Observable';
-//import { Observable } from 'rxjs/Rx';
-//import 'rxjs/Rx';
-//import 'rxjs/add/operator/map';
-import * as firebase from 'firebase/app'; 
-//import {Operator} from 'rxjs/Operator';
+import * as firebase from 'firebase/app';
 
+//Constants
+import { constants } from '../../constants/constants';
+
+//Pages
 import { LoginPage } from '../login/login';
+
+// Native Plugins
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { Camera, CameraOptions } from '@ionic-native/camera';
 
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
@@ -49,12 +53,16 @@ export class ProfilePage {
   birthDateVar: Date;
   emailVar: string;
 
+  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+
   constructor(public _app: App, 
               private authService: AuthServiceProvider, 
               private afs: AngularFirestore, 
               private profileData: ProfileDataProvider, 
               private afAuth: AngularFireAuth, 
-              public alertCtrl: AlertController) {
+              public alertCtrl: AlertController,
+              private transfer: FileTransfer,
+              private camera: Camera) {
     
     this.user = firebase.auth().currentUser; 
     console.log('**This User: '+ this.user.uid);
@@ -228,4 +236,68 @@ export class ProfilePage {
     // });
   }
 
+  // Method to capture Profile Picture using Camera option
+	// takePicture() {
+	// 	this.camera.getPicture({
+	// 		quality: 95,
+	// 		destinationType: this.camera.DestinationType.DATA_URL,
+	// 		sourceType: this.camera.PictureSourceType.CAMERA,
+	// 		allowEdit: true,
+	// 		encodingType: this.camera.EncodingType.PNG,
+	// 		targetWidth: 500,
+	// 		targetHeight: 500,
+	// 		saveToPhotoAlbum: true
+	// 	}).then(imageData => {
+  //   //	this.profileData.updateProfilePic(imageData);
+  //     const fileTransfer: FileTransferObject = this.transfer.create();
+
+  //       let options1: FileUploadOptions = {
+  //         fileKey: 'file',
+  //         fileName: 'name.jpg',
+  //         headers: {}
+  //       }
+
+  //       fileTransfer.upload(imageData, this.baseURI+'saveimage.php', options1)
+  //         .then((data) => {
+  //         // success
+  //         alert("success");
+  //       }, (err) => {
+  //         // error
+  //         alert("error"+JSON.stringify(err));
+  //       });
+	// 	}, error => {
+	// 		console.log("ERROR -> " + JSON.stringify(error));
+	// 	});
+  // }
+  
+  // Upload Picture From Camera
+  takePicture(){  
+      let options = {
+           quality: 50
+      };
+
+      this.camera.getPicture(options).then((imageData) => {
+       // imageData is either a base64 encoded string or a file URI
+       // If it's base64:
+
+        const fileTransfer: FileTransferObject = this.transfer.create();
+        
+        let options1: FileUploadOptions = {
+          fileKey: 'file',
+          fileName: 'name.jpg',
+          headers: {}
+        }
+        console.log('Entered Camera: '+ imageData);
+        fileTransfer.upload(imageData, this.baseURI+'saveimage.php', options1)
+          .then((data) => {
+          // success
+          console.log("success Camera: "+data.response);
+          console.log("bytesSent: "+data.bytesSent);
+          console.log("headers: "+data.headers);
+        }, (err) => {
+          // error
+          alert("error"+JSON.stringify(err));
+        });
+    });
+  }
 }

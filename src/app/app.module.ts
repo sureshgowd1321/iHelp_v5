@@ -32,6 +32,8 @@ import { CommentsPage } from '../pages/comments/comments';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicImageViewerModule } from 'ionic-img-viewer';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { Camera } from '@ionic-native/camera';
 
 // Providers
 import { PhpServiceProvider } from '../providers/php-service/php-service';
@@ -81,6 +83,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
   providers: [
     StatusBar,
     SplashScreen,
+    FileTransfer,
+    Camera,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     PhpServiceProvider,
     AuthServiceProvider,
