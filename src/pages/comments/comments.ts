@@ -30,6 +30,8 @@ export class CommentsPage {
   postObj: any;
   public comments: any = [];
   commentInput: string;
+  images_path: string;
+
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public navCtrl: NavController, 
@@ -54,8 +56,7 @@ export class CommentsPage {
 
   ionViewWillEnter()
   {   
-    //this.refresh();
-    this.comments.length = 0;
+    this.currentUserProfilePicture();
     this.loadAllComments(this.postId);
   }
   
@@ -64,6 +65,8 @@ export class CommentsPage {
   // assign this to the items array for rendering to the HTML template
   loadAllComments(postId)
   {
+    this.comments.length = 0;
+
     this.http.get(this.baseURI + 'get-all-comments.php?postId='+postId )
     .map(res => res.json())
     .subscribe(data =>
@@ -72,6 +75,7 @@ export class CommentsPage {
         //this.hasData = false;
         console.log('***Empty Comments');
       }else {
+        console.log('***It has Comments');
         data.forEach(item=>{ 
             
           this.comments.push(
@@ -89,10 +93,12 @@ export class CommentsPage {
 
   // Add Comments
   postComment(commentDesc: string) {
-    this.phpService.addComments(this.postId, commentDesc);
-    this.commentInput = '';
-    this.comments.length = 0;
-    this.loadAllComments(this.postId);
+
+    this.phpService.addComments(this.postId, commentDesc)
+    .subscribe(res => {
+      this.commentInput = '';
+      this.loadAllComments(this.postId);
+    });
   }
 
   // Edit Comments
@@ -108,11 +114,17 @@ export class CommentsPage {
       buttons: [
         {
           text: 'Cancel',
+          handler: () => {
+            this.loadAllComments(this.postId);
+          }
         },
         {
           text: 'Save',
           handler: data => {
-            this.phpService.updateComment(commentId, data.editPostDesc);
+            this.phpService.updateComment(commentId, data.editPostDesc)
+                .subscribe(res => {
+                  this.loadAllComments(this.postId);
+                });
           }
         }
       ]
@@ -128,11 +140,19 @@ export class CommentsPage {
       buttons: [
         {
           text: "No",
-          role: 'cancel'
+          role: 'cancel',
+          handler: () => {
+            this.loadAllComments(this.postId);
+          }
         },
         {
           text: "Yes",
-          handler: () => { this.phpService.deleteComment(commentId); }
+          handler: () => {  
+            this.phpService.deleteComment(commentId)
+                .subscribe(res => {
+                  this.loadAllComments(this.postId);
+                });
+          }
         }
       ]
     })
@@ -141,7 +161,6 @@ export class CommentsPage {
 
   // Pull to Refresh functionality
   dorefresh(refresher) {
-    this.comments.length = 0;
     this.loadAllComments(this.postId);
     if(refresher != 0)
       refresher.complete();
@@ -151,6 +170,23 @@ export class CommentsPage {
   // Display Image in Full Screen  
   displayImageFullScreen(imageToView) {
     this.profileData.displayImageInFullScreen(imageToView);
+  }
+
+  // Get Current User Profile Picture
+  currentUserProfilePicture()
+  {
+    this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)
+    .map(res => res.json())
+    .subscribe(data =>
+    { 
+      if( data.length === 0 ){
+        //this.hasData = false;
+      }else {
+        data.forEach(item=>{             
+            this.images_path = this.baseURI + item.images_path;
+        });
+      }
+    });
   }
 
 }

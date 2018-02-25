@@ -18,8 +18,7 @@
     <!-- <ion-card>--> 
         <ion-item class="no-scroll">
           <ion-avatar item-left> 
-              <!-- <img [src]="user?.photoURL" #imageToView (click)="displayImageFullScreen(imageToView)" /> -->
-              <img src="{{ (userObj | async)?.photoURL }}" #imageToView (click)="displayImageFullScreen(imageToView)" />
+              <img src="{{ images_path }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)">
            </ion-avatar>
           
            <a class="text-primary">

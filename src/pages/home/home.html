@@ -25,9 +25,9 @@
       <ion-card *ngFor="let item of posts">  
   
           <ion-item>
-  
-              <ion-avatar item-left>
-                <img src="{{ (userObj | async)?.photoURL }}" #imageToView (click)="displayImageFullScreen(imageToView)" />
+
+              <ion-avatar item-left >
+                  <img src="{{ images_path }}" #imageToView (click)="displayImageFullScreen(imageToView)" >
               </ion-avatar>
   
                <ion-avatar item-right (click)="modifyCardActionSheet(item.Id)">

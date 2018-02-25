@@ -43,6 +43,10 @@ export class HomePage {
     public posts: any = [];
     public hasData: Boolean = true;
 
+    images_path: string;
+
+    private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+
     constructor(public http : Http, 
                 public navCtrl: NavController, 
                 private afs: AngularFirestore, 
@@ -54,15 +58,16 @@ export class HomePage {
                 
         this.user = firebase.auth().currentUser; 
         console.log('**This User: '+ this.user.uid);
-      
+                  
         this.userDoc = this.afs.doc('users/'+this.user.uid);
-        this.userObj = this.userDoc.valueChanges();                
+        this.userObj = this.userDoc.valueChanges();              
     }
 
     ionViewWillEnter()
     {  
       this.posts.length = 0;
       this.load(0, 'initialload');
+      this.currentUserProfilePicture();
     }
 
     // Retrieve the JSON encoded data from the remote server
@@ -70,8 +75,7 @@ export class HomePage {
     // assign this to the items array for rendering to the HTML template
     load(minCount, loadType)
     {
-      // this.http.get('http://localhost/ionic-php-mysql/retrieve-data.php?minCount='+minCount +'&loadType='+loadType)  http://192.168.43.228/
-      this.http.get('http://'+constants.IPAddress+'/ionic-php-mysql/retrieve-data.php?minCount='+minCount +'&loadType='+loadType)
+      this.http.get(this.baseURI + 'retrieve-data.php?minCount='+minCount +'&loadType='+loadType)
       .map(res => res.json())
       .subscribe(data =>
       { 
@@ -88,6 +92,7 @@ export class HomePage {
                   "Id"           : item.Id,
                   "post"         : item.post,
                   "createdDate"  : item.CreatedDate
+                  //"createdById"  : 
                 });
               }
           });
@@ -203,5 +208,21 @@ export class HomePage {
   
       actionSheet.present();
     }
-  
+    
+    // Get Current User Profile Picture
+    currentUserProfilePicture()
+    {
+      this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)
+      .map(res => res.json())
+      .subscribe(data =>
+      { 
+        if( data.length === 0 ){
+        }else {
+          data.forEach(item=>{ 
+              this.images_path = this.baseURI + item.images_path;
+          });
+        }
+      });
+    }
+
 }

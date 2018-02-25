@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
@@ -7,6 +8,9 @@ import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs/Observable';
 
 import { ImageViewerController } from 'ionic-img-viewer';
+
+//Constants
+import { constants } from '../../constants/constants';
 
 /*
   Generated class for the ProfileDataProvider provider.
@@ -23,10 +27,12 @@ interface User {
 export class ProfileDataProvider {
 
   user;
+  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(private authService: AuthServiceProvider, 
               public imageViewerCtrl: ImageViewerController, 
-              private afs: AngularFirestore) {
+              private afs: AngularFirestore,
+              public http : Http) {
 
     this.user = firebase.auth().currentUser; 
   }
@@ -110,4 +116,5 @@ export class ProfileDataProvider {
       const viewer = this.imageViewerCtrl.create(imageToView)
       viewer.present();
   }
+
 }

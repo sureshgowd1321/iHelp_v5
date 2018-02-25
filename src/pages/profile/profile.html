@@ -38,8 +38,8 @@
     </ion-fab>
     
     <!-- Display Image -->
-    <img src="{{ (userObj | async)?.photoURL }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)">
-  
+    <img src="{{ images_path }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)">
+
     <!-- Display Name -->
     <ion-item (click)="updateName()">
       <ion-grid>
