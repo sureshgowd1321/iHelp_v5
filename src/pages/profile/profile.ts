@@ -97,17 +97,9 @@ export class ProfilePage {
   // Get Current User Profile Picture
   currentUserProfilePicture()
   {
-    this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)  
-    .map(res => res.json())
-    .subscribe(data =>  
-    { 
-      if( data.length === 0 ){
-        //this.hasData = false;
-      }else {
-        data.forEach(item=>{ 
-            this.images_path = this.baseURI + item.images_path;
-        });
-      }
+    this.phpService.getUserProfilePic(this.user.uid)
+    .subscribe(userProfilePic => {
+      this.images_path = this.baseURI + userProfilePic.images_path;
     });
   }
 

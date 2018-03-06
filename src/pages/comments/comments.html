@@ -28,12 +28,11 @@
       <ion-item>
   
         <ion-avatar item-left>
-            <img src="{{ images_path }}" #imageToView (click)="displayImageFullScreen(imageToView)">
-            <!-- <img src="{{ user?.photoURL }}" #imageToView (click)="displayImageFullScreen(imageToView)" /> -->
+            <img src="{{ profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)">
         </ion-avatar>
   
         <a class="text-primary">
-            <h2> {{ postObj?.Id }} </h2>
+            <h2> {{ userObj?.name }} </h2>
             <p> {{ postObj?.CreatedDate }}  </p>
         </a>
   
@@ -45,7 +44,7 @@
   
     </ion-card>
   
-     <ion-list *ngIf="comments?.length > 0"> <!-- *ngIf="comments?.length > 0"  -->
+     <ion-list *ngIf="comments.length > 0"> <!-- *ngIf="comments?.length > 0"  -->
         <ion-list-header>
             Comments
         </ion-list-header>
@@ -53,28 +52,30 @@
         <ion-item-sliding *ngFor="let comment of comments">
             <ion-item class="item-icon-left" >  <!-- *ngIf="comment?.commentHidden" -->
               <ion-avatar item-left>
-                  <img src="{{ images_path }}" #imageToView (click)="displayImageFullScreen(imageToView)">
+                  <img src="{{ comment.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)">
               </ion-avatar>
-  
-              <h2> {{comment?.postId}}</h2>
-              <p> {{comment?.commentedDate }} </p>   <!-- |date:'MM/dd/yyyy @ h:mma' -->
-  
-              {{comment?.comment}}
+              
+            <a class="text-primary">
+              <h2> {{comment.name}}</h2>
+              <p> {{comment.commentedDate }} </p>   <!-- |date:'MM/dd/yyyy @ h:mma' -->
+            </a>
+
+          {{comment.comment}}
   
             </ion-item>
   
             <ion-item-options side="right" >
-              <button color="danger" ion-button (click)="deleteComment(comment?.Id)" ><ion-icon name="trash"> Delete</ion-icon></button>
+              <button color="danger" ion-button (click)="deleteComment(comment.id)" ><ion-icon name="trash"> Delete</ion-icon></button>
               <!-- <button color="danger" ion-button (click)="hideComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById != currentUserUid">Hide</button> -->
              
-              <button danger ion-button (click)="editComment(comment?.Id, comment?.comment)"><ion-icon name="edit">Edit</ion-icon></button>
+              <button danger ion-button (click)="editComment(comment.id, comment.comment)"><ion-icon name="edit">Edit</ion-icon></button>
             </ion-item-options>
   
         </ion-item-sliding>
   
     </ion-list>
     
-    <p *ngIf="comments?.length === 0"> Be the first person to comment </p>
+    <p *ngIf="comments.length === 0"> Be the first person to comment </p>
   </ion-content>
   
   <ion-footer >

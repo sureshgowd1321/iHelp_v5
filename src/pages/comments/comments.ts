@@ -11,6 +11,10 @@ import { constants } from '../../constants/constants';
 import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
+// Interfaces
+import { IPosts } from '../../providers/interfaces/interface';
+import { IComment } from '../../providers/interfaces/interface';
+
 /**
  * Generated class for the CommentsPage page.
  *
@@ -27,8 +31,14 @@ export class CommentsPage {
 
   user;
   postId: any;
-  postObj: any;
-  public comments: any = [];
+
+  public postObj : any;
+  public userObj : any;
+  public profilePic : string;
+
+  public comments: IComment[] = [];
+
+  //public comments: any = [];
   commentInput: string;
   images_path: string;
 
@@ -44,19 +54,26 @@ export class CommentsPage {
     this.user = firebase.auth().currentUser; 
     
     this.postId = this.navParams.get('postId');
-    
+
     this.http.get(this.baseURI + 'getDataFromId.php?postId='+this.postId)
     .map(res => res.json())
-    .subscribe(data =>
+    .subscribe(postInfo =>
     { 
-      console.log('Comments Page Data: '+ data);
-        this.postObj = data;
+      this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
+          this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
+
+            this.postObj = postInfo;
+            this.userObj = userinfo;
+            this.profilePic = this.baseURI + userProfilePic.images_path;
+
+          });
+      });
     });
+
   }
 
   ionViewWillEnter()
   {   
-    this.currentUserProfilePicture();
     this.loadAllComments(this.postId);
   }
   
@@ -65,36 +82,41 @@ export class CommentsPage {
   // assign this to the items array for rendering to the HTML template
   loadAllComments(postId)
   {
-    this.comments.length = 0;
+    this.comments = [];
 
     this.http.get(this.baseURI + 'get-all-comments.php?postId='+postId )
     .map(res => res.json())
-    .subscribe(data =>
-    { 
-      if( data.length === 0 ){
-        //this.hasData = false;
-        console.log('***Empty Comments');
-      }else {
-        console.log('***It has Comments');
-        data.forEach(item=>{ 
-            
-          this.comments.push(
-          {
-            "Id"             : item.Id,
-            "postId"         : item.postId,
-            "comment"        : item.comment,
-            "commentedBy"    : item.commentedBy,
-            "commentedDate"  : item.commentedDate
+    .subscribe(commentsInfo =>
+      {
+        if( commentsInfo.length === 0 ){
+          console.log('***Empty Comments');
+        } else {
+          commentsInfo.forEach(commentObj=>{
+
+            this.phpService.getUserInfo(commentObj.commentedBy).subscribe(userinfo => {
+              this.phpService.getUserProfilePic(commentObj.commentedBy).subscribe(userProfilePic => {
+
+                this.comments.push({
+                  "id"            : commentObj.Id,
+                  "postId"        : commentObj.postId,
+                  "comment"       : commentObj.comment,
+                  "commentedBy"   : commentObj.commentedBy,
+                  "commentedDate" : commentObj.commentedDate,
+                  "name"          : userinfo.name,
+                  "nickname"      : userinfo.nickname,
+                  "profilePic"    : this.baseURI + userProfilePic.images_path
+                });
+              });      
+            });     
           });
-        });
-      }
-    });
+        }
+      });
   }
 
   // Add Comments
   postComment(commentDesc: string) {
 
-    this.phpService.addComments(this.postId, commentDesc)
+    this.phpService.addComments(this.postId, commentDesc, this.user.uid)
     .subscribe(res => {
       this.commentInput = '';
       this.loadAllComments(this.postId);
@@ -173,20 +195,20 @@ export class CommentsPage {
   }
 
   // Get Current User Profile Picture
-  currentUserProfilePicture()
-  {
-    this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)
-    .map(res => res.json())
-    .subscribe(data =>
-    { 
-      if( data.length === 0 ){
-        //this.hasData = false;
-      }else {
-        data.forEach(item=>{             
-            this.images_path = this.baseURI + item.images_path;
-        });
-      }
-    });
-  }
+  // currentUserProfilePicture()
+  // {
+  //   this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)
+  //   .map(res => res.json())
+  //   .subscribe(data =>
+  //   { 
+  //     if( data.length === 0 ){
+  //       //this.hasData = false;
+  //     }else {
+  //       data.forEach(item=>{             
+  //           this.images_path = this.baseURI + item.images_path;
+  //       });
+  //     }
+  //   });
+  // }
 
 }

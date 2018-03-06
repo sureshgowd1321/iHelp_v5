@@ -20,15 +20,9 @@ import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 
-interface User {
-  id: string;
-  displayName: string;
-  nickName: string;
-  city: string;
-  country: string;
-  birthDate: Date;
-  email: string;
-}
+// Interfaces
+import { IPosts } from '../../providers/interfaces/interface';
+import { IUser } from '../../providers/interfaces/interface';
 
 @Component({
   selector: 'page-home',
@@ -37,10 +31,10 @@ interface User {
 export class HomePage {
 
     user;
-    userDoc: AngularFirestoreDocument<User>;
-    userObj: Observable<User>;
+    userDoc: AngularFirestoreDocument<IUser>;
+    userObj: Observable<IUser>;
 
-    public posts: any = [];
+    public posts: IPosts[] = [];
     public hasData: Boolean = true;
 
     images_path: string;
@@ -65,9 +59,9 @@ export class HomePage {
 
     ionViewWillEnter()
     {  
-      this.posts.length = 0;
+      this.posts = [];
       this.load(0, 'initialload');
-      this.currentUserProfilePicture();
+      //this.currentUserProfilePicture();
     }
 
     // Retrieve the JSON encoded data from the remote server
@@ -87,12 +81,26 @@ export class HomePage {
               
               if (index > -1){
               } else {
-                this.posts.push(
-                {
-                  "Id"           : item.Id,
-                  "post"         : item.post,
-                  "createdDate"  : item.CreatedDate
-                  //"createdById"  : 
+                
+                this.phpService.getUserInfo(item.CreatedById)
+                .subscribe(userinfo => {
+
+                  this.phpService.getUserProfilePic(item.CreatedById)
+                  .subscribe(userProfilePic => {
+                    this.posts.push(
+                      {
+                        "id"           : item.Id,
+                        "post"         : item.post,
+                        "createdDate"  : item.CreatedDate,
+                        "createdById"  : item.CreatedById,
+                        "name"         : userinfo.name,
+                        "email"        : userinfo.email,
+                        "nickname"     : userinfo.nickname,
+                        "city"         : userinfo.city,
+                        "country"      : userinfo.country,
+                        "profilePic"   : this.baseURI + userProfilePic.images_path
+                      });
+                  });
                 });
               }
           });
@@ -103,7 +111,7 @@ export class HomePage {
     checkUniqueId(id) {
 
       // check whether id exists
-      var index = this.posts.findIndex(item => item.Id === id);
+      var index = this.posts.findIndex(item => item.id === id);
       
       return index;
     }
@@ -114,8 +122,8 @@ export class HomePage {
       return new Promise((resolve) => {
           setTimeout(() => {
             
-            let latestId = this.posts[this.posts.length-1].Id;
-            console.log('***Latest Id: '+ latestId);
+            let latestId = this.posts[this.posts.length-1].id;
+            //console.log('***Latest Id: '+ latestId);
 
             this.load(latestId, 'scroll');
 
@@ -210,19 +218,19 @@ export class HomePage {
     }
     
     // Get Current User Profile Picture
-    currentUserProfilePicture()
-    {
-      this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)
-      .map(res => res.json())
-      .subscribe(data =>
-      { 
-        if( data.length === 0 ){
-        }else {
-          data.forEach(item=>{ 
-              this.images_path = this.baseURI + item.images_path;
-          });
-        }
-      });
-    }
+    // currentUserProfilePicture()
+    // {
+    //   this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)
+    //   .map(res => res.json())
+    //   .subscribe(data =>
+    //   { 
+    //     if( data.length === 0 ){
+    //     }else {
+    //       data.forEach(item=>{ 
+    //           this.images_path = this.baseURI + item.images_path;
+    //       });
+    //     }
+    //   });
+    // }
 
 }

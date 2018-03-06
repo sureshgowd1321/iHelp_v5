@@ -11,6 +11,9 @@ import { Observable } from 'rxjs/Rx';
 
 import { PhpServiceProvider } from '../../providers/php-service/php-service';
 
+// Interfaces
+import { IUser } from '../../providers/interfaces/interface';
+
 /*
   Generated class for the AuthServiceProvider provider.
 
@@ -18,25 +21,10 @@ import { PhpServiceProvider } from '../../providers/php-service/php-service';
   and Angular DI.
 */
 
-interface User {
-  uid: string;
-  email: string;
-  photoURL?: string;
-  displayName?: string;
-  nickName?: string;
-  favoriteColor?: string;
-  totalStars?: number;
-  createdDate?: string;
-  displayPostsFrom?: string;
-  city?: string;
-  country?: string;
-  birthDate?: Date;
-}
-
 @Injectable()
 export class AuthServiceProvider {
 
-  user: Observable<User>;
+  user: Observable<IUser>;
   todaysDate: String = new Date().toISOString();
   loading: any;
 
@@ -50,7 +38,7 @@ export class AuthServiceProvider {
     this.user = this.afAuth.authState
     .switchMap(user => {
       if (user) {
-        return this.afs.doc<User>(`users/${user.uid}`).valueChanges()
+        return this.afs.doc<IUser>(`users/${user.uid}`).valueChanges()
       } else {
         return Observable.of(null)
       }
@@ -83,7 +71,7 @@ export class AuthServiceProvider {
   private updateUserData(user) {
     // Sets user data to firestore on login
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
-    const data: User = {
+    const data: IUser = {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
@@ -129,7 +117,7 @@ export class AuthServiceProvider {
   private updateUserDataEmailAndPassword(user, name: string, nickName: string, city: string, country: string) {
     // Sets user data to firestore on login
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
-    const data: User = {
+    const data: IUser = {
       uid: user.uid,
       email: user.email,
       displayName: name,

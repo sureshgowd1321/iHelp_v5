@@ -25,10 +25,23 @@ export class PhpServiceProvider {
     this.options = new RequestOptions({ headers: this.headers });
   }
 
+  // Get User Info
+  getUserInfo(id: string){
+    return this.http.get(this.baseURI + 'getUserInfoFromId.php?userId='+id)
+    .map(response => response.json());
+
+  }
+
+  // Get User Profile Picture
+  getUserProfilePic(id: string) {
+    return this.http.get(this.baseURI + 'getUserProfilePic.php?userId='+id)
+    .map(response => response.json());
+  }
+
   // Adding New Post
-  addPost(postDesc)
+  addPost(postDesc, userId)
   {
-      let body     : string   = "key=create&post=" + postDesc,
+      let body     : string   = "key=create&post=" + postDesc + '&userId=' + userId,
           type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
           headers  : any      = new Headers({ 'Content-Type': type}),
           options  : any      = new RequestOptions({ headers: headers }),
@@ -101,9 +114,9 @@ export class PhpServiceProvider {
   }
 
   // Adding New comments
-  addComments(postId, comment){
+  addComments(postId, comment, commentedBy){
     console.log('Asyn Starts: ');
-    let body     : string   = "key=addComment&postId=" + postId + "&comment=" + comment,
+    let body     : string   = "key=addComment&postId=" + postId + "&comment=" + comment + "&commentedBy=" + commentedBy,
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),

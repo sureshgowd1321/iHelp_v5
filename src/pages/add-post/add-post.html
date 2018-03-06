@@ -18,17 +18,17 @@
     <!-- <ion-card>--> 
         <ion-item class="no-scroll">
           <ion-avatar item-left> 
-              <img src="{{ images_path }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)">
+              <img src="{{ profilePic }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)">
            </ion-avatar>
           
-           <a class="text-primary">
-              <h2 > {{user?.displayName}} </h2>
+            <a class="text-primary">
+              <h2 > {{userObj?.name}} </h2>
             </a>
-            <p> {{postVar?.postInformation.postedDate |date:'MM/dd/yyyy @ h:mma'}} </p>
+            <!-- <p> {{postVar?.postInformation.postedDate |date:'MM/dd/yyyy @ h:mma'}} </p> -->
         </ion-item> <br/>
 
         <!-- <ion-item> placeholder="What's happening" -->
-            <ion-label color="primary" stacked >What you need ?</ion-label>
+            <ion-label color="primary" stacked >What you would like to post ?</ion-label>
             <ion-textarea #ionTxtArea [(ngModel)]="postDesc" class="postBox" id="txtnotes" rows="8" autofocus></ion-textarea>
         <!-- </ion-item> -->
 

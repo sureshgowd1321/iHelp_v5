@@ -27,20 +27,20 @@
           <ion-item>
 
               <ion-avatar item-left >
-                  <img src="{{ images_path }}" #imageToView (click)="displayImageFullScreen(imageToView)" >
+                  <img src="{{ item.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)" >
               </ion-avatar>
   
-               <ion-avatar item-right (click)="modifyCardActionSheet(item.Id)">
+               <ion-avatar item-right (click)="modifyCardActionSheet(item.id)">
                   <ion-icon name="ios-arrow-down"></ion-icon>
               </ion-avatar>
   
               <a class="text-primary">
-                  <h2> {{ item.Id }} </h2>
-                  <p> {{ item.createdDate  }}  </p>   <!-- | date:'MM/dd/yyyy @ h:mma' -->
+                  <h2> {{ item.name }} </h2>
+                  <p> {{ item.createdDate }}  </p>   <!-- | date:'MM/dd/yyyy @ h:mma' -->
               </a>
           </ion-item>
    
-          <ion-card-content (click)="gotoCommentsPage(item.Id)" >
+          <ion-card-content (click)="gotoCommentsPage(item.id)" >
                <p> {{ item.post }} </p>  
           </ion-card-content>
   

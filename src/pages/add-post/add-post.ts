@@ -28,7 +28,9 @@ export class AddPostPage {
 
   user;
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
-  images_path: string;
+  //images_path: string;
+  public userObj : any;
+  public profilePic : string;
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
@@ -38,17 +40,25 @@ export class AddPostPage {
               public http : Http ) {
     
     this.user = firebase.auth().currentUser; 
+    
+    this.phpService.getUserInfo(this.user.uid).subscribe(userinfo => {
+      this.phpService.getUserProfilePic(this.user.uid).subscribe(userProfilePic => {
 
+        this.userObj = userinfo;
+        this.profilePic = this.baseURI + userProfilePic.images_path;
+
+      })
+    });
   }
 
   ionViewWillEnter()
   {  
-    this.currentUserProfilePicture();
+    //this.currentUserProfilePicture();
   }
   
   // Add post method
   addPost(postDesc: string ) {
-      this.phpService.addPost(postDesc);
+      this.phpService.addPost(postDesc, this.user.uid);
 
       // this.afs.collection('posts').add({
       //             'post': postDesc,
@@ -61,21 +71,21 @@ export class AddPostPage {
   }
 
   // Get Current User Profile Picture
-  currentUserProfilePicture()
-  {
-    this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)  
-    .map(res => res.json())
-    .subscribe(data =>  
-    { 
-      if( data.length === 0 ){
-        //this.hasData = false;
-      }else {
-        data.forEach(item=>{ 
-            this.images_path = this.baseURI + item.images_path;
-        });
-      }
-    });
-  }
+  // currentUserProfilePicture()
+  // {
+  //   this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)  
+  //   .map(res => res.json())
+  //   .subscribe(data =>  
+  //   { 
+  //     if( data.length === 0 ){
+  //       //this.hasData = false;
+  //     }else {
+  //       data.forEach(item=>{ 
+  //           this.images_path = this.baseURI + item.images_path;
+  //       });
+  //     }
+  //   });
+  // }
 
   // Display Image in Full Screen  
 	displayImageFullScreen(imageToView) {
