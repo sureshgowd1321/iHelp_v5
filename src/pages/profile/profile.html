@@ -48,7 +48,8 @@
             Name
           </ion-col>
           <ion-col >
-              {{ user?.displayName }} 
+              {{userInfo?.name}}
+             <!-- {{ user?.displayName }} -->
           </ion-col>
           <ion-col class="placeholder-profile" *ngIf="user?.displayName == null">
             <span>
@@ -67,7 +68,8 @@
             Nickname
           </ion-col>
           <ion-col >
-            {{ (userObj | async)?.nickName }} 
+              {{userInfo?.nickname}}
+           <!-- {{ (userObj | async)?.nickName }} -->
           </ion-col>
           <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
             <span>
@@ -92,7 +94,8 @@
             City
           </ion-col>
           <ion-col >
-            {{ (userObj | async)?.city }} 
+              {{userInfo?.name}}
+          <!--  {{ (userObj | async)?.city }} -->
           </ion-col>
           <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
             <span>
@@ -102,6 +105,26 @@
         </ion-row>
       </ion-grid>
     </ion-item>
+
+    <!-- Display State -->
+    <ion-item (click)="updateState()">
+        <ion-grid>
+          <ion-row>
+            <ion-col width-50 class="labelStyle">
+              State
+            </ion-col>
+            <ion-col >
+                {{userInfo?.name}}
+            <!--  {{ (userObj | async)?.city }} -->
+            </ion-col>
+            <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
+              <span>
+                Tap here to edit.
+              </span>
+            </ion-col> -->
+          </ion-row>
+        </ion-grid>
+      </ion-item>
   
     <!-- Display Country -->
     <ion-item (click)="updateCountry()">
@@ -111,7 +134,8 @@
             Country
           </ion-col>
           <ion-col >
-            {{ (userObj | async)?.country }} 
+              {{userInfo?.name}}
+           <!-- {{ (userObj | async)?.country }} -->
           </ion-col>
           <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
             <span>
@@ -146,7 +170,8 @@
           </ion-col>
           <ion-col class="placeholder-profile">
             <span>
-              {{ (userObj | async)?.totalStars }}
+                {{userInfo?.totalstars}}
+            <!--  {{ (userObj | async)?.totalStars }} -->
             </span>
           </ion-col>
         </ion-row>

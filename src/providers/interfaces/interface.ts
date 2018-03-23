@@ -7,6 +7,7 @@ export interface IPosts {
     email        : string;
     nickname     : string;
     city         : string;
+    state        : string;
     country      : string;
     profilePic   : string;
 }
@@ -22,6 +23,7 @@ export interface IUser {
     createdDate?      : string;
     displayPostsFrom? : string;
     city?             : string;
+    state?            : string;
     country?          : string;
     birthDate?        : Date;
 }

@@ -48,6 +48,7 @@ export class ProfilePage {
   userDoc: AngularFirestoreDocument<User>;
   userObj: Observable<User>;
   user;
+  public userInfo: any;
 
   nickNameVar: string;
   cityVar: string;
@@ -75,6 +76,10 @@ export class ProfilePage {
     this.userDoc = this.afs.doc('users/'+this.user.uid);
     this.userObj = this.userDoc.valueChanges();
     
+    this.phpService.getUserInfo(this.user.uid).subscribe(userinfo => {
+      this.userInfo = userinfo;   
+    });
+
     this.userObj.forEach(usr => {
       this.nickNameVar = usr.nickName;
       this.cityVar = usr.city;

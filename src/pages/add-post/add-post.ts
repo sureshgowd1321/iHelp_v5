@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Http } from '@angular/http';
 
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
+//import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import * as firebase from 'firebase/app'; 
 
 //Constants
@@ -28,14 +28,13 @@ export class AddPostPage {
 
   user;
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
-  //images_path: string;
   public userObj : any;
   public profilePic : string;
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
               private profileData: ProfileDataProvider,
-              private afs: AngularFirestore,
+              //private afs: AngularFirestore,
               public phpService: PhpServiceProvider,
               public http : Http ) {
     
@@ -53,39 +52,15 @@ export class AddPostPage {
 
   ionViewWillEnter()
   {  
-    //this.currentUserProfilePicture();
   }
   
   // Add post method
-  addPost(postDesc: string ) {
-      this.phpService.addPost(postDesc, this.user.uid);
+  addPost(postDesc: string, selectedLocation: string) {
 
-      // this.afs.collection('posts').add({
-      //             'post': postDesc,
-      //             'postedDate': new Date().toISOString(),
-      //             'postedById': this.user.uid,
-      //             'count': 15
-      // });
-      
+    this.phpService.addPost(postDesc, this.user.uid, selectedLocation, this.userObj.PostalCode).subscribe(res => { 
       this.navCtrl.pop();
+    });
   }
-
-  // Get Current User Profile Picture
-  // currentUserProfilePicture()
-  // {
-  //   this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)  
-  //   .map(res => res.json())
-  //   .subscribe(data =>  
-  //   { 
-  //     if( data.length === 0 ){
-  //       //this.hasData = false;
-  //     }else {
-  //       data.forEach(item=>{ 
-  //           this.images_path = this.baseURI + item.images_path;
-  //       });
-  //     }
-  //   });
-  // }
 
   // Display Image in Full Screen  
 	displayImageFullScreen(imageToView) {

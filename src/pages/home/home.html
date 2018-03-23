@@ -3,7 +3,11 @@
       <ion-title class="labelStyle">Home Page</ion-title>
       
       <ion-buttons end>
-          
+        
+        <button ion-button block color="primary" (click)="gotoFilterPostPage()">
+            <ion-icon name="funnel"></ion-icon>
+        </button>
+
         <button ion-button block color="primary" (click)="gotoAddPost()">
             <ion-icon name="add-circle"></ion-icon>
         </button>
@@ -45,11 +49,11 @@
           </ion-card-content>
   
           
-            <ion-item-options side="right" > <!-- *ngIf="comment?.commentHiddenById != currentUserUid" -->
+        <!--    <ion-item-options side="right" >  *ngIf="comment?.commentHiddenById != currentUserUid" 
               <!-- <button color="danger" ion-button (click)="deleteComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById == currentUserUid"><ion-icon name="trash"> Delete</ion-icon></button>
-              <button color="danger" ion-button (click)="hideComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById != currentUserUid">Hide</button> -->
+              <button color="danger" ion-button (click)="hideComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById != currentUserUid">Hide</button> 
               <button danger ion-button (click)="gotoEditPostPage(item.id)" ><ion-icon name="edit">Edit</ion-icon></button>
-            </ion-item-options> 
+            </ion-item-options>  -->
        
       </ion-card> 
   
