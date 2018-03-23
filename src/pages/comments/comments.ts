@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { Http } from '@angular/http'; // , Headers, RequestOptions
 import * as firebase from 'firebase/app'; 
 
 //Constants
@@ -12,7 +12,7 @@ import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
 // Interfaces
-import { IPosts } from '../../providers/interfaces/interface';
+//import { IPosts } from '../../providers/interfaces/interface';
 import { IComment } from '../../providers/interfaces/interface';
 
 /**
@@ -55,10 +55,7 @@ export class CommentsPage {
     
     this.postId = this.navParams.get('postId');
 
-    this.http.get(this.baseURI + 'getDataFromId.php?postId='+this.postId)
-    .map(res => res.json())
-    .subscribe(postInfo =>
-    { 
+    this.phpService.getPostInfo(this.postId).subscribe(postInfo =>{ 
       this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
           this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
 
@@ -84,10 +81,8 @@ export class CommentsPage {
   {
     this.comments = [];
 
-    this.http.get(this.baseURI + 'get-all-comments.php?postId='+postId )
-    .map(res => res.json())
-    .subscribe(commentsInfo =>
-      {
+   this.phpService.getAllComments(postId).subscribe(commentsInfo => {
+
         if( commentsInfo.length === 0 ){
           console.log('***Empty Comments');
         } else {
@@ -193,22 +188,5 @@ export class CommentsPage {
   displayImageFullScreen(imageToView) {
     this.profileData.displayImageInFullScreen(imageToView);
   }
-
-  // Get Current User Profile Picture
-  // currentUserProfilePicture()
-  // {
-  //   this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)
-  //   .map(res => res.json())
-  //   .subscribe(data =>
-  //   { 
-  //     if( data.length === 0 ){
-  //       //this.hasData = false;
-  //     }else {
-  //       data.forEach(item=>{             
-  //           this.images_path = this.baseURI + item.images_path;
-  //       });
-  //     }
-  //   });
-  // }
 
 }

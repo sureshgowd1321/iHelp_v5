@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
+//import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import * as firebase from 'firebase/app'; 
 
-import { Observable } from 'rxjs/Observable';
+//import { Observable } from 'rxjs/Observable';
 
 import { ImageViewerController } from 'ionic-img-viewer';
 
@@ -19,17 +19,17 @@ import { constants } from '../../constants/constants';
   and Angular DI.
 */
 
-interface User {
-  displayName?: string;
-}
+// interface User {
+//   displayName?: string;
+// }
 
 @Injectable()
 export class ProfileDataProvider {
 
   user;
-  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
-  constructor(private authService: AuthServiceProvider, 
+  constructor( //private authService: AuthServiceProvider, 
               public imageViewerCtrl: ImageViewerController, 
               private afs: AngularFirestore,
               public http : Http) {

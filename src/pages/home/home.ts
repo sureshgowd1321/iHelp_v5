@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core'; // , OnInit
 import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
 import { Http } from '@angular/http';
 
-import { AngularFireAuth } from 'angularfire2/auth';
+//import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app'; 
@@ -11,6 +11,7 @@ import * as firebase from 'firebase/app';
 import { AddPostPage } from '../add-post/add-post';
 import { EditPostPage } from '../edit-post/edit-post';
 import { CommentsPage } from '../comments/comments';
+import { FilterPostsPage } from '../filter-posts/filter-posts';
 
 //Constants
 import { constants } from '../../constants/constants';
@@ -18,7 +19,6 @@ import { constants } from '../../constants/constants';
 // Providers
 import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
-import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 
 // Interfaces
 import { IPosts } from '../../providers/interfaces/interface';
@@ -35,16 +35,12 @@ export class HomePage {
     userObj: Observable<IUser>;
 
     public posts: IPosts[] = [];
-    public hasData: Boolean = true;
-
-    images_path: string;
 
     private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
     constructor(public http : Http, 
                 public navCtrl: NavController, 
                 private afs: AngularFirestore, 
-                private authService: AuthServiceProvider,
                 private profileData: ProfileDataProvider,
                 public actionSheetCtrl: ActionSheetController,
                 public phpService: PhpServiceProvider,
@@ -54,14 +50,14 @@ export class HomePage {
         console.log('**This User: '+ this.user.uid);
                   
         this.userDoc = this.afs.doc('users/'+this.user.uid);
-        this.userObj = this.userDoc.valueChanges();              
+        this.userObj = this.userDoc.valueChanges();    
+        
     }
 
     ionViewWillEnter()
     {  
       this.posts = [];
       this.load(0, 'initialload');
-      //this.currentUserProfilePicture();
     }
 
     // Retrieve the JSON encoded data from the remote server
@@ -69,42 +65,48 @@ export class HomePage {
     // assign this to the items array for rendering to the HTML template
     load(minCount, loadType)
     {
-      this.http.get(this.baseURI + 'retrieve-data.php?minCount='+minCount +'&loadType='+loadType)
-      .map(res => res.json())
-      .subscribe(data =>
-      { 
-        if( data.length === 0 ){
-          this.hasData = false;
-        }else {
-          data.forEach(item=>{ 
-              var index = this.checkUniqueId(item.Id);
-              
-              if (index > -1){
-              } else {
+      
+      this.phpService.getUserInfo(this.user.uid).subscribe(loggedInUserInfo => {
+        this.phpService.getAllPosts(minCount, loadType, loggedInUserInfo.PostalCode, loggedInUserInfo.PostFilter)     
+        .subscribe(data =>
+        { 
+          if( data.length === 0 ){
+           // this.hasData = false;
+          }else {
+            data.forEach(item=>{ 
+                var index = this.checkUniqueId(item.ID);
                 
-                this.phpService.getUserInfo(item.CreatedById)
-                .subscribe(userinfo => {
+                if (index > -1){
+                } else {
+                  
+                  this.phpService.getUserInfo(item.CreatedById).subscribe(userinfo => {
 
-                  this.phpService.getUserProfilePic(item.CreatedById)
-                  .subscribe(userProfilePic => {
-                    this.posts.push(
-                      {
-                        "id"           : item.Id,
-                        "post"         : item.post,
-                        "createdDate"  : item.CreatedDate,
-                        "createdById"  : item.CreatedById,
-                        "name"         : userinfo.name,
-                        "email"        : userinfo.email,
-                        "nickname"     : userinfo.nickname,
-                        "city"         : userinfo.city,
-                        "country"      : userinfo.country,
-                        "profilePic"   : this.baseURI + userProfilePic.images_path
+                    this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {
+                      
+                      this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
+                      
+                        this.posts.push(
+                          {
+                            "id"           : item.ID,
+                            "post"         : item.post,
+                            "createdDate"  : item.CreatedDate,
+                            "createdById"  : item.CreatedById,
+                            "name"         : userinfo.name,
+                            "email"        : userinfo.email,
+                            "nickname"     : userinfo.nickname,
+                            "city"         : userLocationInfo.City,
+                            "state"        : userLocationInfo.State,
+                            "country"      : userLocationInfo.Country,
+                            "profilePic"   : this.baseURI + userProfilePic.images_path
+                          }
+                        );
                       });
+                    });
                   });
-                });
-              }
-          });
-        }
+                }
+            });
+          }
+        });
       });
     }
 
@@ -123,7 +125,6 @@ export class HomePage {
           setTimeout(() => {
             
             let latestId = this.posts[this.posts.length-1].id;
-            //console.log('***Latest Id: '+ latestId);
 
             this.load(latestId, 'scroll');
 
@@ -151,6 +152,11 @@ export class HomePage {
       this.navCtrl.push(EditPostPage, {
         postId
       });
+    }
+
+    // Go to Filter Posts page
+    gotoFilterPostPage() {
+      this.navCtrl.push(FilterPostsPage);
     }
     
     // Delete the post
@@ -216,21 +222,5 @@ export class HomePage {
   
       actionSheet.present();
     }
-    
-    // Get Current User Profile Picture
-    // currentUserProfilePicture()
-    // {
-    //   this.http.get(this.baseURI+'retrieve-images.php?userId='+this.user.uid)
-    //   .map(res => res.json())
-    //   .subscribe(data =>
-    //   { 
-    //     if( data.length === 0 ){
-    //     }else {
-    //       data.forEach(item=>{ 
-    //           this.images_path = this.baseURI + item.images_path;
-    //       });
-    //     }
-    //   });
-    // }
 
 }

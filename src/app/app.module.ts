@@ -27,12 +27,13 @@ import { ProfilePage } from '../pages/profile/profile';
 import { AddPostPage } from '../pages/add-post/add-post';
 import { EditPostPage } from '../pages/edit-post/edit-post';
 import { CommentsPage } from '../pages/comments/comments';
+import { FilterPostsPage } from '../pages/filter-posts/filter-posts';
 
 // Native plugins
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicImageViewerModule } from 'ionic-img-viewer';
-import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { FileTransfer } from '@ionic-native/file-transfer'; // , FileUploadOptions, FileTransferObject
 import { Camera } from '@ionic-native/camera';
 
 // Providers
@@ -53,7 +54,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     ProfilePage,
     AddPostPage,
     EditPostPage,
-    CommentsPage
+    CommentsPage,
+    FilterPostsPage
   ],
   imports: [
     BrowserModule,
@@ -78,7 +80,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     ProfilePage,
     AddPostPage,
     EditPostPage,
-    CommentsPage
+    CommentsPage,
+    FilterPostsPage
   ],
   providers: [
     StatusBar,
