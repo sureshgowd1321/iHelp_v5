@@ -10,7 +10,11 @@
       <ion-title>Profile</ion-title>
   
       <ion-buttons end>
-  
+      
+        <button ion-button icon-only (click)="goToEditProfilePage()">
+            <ion-icon name="create"></ion-icon>
+        </button>
+
         <button ion-button icon-only (click)="logout()">
           <ion-icon name="log-out"></ion-icon>
         </button>
@@ -24,43 +28,44 @@
   <ion-content >  
   
     <!-- Fab to display Camera to take picture from Mobile Camera -->
-    <ion-fab left top>
+    <!-- <ion-fab left top>
       <button ion-fab color="primary" (click)="takePicture()">
             <ion-icon name="md-camera"></ion-icon>
         </button>
     </ion-fab>
   
-    <!-- Fab to display Gallery to Select Image from Mobile Gallery -->
+    <!-- Fab to display Gallery to Select Image from Mobile Gallery 
     <ion-fab right top>
       <button ion-fab color="secondary" (click)="selectFromGallery()">
             <ion-icon name="image"></ion-icon>
         </button>
-    </ion-fab>
+    </ion-fab> -->
     
     <!-- Display Image -->
-    <img src="{{ images_path }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)">
+    <!-- <img src="{{ images_path }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)">  -->
+    <img src="{{ userProfilePic }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)"> 
 
-    <!-- Display Name -->
-    <ion-item (click)="updateName()">
+    <!-- Display Name (click)="updateName()"-->
+    <ion-item >
       <ion-grid>
         <ion-row>
           <ion-col width-50 class="labelStyle">
             Name
           </ion-col>
           <ion-col >
-              {{userInfo?.name}}
-             <!-- {{ user?.displayName }} -->
+              {{nameVar}}
+             <!-- {{ user?.displayName }}  -->
           </ion-col>
-          <ion-col class="placeholder-profile" *ngIf="user?.displayName == null">
+          <!-- <ion-col class="placeholder-profile" *ngIf="user?.displayName == null">
             <span>
               Tap here to edit.
-            </span>
-          </ion-col>
+            </span> 
+          </ion-col>  -->
         </ion-row>
       </ion-grid>
     </ion-item>
   
-     <!-- Display Nickname -->
+     <!-- Display Nickname 
      <ion-item (click)="updateNickName()">
       <ion-grid>
         <ion-row>
@@ -69,16 +74,16 @@
           </ion-col>
           <ion-col >
               {{userInfo?.nickname}}
-           <!-- {{ (userObj | async)?.nickName }} -->
+           <!-- {{ (userObj | async)?.nickName }} 
           </ion-col>
           <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
             <span>
               Tap here to edit.
             </span>
-          </ion-col> -->
+          </ion-col> 
         </ion-row>
       </ion-grid>
-    </ion-item>
+    </ion-item> -->
   
     <!-- Display Date of Birth 
     <ion-item>
@@ -86,67 +91,49 @@
       <ion-datetime displayFormat="MMM D, YYYY" pickerFormat="D MMM YYYY" [(ngModel)]="birthDateVar" (ionChange)="updateBirthDate(birthDateVar)"></ion-datetime>
     </ion-item> -->
   
-    <!-- Display City -->
-    <ion-item (click)="updateCity()">
+    <!-- Display City (click)="updateCity()" -->
+    <ion-item >
       <ion-grid>
         <ion-row>
           <ion-col width-50 class="labelStyle">
             City
           </ion-col>
           <ion-col >
-              {{userInfo?.name}}
-          <!--  {{ (userObj | async)?.city }} -->
+              {{cityVar}}
           </ion-col>
-          <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
-            <span>
-              Tap here to edit.
-            </span>
-          </ion-col> -->
         </ion-row>
       </ion-grid>
     </ion-item>
 
-    <!-- Display State -->
-    <ion-item (click)="updateState()">
+    <!-- Display State (click)="updateState()" -->
+    <ion-item >
         <ion-grid>
           <ion-row>
             <ion-col width-50 class="labelStyle">
               State
             </ion-col>
             <ion-col >
-                {{userInfo?.name}}
-            <!--  {{ (userObj | async)?.city }} -->
+                {{stateVar}}
             </ion-col>
-            <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
-              <span>
-                Tap here to edit.
-              </span>
-            </ion-col> -->
           </ion-row>
         </ion-grid>
       </ion-item>
   
-    <!-- Display Country -->
-    <ion-item (click)="updateCountry()">
+    <!-- Display Country (click)="updateCountry()"-->
+    <ion-item >
       <ion-grid>
         <ion-row>
           <ion-col width-50 class="labelStyle">
             Country
           </ion-col>
           <ion-col >
-              {{userInfo?.name}}
-           <!-- {{ (userObj | async)?.country }} -->
+              {{countryVar}}
           </ion-col>
-          <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
-            <span>
-              Tap here to edit.
-            </span>
-          </ion-col> -->
         </ion-row>
       </ion-grid>
     </ion-item>
   
-    <!-- Display Email 
+    <!-- Display Email  -->
     <ion-item>
       <ion-grid>
         <ion-row>
@@ -155,12 +142,12 @@
           </ion-col>
           <ion-col class="placeholder-profile">
             <span>
-              {{ (userObj | async)?.email }}
+                {{emailVar}}
             </span>
           </ion-col>
         </ion-row>
       </ion-grid>
-    </ion-item> -->
+    </ion-item> 
   
     <ion-item>
       <ion-grid>
@@ -170,7 +157,7 @@
           </ion-col>
           <ion-col class="placeholder-profile">
             <span>
-                {{userInfo?.totalstars}}
+                <!-- {{userInfo?.totalstars}} -->
             <!--  {{ (userObj | async)?.totalStars }} -->
             </span>
           </ion-col>

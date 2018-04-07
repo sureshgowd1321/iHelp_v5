@@ -18,35 +18,49 @@
               <ion-list no-lines>
 
                   <ion-item>
-                      <ion-label floating color="primary">Full Name</ion-label>
+                      <ion-label color="primary">Name</ion-label>
                       <ion-input #name formControlName="name" type="string" [class.invalid]="!signupForm.controls.name.valid && signupForm.controls.name.dirty"></ion-input>
                   </ion-item>
                   <ion-item class="error-message" *ngIf="!signupForm.controls.name.valid && signupForm.controls.name.dirty">
                       <p>Please enter name.</p>
                   </ion-item>
-
+<!-- 
                   <ion-item>
                       <ion-label floating color="primary">Nick Name</ion-label>
                       <ion-input #nickName formControlName="nickName" type="string" [class.invalid]="!signupForm.controls.name.valid && signupForm.controls.name.dirty"></ion-input>
+                  </ion-item> [(ngModel)]="gender" formcontrolname="nameFormControl" -->
+
+                  <ion-item>
+                    <ion-label color="primary">Gender</ion-label>
+                    <ion-select #gender formControlName="gender">
+                      <ion-option value="f">Male</ion-option>
+                      <ion-option value="m">Female</ion-option>
+                    </ion-select>
                   </ion-item>
 
                   <ion-item>
-                      <ion-label floating color="primary">City</ion-label>
-                      <ion-input #city formControlName="city" type="string" ></ion-input>
+                    <ion-label color="primary">Country</ion-label>
+                    <ion-select #country formControlName="country" (ionChange)="setStateValues()" >
+                        <ion-option *ngFor="let country of countries">{{country}} </ion-option>
+                    </ion-select>
                   </ion-item>
 
                   <ion-item>
-                    <ion-label floating color="primary">State</ion-label>
-                    <ion-input #state formControlName="state" type="string" ></ion-input>
+                    <ion-label color="primary">State</ion-label>
+                    <ion-select #state formControlName="state" (ionChange)="setCityValues()">
+                        <ion-option *ngFor="let state of selectedStates">{{state}} </ion-option>
+                    </ion-select>
                   </ion-item>
 
                   <ion-item>
-                      <ion-label floating color="primary">Country</ion-label>
-                      <ion-input #country formControlName="country" type="string" ></ion-input>
+                    <ion-label color="primary">City</ion-label>
+                    <ion-select #city formControlName="city" >
+                        <ion-option *ngFor="let city of selectedCities">{{city}} </ion-option>
+                    </ion-select>
                   </ion-item>
 
                   <ion-item>
-                      <ion-label floating color="primary">Email</ion-label>
+                      <ion-label color="primary">Email</ion-label>
                       <ion-input #email formControlName="email" type="email" [class.invalid]="!signupForm.controls.email.valid && signupForm.controls.email.dirty"></ion-input>
                   </ion-item>
                   <ion-item class="error-message" *ngIf="!signupForm.controls.email.valid  && signupForm.controls.email.dirty">
@@ -54,7 +68,7 @@
                   </ion-item>
 
                   <ion-item>
-                      <ion-label floating color="primary">Password</ion-label>
+                      <ion-label color="primary">Password</ion-label>
                       <ion-input #password formControlName="password" type="password" [class.invalid]="!signupForm.controls.password.valid && signupForm.controls.password.dirty"></ion-input>
                   </ion-item>
                   <ion-item class="error-message" *ngIf="!signupForm.controls.password.valid  && signupForm.controls.password.dirty">

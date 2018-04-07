@@ -70,6 +70,18 @@ export class PhpServiceProvider {
     .map(response => response.json());
   }
 
+  // Get All Countries
+  getAllCountries() {
+  //  let body     : string   = "key=countries",
+        // type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        // headers  : any      = new Headers({ 'Content-Type': type}),
+        // options  : any      = new RequestOptions({ headers: headers }),
+       // url      : any      = this.baseURI + "get-all-locations.php?key=countries";
+
+    return this.http.get(this.baseURI + 'get-all-locations.php?key=countries')
+    .map(response => response.json());
+  }
+
   // Adding New Post
   addPost(postDesc, userId, postedLocation, PostalCode)
   {
@@ -81,19 +93,6 @@ export class PhpServiceProvider {
 
       return this.http.post(url, body, options)
                   .map(response => response.json());
-      // .subscribe((data) =>
-      // {
-      //    // If the request was successful notify the user
-      //    if(data.status === 200)
-      //    {
-      //      console.log('Successfully new post submitted');
-      //    }
-      //    // Otherwise let 'em know anyway
-      //    else
-      //    {
-      //       console.log('Something went wrong!');
-      //    }
-      // });
   }
 
   // Updating existing post
@@ -220,7 +219,7 @@ export class PhpServiceProvider {
   // Add New User service
   updateUserFilter(userId, postFilter)
   {
-    let body     : string   = "key=updateUser" + 
+    let body     : string   = "key=updateUserPostFilter" + 
                               "&userId=" + userId + 
                               "&postFilter=" + postFilter ,
 
@@ -231,20 +230,23 @@ export class PhpServiceProvider {
 
     return this.http.post(url, body, options)
                   .map(response => response.json());
+  }
 
-    // .subscribe((data) =>
-    // {
-    //   //If the request was successful notify the user
-    //   if(data.status === 200)
-    //   {
-    //       console.log('***Update User Success:');
-    //   }
-    //   // Otherwise let 'em know anyway
-    //   else
-    //   {   
-    //       console.log('***Update User Error');
-    //   }
-    // });
+  // Update User Data
+  updateUserData(userId, updatedName, locId)
+  {
+    let body     : string   = "key=updateUserData" + 
+                              "&userId=" + userId + 
+                              "&userName=" + updatedName + 
+                              "&locationId=" + locId ,
+
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                  .map(response => response.json());
   }
 
 }

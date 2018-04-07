@@ -28,6 +28,7 @@ import { AddPostPage } from '../pages/add-post/add-post';
 import { EditPostPage } from '../pages/edit-post/edit-post';
 import { CommentsPage } from '../pages/comments/comments';
 import { FilterPostsPage } from '../pages/filter-posts/filter-posts';
+import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 
 // Native plugins
 import { StatusBar } from '@ionic-native/status-bar';
@@ -55,7 +56,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     AddPostPage,
     EditPostPage,
     CommentsPage,
-    FilterPostsPage
+    FilterPostsPage,
+    EditProfilePage
   ],
   imports: [
     BrowserModule,
@@ -81,7 +83,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     AddPostPage,
     EditPostPage,
     CommentsPage,
-    FilterPostsPage
+    FilterPostsPage,
+    EditProfilePage
   ],
   providers: [
     StatusBar,
