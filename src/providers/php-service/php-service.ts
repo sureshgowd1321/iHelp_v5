@@ -38,17 +38,28 @@ export class PhpServiceProvider {
   }
   
   // Get All Posts
-  getAllPosts(minCount: string, loadType: string, postalCode: string, postFilter: string) {
+  getAllPosts(minCount: string, loadType: string, postalCode: string, postFilter: string, postCity: string, postState: string, postCountry: string) {
     return this.http.get(this.baseURI + 'retrieve-data.php?minCount=' + minCount 
                                       + '&loadType=' + loadType 
                                       + '&userPostalCode=' + postalCode
-                                      + '&userPostFilter=' + postFilter )
+                                      + '&userPostFilter=' + postFilter
+                                      + '&postedCity=' + postCity
+                                      + '&postedState=' + postState
+                                      + '&postedCountry=' + postCountry )
     .map(response => response.json());
   } 
 
   // Get Post Information
   getPostInfo(postId: string) {
     return this.http.get(this.baseURI + 'getDataFromId.php?postId='+postId)
+    .map(response => response.json());
+  }
+
+  // Get All Posts from User Id
+  getPostsFromUserId(userUid: string, minCount: string, loadType: string) {
+    return this.http.get(this.baseURI + 'getPostsFromUserId.php?userUid='+userUid
+                                      + '&loadType=' + loadType
+                                      + '&minCount=' + minCount)
     .map(response => response.json());
   }
 
@@ -83,9 +94,10 @@ export class PhpServiceProvider {
   }
 
   // Adding New Post
-  addPost(postDesc, userId, postedLocation, PostalCode)
+  addPost(postDesc, userId, postedLocation, PostalCode, postedCity, postedState, postedCountry)
   {
-      let body     : string   = "key=create&post=" + postDesc + '&userId=' + userId + '&postedLocation=' + postedLocation + '&postalCode=' + PostalCode,
+      let body     : string   = "key=create&post=" + postDesc + '&userId=' + userId + '&postedLocation=' + postedLocation + '&postalCode=' + PostalCode + 
+                                '&postedCity='+ postedCity + '&postedState=' + postedState + '&postedCountry=' + postedCountry,
           type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
           headers  : any      = new Headers({ 'Content-Type': type}),
           options  : any      = new RequestOptions({ headers: headers }),

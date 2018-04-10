@@ -1,60 +1,48 @@
-import { Component } from '@angular/core'; // , OnInit
-import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
-import { Http } from '@angular/http';
+import { Component } from '@angular/core';
+import { IonicPage, NavController, NavParams, AlertController, ActionSheetController } from 'ionic-angular';
 
-//import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
-import * as firebase from 'firebase/app'; 
-
-//Pages
-import { AddPostPage } from '../add-post/add-post';
-import { EditPostPage } from '../edit-post/edit-post';
-import { CommentsPage } from '../comments/comments';
-import { FilterPostsPage } from '../filter-posts/filter-posts';
-
-//Constants
-import { constants } from '../../constants/constants';
+// Interfaces
+import { IPosts } from '../../providers/interfaces/interface';
 
 // Providers
 import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
-// Interfaces
-import { IPosts } from '../../providers/interfaces/interface';
-import { IUser } from '../../providers/interfaces/interface';
+//Constants
+import { constants } from '../../constants/constants';
 
+//Pages
+import { EditPostPage } from '../edit-post/edit-post';
+import { CommentsPage } from '../comments/comments';
+/**
+ * Generated class for the UserPostsPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
+
+@IonicPage()
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
+  selector: 'page-user-posts',
+  templateUrl: 'user-posts.html',
 })
-export class HomePage {
+export class UserPostsPage {
 
-    user;
-    userDoc: AngularFirestoreDocument<IUser>;
-    userObj: Observable<IUser>;
+  public posts: IPosts[] = [];
+  userUId: string;
+  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
-    public posts: IPosts[] = [];
+  constructor(public navCtrl: NavController, 
+              public navParams: NavParams,
+              private profileData: ProfileDataProvider,
+              public actionSheetCtrl: ActionSheetController,
+              public phpService: PhpServiceProvider,
+              public alertCtrl: AlertController) {
 
-    private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+    this.userUId = this.navParams.get('userId');
+  }
 
-    constructor(public http : Http, 
-                public navCtrl: NavController, 
-                private afs: AngularFirestore, 
-                private profileData: ProfileDataProvider,
-                public actionSheetCtrl: ActionSheetController,
-                public phpService: PhpServiceProvider,
-                public alertCtrl: AlertController ) {
-                
-        this.user = firebase.auth().currentUser; 
-        console.log('**This User: '+ this.user.uid);
-                  
-        this.userDoc = this.afs.doc('users/'+this.user.uid);
-        this.userObj = this.userDoc.valueChanges();    
-        
-    }
-
-    ionViewWillEnter()
+  ionViewWillEnter()
     {  
       this.posts = [];
       this.load(0, 'initialload');
@@ -66,14 +54,11 @@ export class HomePage {
     load(minCount, loadType)
     {
       
-      this.phpService.getUserInfo(this.user.uid).subscribe(loggedInUserInfo => {
+      //this.phpService.getUserInfo(this.userUId).subscribe(loggedInUserInfo => {
 
-        this.phpService.getLocationInfo(loggedInUserInfo.PostalCode).subscribe(userLocationInfo => {
+        //this.phpService.getLocationInfo(loggedInUserInfo.PostalCode).subscribe(userLocationInfo => {
 
-          this.phpService.getAllPosts(minCount, loadType, loggedInUserInfo.PostalCode, loggedInUserInfo.PostFilter, 
-                                      userLocationInfo.City, userLocationInfo.State, userLocationInfo.Country )     
-          .subscribe(data =>
-          { 
+          this.phpService.getPostsFromUserId(this.userUId, minCount, loadType).subscribe(data => { 
             if( data.length === 0 ){
             // this.hasData = false;
             }else {
@@ -111,8 +96,8 @@ export class HomePage {
               });
             }
           });
-        });
-      });
+        //});
+      //});
     }
 
     checkUniqueId(id) {
@@ -145,42 +130,6 @@ export class HomePage {
       if(refresher != 0)
         refresher.complete();
     
-    }
-
-    // Go to Add post Page to add a post
-    gotoAddPost() {
-      this.navCtrl.push(AddPostPage);
-    }
-
-    // Go to Edit Post Page to update the post
-    gotoEditPostPage(postId: any) {
-      this.navCtrl.push(EditPostPage, {
-        postId
-      });
-    }
-
-    // Go to Filter Posts page
-    gotoFilterPostPage() {
-      this.navCtrl.push(FilterPostsPage);
-    }
-    
-    // Delete the post
-    deletePost(postId: any){
-      let alert = this.alertCtrl.create({
-        title: 'Confirm',
-        message: 'Are you sure, you want to Delete?',
-        buttons: [
-          {
-            text: "No",
-            role: 'cancel'
-          },
-          {
-            text: "Yes",
-            handler: () => { this.phpService.deletePost(postId); }
-          }
-        ]
-      })
-      alert.present();
     }
 
     // Goto Comments Page
@@ -228,4 +177,29 @@ export class HomePage {
       actionSheet.present();
     }
 
+    // Go to Edit Post Page to update the post
+    gotoEditPostPage(postId: any) {
+      this.navCtrl.push(EditPostPage, {
+        postId
+      });
+    }
+
+    // Delete the post
+    deletePost(postId: any){
+      let alert = this.alertCtrl.create({
+        title: 'Confirm',
+        message: 'Are you sure, you want to Delete?',
+        buttons: [
+          {
+            text: "No",
+            role: 'cancel'
+          },
+          {
+            text: "Yes",
+            handler: () => { this.phpService.deletePost(postId); }
+          }
+        ]
+      })
+      alert.present();
+    }
 }

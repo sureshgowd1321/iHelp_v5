@@ -29,7 +29,12 @@ export class AddPostPage {
   user;
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
   public userObj : any;
+  public locationObj : any;
   public profilePic : string;
+  public userCity : string;
+  public userState : string;
+  public userCountry : string;
+  selectedLocation;
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
@@ -42,22 +47,27 @@ export class AddPostPage {
     
     this.phpService.getUserInfo(this.user.uid).subscribe(userinfo => {
       this.phpService.getUserProfilePic(this.user.uid).subscribe(userProfilePic => {
+        this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(locationInfo => {
+          
+          this.locationObj = locationInfo;
+          this.userObj = userinfo;
+          this.profilePic = this.baseURI + userProfilePic.images_path;
 
-        this.userObj = userinfo;
-        this.profilePic = this.baseURI + userProfilePic.images_path;
-
-      })
+        });
+      });
     });
   }
 
   ionViewWillEnter()
   {  
+    this.selectedLocation = 'CT';
   }
   
   // Add post method
-  addPost(postDesc: string, selectedLocation: string) {
+  addPost(postDesc: string) {
 
-    this.phpService.addPost(postDesc, this.user.uid, selectedLocation, this.userObj.PostalCode).subscribe(res => { 
+    this.phpService.addPost(postDesc, this.user.uid, this.selectedLocation, this.userObj.PostalCode,
+                            this.locationObj.City, this.locationObj.State, this.locationObj.Country).subscribe(res => { 
       this.navCtrl.pop();
     });
   }

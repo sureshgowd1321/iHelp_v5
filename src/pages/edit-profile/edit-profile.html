@@ -24,6 +24,7 @@
 
 <ion-content >
     
+  <div class="background">
     <!-- Fab to display Camera to take picture from Mobile Camera -->
     <ion-fab left top>
       <button ion-fab color="primary" (click)="takePicture()">
@@ -39,8 +40,8 @@
     </ion-fab> 
 
     <!-- Display Image -->
-    <img src="{{ userProfilePic }}" class="thumb-img" #imageToView (click)="displayImageFullScreen(imageToView)"> 
-
+    <img src="{{ userProfilePic }}" class="roung-img" #imageToView (click)="displayImageFullScreen(imageToView)"> 
+  </div>
     <ion-item>
       <ion-label color="primary">Name</ion-label>
       <ion-input type="string" [(ngModel)]="updatedName" ></ion-input>
@@ -59,8 +60,10 @@
       </ion-grid>
     </ion-item>
 
-
-    <h6 class="locHeader">  Update Your location </h6>
+    <ion-list-header>
+        <h6 class="locHeader">Update Your location</h6> 
+      </ion-list-header>
+    <!-- <h6 class="locHeader">  Update Your location </h6> -->
 
     <ion-item>
       <ion-label color="primary">Country</ion-label>
