@@ -12,6 +12,9 @@ import { AngularFireAuth } from 'angularfire2/auth';
 
 import { TabsPage } from '../tabs/tabs';
 
+// Interfaces
+import { ICountries } from '../../providers/interfaces/interface';
+
 // Providers
 import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
@@ -32,7 +35,11 @@ export class SignUpPage {
 
   public signupForm;
   loading: any;
- // public locationId: string;
+
+  allLocations: ICountries[] = [];
+  countries: any = [];
+  selectedStates: any = [];
+  selectedCities: any = [];
 
   constructor(public navCtrl: NavController, 
               public firebaseAuth: AngularFireAuth, 
@@ -46,12 +53,78 @@ export class SignUpPage {
       this.signupForm = formBuilder.group({
         name: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
         nickName: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
+        gender: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
         city: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
         state: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
         country: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
         email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
         password: ['', Validators.compose([Validators.minLength(6), Validators.required])]
       })
+  }
+
+  ionViewWillEnter()
+  {  
+    this.phpService.getAllCountries().subscribe(countriesInfo => {
+      countriesInfo.forEach(countryObj=>{
+
+        this.allLocations.push({
+              country   : countryObj.Country,
+              state     : countryObj.State,
+              city      : countryObj.City
+        });  
+
+        var index = this.countries.findIndex(item => item === countryObj.Country);
+                
+        if (index > -1){
+        } else {
+
+          this.countries.push(countryObj.Country);   
+        }
+      });
+    }); 
+  }
+
+  // checkUniqueId(id) {
+
+  //   // check whether id exists
+  //   var index = this.countries.findIndex(item => item === id);
+    
+  //   return index;
+  // }
+
+  // Set State values based on selected country
+  setStateValues() {
+      this.selectedStates.length = 0;
+      this.selectedCities.length = 0;
+
+      this.allLocations.forEach(stateObj => {
+        if(stateObj.country === this.signupForm.value.country.trim()){
+
+          var index = this.selectedStates.findIndex(item => item === stateObj.state);
+
+          if (index > -1){
+          } else {  
+            this.selectedStates.push(stateObj.state);   
+          }          
+        }
+      });     
+  }
+
+  // Set Cities based in selected state
+  setCityValues() {
+    this.selectedCities.length = 0;
+
+    this.allLocations.forEach(cityObj => {
+      if(cityObj.state === this.signupForm.value.state.trim()){
+
+        var index = this.selectedCities.findIndex(item => item === cityObj.city);
+
+        if (index > -1){
+        } else {  
+          this.selectedCities.push(cityObj.city);   
+        }          
+      }
+    });     
   }
 
   // Signup using Email And password
@@ -79,6 +152,10 @@ export class SignUpPage {
         this.signupForm.value.email = this.signupForm.value.password = '';
       });
     }
+  }
+
+  initializeCountries(){
+    
   }
 
   goToLoginPage(): void {

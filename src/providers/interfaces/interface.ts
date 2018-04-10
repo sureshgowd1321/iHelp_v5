@@ -14,7 +14,7 @@ export interface IPosts {
 
 export interface IUser {
     uid               : string;
-    email             : string;
+    email?            : string;
     photoURL?         : string;
     displayName?      : string;
     nickName?         : string;
@@ -37,4 +37,10 @@ export interface IComment {
     name          : string;
     nickname      : string;
     profilePic    : string;
+}
+
+export interface ICountries {
+    country   : string;
+    state     : string;
+    city      : string;
 }

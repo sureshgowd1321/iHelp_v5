@@ -1,7 +1,7 @@
-page-profile {
+page-edit-profile {
     .background{
-        width:100%;
-        height:100%;
+       // width:100%;
+       // height:100%;
         background: linear-gradient(10deg,#4E5EFC,#4EE7FC);
     }
     .scroll-content{
@@ -24,6 +24,11 @@ page-profile {
 
     .labelStyle {
         color: blue;
+    }
+
+    .locHeader {
+        margin-left: 20px;
+        text-align: left;
     }
 
     .roung-img {

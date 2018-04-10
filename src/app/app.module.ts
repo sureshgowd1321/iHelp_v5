@@ -16,8 +16,6 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { environment } from '../environments/environment';
 
 // Pages
-import { AboutPage } from '../pages/about/about';
-import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
@@ -28,6 +26,8 @@ import { AddPostPage } from '../pages/add-post/add-post';
 import { EditPostPage } from '../pages/edit-post/edit-post';
 import { CommentsPage } from '../pages/comments/comments';
 import { FilterPostsPage } from '../pages/filter-posts/filter-posts';
+import { EditProfilePage } from '../pages/edit-profile/edit-profile';
+import { UserPostsPage } from '../pages/user-posts/user-posts';
 
 // Native plugins
 import { StatusBar } from '@ionic-native/status-bar';
@@ -44,8 +44,6 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
 @NgModule({
   declarations: [
     MyApp,
-    AboutPage,
-    ContactPage,
     HomePage,
     TabsPage,
     LoginPage,
@@ -55,7 +53,9 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     AddPostPage,
     EditPostPage,
     CommentsPage,
-    FilterPostsPage
+    FilterPostsPage,
+    EditProfilePage,
+    UserPostsPage
   ],
   imports: [
     BrowserModule,
@@ -70,8 +70,6 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    AboutPage,
-    ContactPage,
     HomePage,
     TabsPage,
     LoginPage,
@@ -81,7 +79,9 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     AddPostPage,
     EditPostPage,
     CommentsPage,
-    FilterPostsPage
+    FilterPostsPage,
+    EditProfilePage,
+    UserPostsPage
   ],
   providers: [
     StatusBar,
