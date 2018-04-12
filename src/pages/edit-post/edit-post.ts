@@ -30,14 +30,17 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 })
 export class EditPostPage {
 
-  postId: number;
+  postId: string;
   user;
   postDesc: any;
+  public postObj : any;
+  public userObj : any;
+  public profilePic : string;
+  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
               private profileData: ProfileDataProvider,
-              //private afs: AngularFirestore,
               public phpService: PhpServiceProvider,
               public http: Http) {
     
@@ -45,15 +48,18 @@ export class EditPostPage {
 
     this.postId = this.navParams.get('postId');
     console.log('***Item Id: '+ this.postId);
+    
+    this.phpService.getPostInfo(this.postId).subscribe(postInfo =>{ 
+      this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
+          this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
 
-   // this.postData = this.dataManipulateService.getPostFromId(this.postId);
-   // console.log('**PostObj FROM Php:' + this.postData);console.log('**PostObj FROM Php:' + this.postData);
+            this.postObj = postInfo;
+            this.userObj = userinfo;
+            this.profilePic = this.baseURI + userProfilePic.images_path;
+			      this.postDesc = postInfo.post;
 
-    this.http.get('http://'+constants.IPAddress+'/ionic-php-mysql/getDataFromId.php?postId='+this.postId)
-    .map(res => res.json())
-    .subscribe(data =>
-    { 
-        this.postDesc = data.post;
+          });
+      });
     });
   }
 

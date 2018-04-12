@@ -10,6 +10,7 @@ export interface IPosts {
     state        : string;
     country      : string;
     profilePic   : string;
+    addedToWishlist : boolean;
 }
 
 export interface IUser {

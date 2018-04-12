@@ -81,6 +81,24 @@ export class PhpServiceProvider {
     .map(response => response.json());
   }
 
+  // Get Wishlist information from User Id
+  getWishlistFromUserId(userUid: string) {
+    let noLoadVar = 'noload';
+    let mincountVar = 0;
+    return this.http.get(this.baseURI + 'getWishlistFromUserId.php?userId=' + userUid
+                                      + '&loadType=' + noLoadVar
+                                      + '&minCount=' + mincountVar)
+    .map(response => response.json());
+  }
+
+  // Get Wishlist information from User Id
+  getMyWishlist(userUid: string, minCount: string, loadType: string) {
+    return this.http.get(this.baseURI + 'getWishlistFromUserId.php?userId=' + userUid
+                                      + '&loadType=' + loadType
+                                      + '&minCount=' + minCount )
+    .map(response => response.json());
+  }
+
   // Get All Countries
   getAllCountries() {
   //  let body     : string   = "key=countries",
@@ -259,6 +277,32 @@ export class PhpServiceProvider {
 
     return this.http.post(url, body, options)
                   .map(response => response.json());
+  }
+
+  // Adding New Wishlist
+  addWishlist(userId, postId)
+  {
+      let body     : string   = "key=addWishlist&postId=" + postId + '&userUid=' + userId,
+          type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+          headers  : any      = new Headers({ 'Content-Type': type}),
+          options  : any      = new RequestOptions({ headers: headers }),
+          url      : any      = this.baseURI + "manage-data.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
+  }
+
+  // Deleting Wishlist
+  deleteWishlist(userId, postId)
+  {
+    let body     : string   = "key=deleteWishlist&postId=" + postId + '&userUid=' + userId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
   }
 
 }

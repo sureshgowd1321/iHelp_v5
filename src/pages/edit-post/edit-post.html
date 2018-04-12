@@ -18,13 +18,13 @@
        <!-- <ion-card>--> 
           <ion-item class="no-scroll">
               <ion-avatar item-left> 
-                  <img [src]="user?.photoURL" #imageToView (click)="displayImageFullScreen(imageToView)" />
+                <img src="{{ profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)">
                </ion-avatar>
               
                <a class="text-primary">
-                  <h2 > {{user?.displayName}} </h2>
+                  <h2 >  {{ userObj?.name }} </h2>
                 </a>
-                <p> {{postVar?.postInformation.postedDate |date:'MM/dd/yyyy @ h:mma'}} </p>
+                <p> {{ postObj?.CreatedDate }} </p>
             </ion-item> <br/>
     
             <!-- <ion-item> placeholder="What's happening" -->

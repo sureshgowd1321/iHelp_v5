@@ -30,6 +30,14 @@
         <ion-avatar item-left>
             <img src="{{ profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)">
         </ion-avatar>
+
+        <ion-avatar item-right (click)="addToWishlist()" *ngIf="postObj?.CreatedById != user.uid && !isPostInWishlist">
+          <ion-icon name="ios-heart-outline"></ion-icon>
+        </ion-avatar>
+
+        <ion-avatar item-right (click)="removeFromWishlist()" *ngIf="postObj?.CreatedById != user.uid && isPostInWishlist">
+          <ion-icon name="ios-heart"></ion-icon>
+        </ion-avatar>
   
         <a class="text-primary">
             <h2> {{ userObj?.name }} </h2>
@@ -56,7 +64,7 @@
               </ion-avatar>
               
             <a class="text-primary">
-              <h2> {{comment.name}}</h2>
+              <h2 (click)="gotoUsersPage(comment.commentedBy)" class="labelStyle"> {{comment.name}}</h2>
               <p> {{comment.commentedDate }} </p>   <!-- |date:'MM/dd/yyyy @ h:mma' -->
             </a>
 
@@ -75,7 +83,7 @@
   
     </ion-list>
     
-    <p *ngIf="comments.length === 0"> Be the first person to comment </p>
+    <p padding *ngIf="comments.length === 0"> Be the first person to comment </p>
   </ion-content>
   
   <ion-footer >

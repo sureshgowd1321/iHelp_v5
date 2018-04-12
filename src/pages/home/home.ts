@@ -3,8 +3,8 @@ import { NavController, AlertController, ActionSheetController } from 'ionic-ang
 import { Http } from '@angular/http';
 
 //import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
+//import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
+//import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app'; 
 
 //Pages
@@ -12,6 +12,7 @@ import { AddPostPage } from '../add-post/add-post';
 import { EditPostPage } from '../edit-post/edit-post';
 import { CommentsPage } from '../comments/comments';
 import { FilterPostsPage } from '../filter-posts/filter-posts';
+import { UserProfilePage } from '../user-profile/user-profile';
 
 //Constants
 import { constants } from '../../constants/constants';
@@ -31,26 +32,17 @@ import { IUser } from '../../providers/interfaces/interface';
 export class HomePage {
 
     user;
-    userDoc: AngularFirestoreDocument<IUser>;
-    userObj: Observable<IUser>;
-
     public posts: IPosts[] = [];
-
     private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
     constructor(public http : Http, 
-                public navCtrl: NavController, 
-                private afs: AngularFirestore, 
+                public navCtrl: NavController,
                 private profileData: ProfileDataProvider,
                 public actionSheetCtrl: ActionSheetController,
                 public phpService: PhpServiceProvider,
                 public alertCtrl: AlertController ) {
                 
-        this.user = firebase.auth().currentUser; 
-        console.log('**This User: '+ this.user.uid);
-                  
-        this.userDoc = this.afs.doc('users/'+this.user.uid);
-        this.userObj = this.userDoc.valueChanges();    
+        this.user = firebase.auth().currentUser;  
         
     }
 
@@ -88,22 +80,38 @@ export class HomePage {
                       this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {
                         
                         this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
-                        
-                          this.posts.push(
-                            {
-                              "id"           : item.ID,
-                              "post"         : item.post,
-                              "createdDate"  : item.CreatedDate,
-                              "createdById"  : item.CreatedById,
-                              "name"         : userinfo.name,
-                              "email"        : userinfo.email,
-                              "nickname"     : userinfo.nickname,
-                              "city"         : userLocationInfo.City,
-                              "state"        : userLocationInfo.State,
-                              "country"      : userLocationInfo.Country,
-                              "profilePic"   : this.baseURI + userProfilePic.images_path
-                            }
-                          );
+                          
+                          this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
+
+                              let isPostInWishlist = false;
+
+                              if( wishlistInfo.length === 0 ){
+                              } else {
+                                wishlistInfo.forEach(wishObj=>{
+                      
+                                  if(wishObj.PostId === item.ID){
+                                    isPostInWishlist = true;
+                                  }    
+                                });
+                              }
+                          
+                              this.posts.push(
+                                {
+                                  "id"           : item.ID,
+                                  "post"         : item.post,
+                                  "createdDate"  : item.CreatedDate,
+                                  "createdById"  : item.CreatedById,
+                                  "name"         : userinfo.name,
+                                  "email"        : userinfo.email,
+                                  "nickname"     : userinfo.nickname,
+                                  "city"         : userLocationInfo.City,
+                                  "state"        : userLocationInfo.State,
+                                  "country"      : userLocationInfo.Country,
+                                  "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                  "addedToWishlist" : isPostInWishlist
+                                }
+                              );
+                          });
                         });
                       });
                     });
@@ -163,6 +171,13 @@ export class HomePage {
     gotoFilterPostPage() {
       this.navCtrl.push(FilterPostsPage);
     }
+
+    // Goto Comments Page
+    gotoCommentsPage(postId: any) {
+      this.navCtrl.push(CommentsPage, {
+        postId
+      });
+    }
     
     // Delete the post
     deletePost(postId: any){
@@ -184,9 +199,9 @@ export class HomePage {
     }
 
     // Goto Comments Page
-    gotoCommentsPage(postId: any) {
-      this.navCtrl.push(CommentsPage, {
-        postId
+    gotoUsersPage(userId: any) {
+      this.navCtrl.push(UserProfilePage, {
+        userId
       });
     }
 
@@ -228,4 +243,19 @@ export class HomePage {
       actionSheet.present();
     }
 
-}
+    // Add Wishlist
+    addToWishlist(postId: any, postItem: any){
+      this.phpService.addWishlist(this.user.uid, postId).subscribe(wishlistInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].addedToWishlist = true;
+      });
+    }
+
+    // Remove Wishlist
+    removeFromWishlist(postId: any, postItem: any){
+      this.phpService.deleteWishlist(this.user.uid, postId).subscribe(wishlistInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].addedToWishlist = false;
+      });
+    }
+} 

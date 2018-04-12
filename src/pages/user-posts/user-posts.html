@@ -31,7 +31,7 @@
                 <img src="{{ item.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)" >
             </ion-avatar>
 
-             <ion-avatar item-right (click)="modifyCardActionSheet(item.id)">
+            <ion-avatar item-right (click)="modifyCardActionSheet(item.id)" *ngIf="item.createdById == loggedInUser" >
                 <ion-icon name="ios-arrow-down"></ion-icon>
             </ion-avatar>
 

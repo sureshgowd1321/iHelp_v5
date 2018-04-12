@@ -15,6 +15,9 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 //import { IPosts } from '../../providers/interfaces/interface';
 import { IComment } from '../../providers/interfaces/interface';
 
+// Pages
+import { UserProfilePage } from '../user-profile/user-profile';
+
 /**
  * Generated class for the CommentsPage page.
  *
@@ -35,10 +38,10 @@ export class CommentsPage {
   public postObj : any;
   public userObj : any;
   public profilePic : string;
+  public isPostInWishlist: boolean;
 
   public comments: IComment[] = [];
 
-  //public comments: any = [];
   commentInput: string;
   images_path: string;
 
@@ -58,11 +61,26 @@ export class CommentsPage {
     this.phpService.getPostInfo(this.postId).subscribe(postInfo =>{ 
       this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
           this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
+            this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
 
-            this.postObj = postInfo;
-            this.userObj = userinfo;
-            this.profilePic = this.baseURI + userProfilePic.images_path;
+                let isInWishlist = false;
 
+                if( wishlistInfo.length === 0 ){
+                } else {
+                  wishlistInfo.forEach(wishObj=>{
+        
+                    if(wishObj.PostId === this.postId){
+                      isInWishlist = true;
+                    }    
+                  });
+                }
+
+                this.postObj = postInfo;
+                this.userObj = userinfo;
+                this.profilePic = this.baseURI + userProfilePic.images_path;
+                this.isPostInWishlist = isInWishlist;
+
+            });
           });
       });
     });
@@ -187,6 +205,27 @@ export class CommentsPage {
   // Display Image in Full Screen  
   displayImageFullScreen(imageToView) {
     this.profileData.displayImageInFullScreen(imageToView);
+  }
+
+  // Goto Comments Page
+  gotoUsersPage(userId: any) {
+    this.navCtrl.push(UserProfilePage, {
+      userId
+    });
+  }
+
+  // Add Wishlist
+  addToWishlist(){
+    this.phpService.addWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
+      this.isPostInWishlist = true;
+    });
+  }
+
+  // Remove Wishlist
+  removeFromWishlist(){
+    this.phpService.deleteWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
+      this.isPostInWishlist = false;
+    });
   }
 
 }

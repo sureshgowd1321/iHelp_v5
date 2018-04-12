@@ -28,6 +28,8 @@ import { CommentsPage } from '../pages/comments/comments';
 import { FilterPostsPage } from '../pages/filter-posts/filter-posts';
 import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 import { UserPostsPage } from '../pages/user-posts/user-posts';
+import { MyWishlistPage } from '../pages/my-wishlist/my-wishlist';
+import { UserProfilePage } from '../pages/user-profile/user-profile';
 
 // Native plugins
 import { StatusBar } from '@ionic-native/status-bar';
@@ -55,7 +57,9 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     CommentsPage,
     FilterPostsPage,
     EditProfilePage,
-    UserPostsPage
+    UserPostsPage,
+    MyWishlistPage,
+    UserProfilePage
   ],
   imports: [
     BrowserModule,
@@ -81,7 +85,9 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     CommentsPage,
     FilterPostsPage,
     EditProfilePage,
-    UserPostsPage
+    UserPostsPage,
+    MyWishlistPage,
+    UserProfilePage
   ],
   providers: [
     StatusBar,

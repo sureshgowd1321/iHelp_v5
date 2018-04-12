@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController, ActionSheetController } from 'ionic-angular';
+import * as firebase from 'firebase/app'; 
 
 // Interfaces
 import { IPosts } from '../../providers/interfaces/interface';
@@ -28,8 +29,9 @@ import { CommentsPage } from '../comments/comments';
 })
 export class UserPostsPage {
 
+  public loggedInUser;
   public posts: IPosts[] = [];
-  userUId: string;
+  public userUId: string;
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public navCtrl: NavController, 
@@ -39,6 +41,8 @@ export class UserPostsPage {
               public phpService: PhpServiceProvider,
               public alertCtrl: AlertController) {
 
+    this.loggedInUser = firebase.auth().currentUser.uid; 
+    
     this.userUId = this.navParams.get('userId');
   }
 
@@ -53,51 +57,46 @@ export class UserPostsPage {
     // assign this to the items array for rendering to the HTML template
     load(minCount, loadType)
     {
-      
-      //this.phpService.getUserInfo(this.userUId).subscribe(loggedInUserInfo => {
+      this.phpService.getPostsFromUserId(this.userUId, minCount, loadType).subscribe(data => { 
+        if( data.length === 0 ){
+        // this.hasData = false;
+        }else {
+          data.forEach(item=>{ 
+              var index = this.checkUniqueId(item.ID);
+              
+              if (index > -1){
+              } else {
+                
+                this.phpService.getUserInfo(item.CreatedById).subscribe(userinfo => {
 
-        //this.phpService.getLocationInfo(loggedInUserInfo.PostalCode).subscribe(userLocationInfo => {
-
-          this.phpService.getPostsFromUserId(this.userUId, minCount, loadType).subscribe(data => { 
-            if( data.length === 0 ){
-            // this.hasData = false;
-            }else {
-              data.forEach(item=>{ 
-                  var index = this.checkUniqueId(item.ID);
-                  
-                  if (index > -1){
-                  } else {
+                  this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {
                     
-                    this.phpService.getUserInfo(item.CreatedById).subscribe(userinfo => {
-
-                      this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {
-                        
-                        this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
-                        
-                          this.posts.push(
-                            {
-                              "id"           : item.ID,
-                              "post"         : item.post,
-                              "createdDate"  : item.CreatedDate,
-                              "createdById"  : item.CreatedById,
-                              "name"         : userinfo.name,
-                              "email"        : userinfo.email,
-                              "nickname"     : userinfo.nickname,
-                              "city"         : userLocationInfo.City,
-                              "state"        : userLocationInfo.State,
-                              "country"      : userLocationInfo.Country,
-                              "profilePic"   : this.baseURI + userProfilePic.images_path
-                            }
-                          );
-                        });
-                      });
+                    this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
+                    
+                      
+                      this.posts.push(
+                        {
+                          "id"           : item.ID,
+                          "post"         : item.post,
+                          "createdDate"  : item.CreatedDate,
+                          "createdById"  : item.CreatedById,
+                          "name"         : userinfo.name,
+                          "email"        : userinfo.email,
+                          "nickname"     : userinfo.nickname,
+                          "city"         : userLocationInfo.City,
+                          "state"        : userLocationInfo.State,
+                          "country"      : userLocationInfo.Country,
+                          "profilePic"   : this.baseURI + userProfilePic.images_path,
+                          "addedToWishlist" : false
+                        }
+                      );
                     });
-                  }
-              });
-            }
+                  });
+                });
+              }
           });
-        //});
-      //});
+        }
+      });
     }
 
     checkUniqueId(id) {
@@ -136,6 +135,13 @@ export class UserPostsPage {
     gotoCommentsPage(postId: any) {
       this.navCtrl.push(CommentsPage, {
         postId
+      });
+    }
+
+    // Goto Signup Page
+    goToUserPosts(userId): void {
+      this.navCtrl.push(UserPostsPage, {
+        userId
       });
     }
 

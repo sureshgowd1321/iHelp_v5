@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, App, AlertController, LoadingController, NavController } from 'ionic-angular';
 import { Http } from '@angular/http';
 
-//import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { AngularFireAuth } from 'angularfire2/auth';
-//import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
 //Constants
@@ -34,7 +32,7 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 export class ProfilePage {
 
   user;
-  public userInfo: any;
+  //public userInfo: any;
 
   nameVar: string;
   cityVar: string;
