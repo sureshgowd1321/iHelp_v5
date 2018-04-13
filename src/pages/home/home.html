@@ -26,7 +26,7 @@
         </ion-refresher-content>
       </ion-refresher>
 
-      <ion-card *ngFor="let item of posts">  
+       <ion-card *ngFor="let item of posts">  
   
           <ion-item>
 
@@ -55,16 +55,37 @@
           <ion-card-content (click)="gotoCommentsPage(item.id)" >
                <p> {{ item.post }} </p>  
           </ion-card-content>
-  
-          
-        <!--    <ion-item-options side="right" >  *ngIf="comment?.commentHiddenById != currentUserUid" 
-              <!-- <button color="danger" ion-button (click)="deleteComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById == currentUserUid"><ion-icon name="trash"> Delete</ion-icon></button>
-              <button color="danger" ion-button (click)="hideComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById != currentUserUid">Hide</button> 
-              <button danger ion-button (click)="gotoEditPostPage(item.id)" ><ion-icon name="edit">Edit</ion-icon></button>
-            </ion-item-options>  -->
-       
-      </ion-card> 
-  
+
+          <ion-item>
+          <p> <ion-icon name="thumbs-up" icon-left></ion-icon> 10 Likes  . &nbsp;
+            <ion-icon name="text" icon-left></ion-icon>5 Comments</p>
+          </ion-item>
+
+          <ion-row>
+            <ion-col>
+              <button ion-button icon-left clear small>
+                <ion-icon name="ios-thumbs-up-outline"></ion-icon>
+                <div>Like</div>
+              </button>
+            </ion-col>
+
+            <ion-col>
+              <button ion-button icon-left clear small>
+                <ion-icon name="thumbs-up"></ion-icon>
+                <div>Like</div>
+              </button>
+            </ion-col>
+
+            <ion-col (click)="gotoCommentsPage(item.id)">
+              <button ion-button icon-left clear small >
+                <ion-icon name="text"></ion-icon>
+                <div>Comment</div>
+              </button>
+            </ion-col>
+          </ion-row>
+
+      </ion-card>
+
       <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())" > <!-- *ngIf="hasData" -->
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
       </ion-infinite-scroll>

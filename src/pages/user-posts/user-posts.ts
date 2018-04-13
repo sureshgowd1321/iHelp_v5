@@ -73,23 +73,38 @@ export class UserPostsPage {
                     
                     this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
                     
-                      
-                      this.posts.push(
-                        {
-                          "id"           : item.ID,
-                          "post"         : item.post,
-                          "createdDate"  : item.CreatedDate,
-                          "createdById"  : item.CreatedById,
-                          "name"         : userinfo.name,
-                          "email"        : userinfo.email,
-                          "nickname"     : userinfo.nickname,
-                          "city"         : userLocationInfo.City,
-                          "state"        : userLocationInfo.State,
-                          "country"      : userLocationInfo.Country,
-                          "profilePic"   : this.baseURI + userProfilePic.images_path,
-                          "addedToWishlist" : false
-                        }
-                      );
+                      this.phpService.getWishlistFromUserId(this.userUId).subscribe(wishlistInfo => {   
+
+                        let isPostInWishlist = false;
+
+                          if( wishlistInfo.length === 0 ){
+                          } else {
+                            wishlistInfo.forEach(wishObj=>{
+                  
+                              if(wishObj.PostId === item.ID){
+                                isPostInWishlist = true;
+                              }    
+                            });
+                          }
+
+                        this.posts.push(
+                          {
+                            "id"           : item.ID,
+                            "post"         : item.post,
+                            "createdDate"  : item.CreatedDate,
+                            "createdById"  : item.CreatedById,
+                            "name"         : userinfo.name,
+                            "email"        : userinfo.email,
+                            "nickname"     : userinfo.nickname,
+                            "city"         : userLocationInfo.City,
+                            "state"        : userLocationInfo.State,
+                            "country"      : userLocationInfo.Country,
+                            "profilePic"   : this.baseURI + userProfilePic.images_path,
+                            "wishId"       : wishlistInfo.id,
+                            "addedToWishlist" : isPostInWishlist
+                          }
+                        );
+                      });
                     });
                   });
                 });

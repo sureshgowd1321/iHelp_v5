@@ -9,7 +9,8 @@ export interface IPosts {
     city         : string;
     state        : string;
     country      : string;
-    profilePic   : string;
+    profilePic   : string;  
+    wishId       : number;
     addedToWishlist : boolean;
 }
 

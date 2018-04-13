@@ -1,10 +1,6 @@
 import { Component } from '@angular/core'; // , OnInit
 import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
 import { Http } from '@angular/http';
-
-//import { AngularFireAuth } from 'angularfire2/auth'; Test
-//import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
-//import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app'; 
 
 //Pages
@@ -53,8 +49,6 @@ export class HomePage {
     }
 
     // Retrieve the JSON encoded data from the remote server
-    // Using Angular's Http class and an Observable - then
-    // assign this to the items array for rendering to the HTML template
     load(minCount, loadType)
     {
       
@@ -64,20 +58,20 @@ export class HomePage {
 
           this.phpService.getAllPosts(minCount, loadType, loggedInUserInfo.PostalCode, loggedInUserInfo.PostFilter, 
                                       userLocationInfo.City, userLocationInfo.State, userLocationInfo.Country )     
-          .subscribe(data =>
+          .subscribe(postdata =>
           { 
-            if( data.length === 0 ){
+            if( postdata.length === 0 ){
             // this.hasData = false;
             }else {
-              data.forEach(item=>{ 
-                  var index = this.checkUniqueId(item.ID);
+              postdata.forEach(postInfo => { 
+                  var index = this.checkUniqueId(postInfo.ID);
                   
                   if (index > -1){
                   } else {
                     
-                    this.phpService.getUserInfo(item.CreatedById).subscribe(userinfo => {
+                    this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
 
-                      this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {
+                      this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
                         
                         this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
                           
@@ -89,7 +83,7 @@ export class HomePage {
                               } else {
                                 wishlistInfo.forEach(wishObj=>{
                       
-                                  if(wishObj.PostId === item.ID){
+                                  if(wishObj.PostId === postInfo.ID){
                                     isPostInWishlist = true;
                                   }    
                                 });
@@ -97,10 +91,10 @@ export class HomePage {
                           
                               this.posts.push(
                                 {
-                                  "id"           : item.ID,
-                                  "post"         : item.post,
-                                  "createdDate"  : item.CreatedDate,
-                                  "createdById"  : item.CreatedById,
+                                  "id"           : postInfo.ID,
+                                  "post"         : postInfo.post,
+                                  "createdDate"  : postInfo.CreatedDate,
+                                  "createdById"  : postInfo.CreatedById,
                                   "name"         : userinfo.name,
                                   "email"        : userinfo.email,
                                   "nickname"     : userinfo.nickname,
@@ -108,6 +102,7 @@ export class HomePage {
                                   "state"        : userLocationInfo.State,
                                   "country"      : userLocationInfo.Country,
                                   "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                  "wishId"       : wishlistInfo.id,
                                   "addedToWishlist" : isPostInWishlist
                                 }
                               );

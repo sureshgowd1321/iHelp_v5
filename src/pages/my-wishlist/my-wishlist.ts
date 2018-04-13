@@ -42,11 +42,11 @@ export class MyWishlistPage {
               private profileData: ProfileDataProvider) {
 
     this.user = firebase.auth().currentUser;
+    this.isWishListEmpty = false;
   }
 
   ionViewWillEnter()
     {  
-      this.isWishListEmpty = false;
       this.posts = [];
       this.load(0, 'initialload');
     }
@@ -59,12 +59,12 @@ export class MyWishlistPage {
       this.phpService.getMyWishlist(this.user.uid, minCount, loadType).subscribe(wishlist => {
 
         if( wishlist.length === 0 ){
-          this.isWishListEmpty = true;
+         // this.isWishListEmpty = true;
         } else {
-          this.isWishListEmpty = false;
+        //  this.isWishListEmpty = false;
           wishlist.forEach(wishObj=>{
 
-            var index = this.checkUniqueId(wishObj.PostId);
+            var index = this.checkUniqueId(wishObj.id);
 
             if (index > -1){
             } else {
@@ -87,6 +87,7 @@ export class MyWishlistPage {
                             "state"        : userLocationInfo.State,
                             "country"      : userLocationInfo.Country,
                             "profilePic"   : this.baseURI + userProfilePic.images_path,
+                            "wishId"       : wishObj.id,
                             "addedToWishlist" : false
                           }
                         );
@@ -100,10 +101,10 @@ export class MyWishlistPage {
       });
     }
 
-    checkUniqueId(id) {
+    checkUniqueId(wishid) {
 
       // check whether id exists
-      var index = this.posts.findIndex(item => item.id === id);
+      var index = this.posts.findIndex(item => item.wishId === wishid);
       
       return index;
     }
@@ -114,7 +115,7 @@ export class MyWishlistPage {
       return new Promise((resolve) => {
           setTimeout(() => {
             
-            let latestId = this.posts[this.posts.length-1].id;
+            let latestId = this.posts[this.posts.length-1].wishId;
 
             this.load(latestId, 'scroll');
 

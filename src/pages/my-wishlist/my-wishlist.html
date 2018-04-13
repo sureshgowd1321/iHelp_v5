@@ -15,7 +15,7 @@
 
 <ion-content >
 
-  <div *ngIf="!isWishListEmpty" > 
+  <!-- <div *ngIf="!isWishListEmpty" >  -->
     <ion-refresher (ionRefresh)="dorefresh($event)">
       <ion-refresher-content pullingText="Pull to refresh"
                       pullingIcon="arrow-dropdown"
@@ -52,9 +52,9 @@
       <ion-infinite-scroll-content></ion-infinite-scroll-content>
     </ion-infinite-scroll>
 
-  </div>
+ <!-- </div>
 
-  <div *ngIf="isWishListEmpty" >
+   <div *ngIf="isWishListEmpty" >
       <p> You have not added anything to Wishlist</p>
-  </div>
+  </div> -->
 </ion-content>
