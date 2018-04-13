@@ -2,7 +2,7 @@ import { Component } from '@angular/core'; // , OnInit
 import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
 import { Http } from '@angular/http';
 
-//import { AngularFireAuth } from 'angularfire2/auth';
+//import { AngularFireAuth } from 'angularfire2/auth'; Test
 //import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 //import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app'; 
