@@ -17,6 +17,7 @@ import { IComment } from '../../providers/interfaces/interface';
 
 // Pages
 import { UserProfilePage } from '../user-profile/user-profile';
+import { DisplayPostLikesPage } from '../display-post-likes/display-post-likes';
 
 /**
  * Generated class for the CommentsPage page.
@@ -39,6 +40,8 @@ export class CommentsPage {
   public userObj : any;
   public profilePic : string;
   public isPostInWishlist: boolean;
+  public likesCount : number;
+  public isPostLiked : boolean;
 
   public comments: IComment[] = [];
 
@@ -60,28 +63,42 @@ export class CommentsPage {
 
     this.phpService.getPostInfo(this.postId).subscribe(postInfo =>{ 
       this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
-          this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
-            this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
+        this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
+          this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
+            this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
+              this.phpService.getlikeInfoPerUser(this.user.uid, this.postId).subscribe(userLikeInfo => {
 
-                let isInWishlist = false;
-
-                if( wishlistInfo.length === 0 ){
-                } else {
-                  wishlistInfo.forEach(wishObj=>{
-        
-                    if(wishObj.PostId === this.postId){
-                      isInWishlist = true;
-                    }    
-                  });
+                // Check post is liked by loggedin User or not
+                let isLiked = false;
+                if( userLikeInfo === 0 ){
+                }else{
+                  isLiked = true;
                 }
 
-                this.postObj = postInfo;
-                this.userObj = userinfo;
-                this.profilePic = this.baseURI + userProfilePic.images_path;
-                this.isPostInWishlist = isInWishlist;
+                // Get Wishlist information
+                  let isInWishlist = false;
 
+                  if( wishlistInfo.length === 0 ){
+                  } else {
+                    wishlistInfo.forEach(wishObj=>{
+          
+                      if(wishObj.PostId === this.postId){
+                        isInWishlist = true;
+                      }    
+                    });
+                  }
+
+                  this.postObj = postInfo;
+                  this.userObj = userinfo;
+                  this.profilePic = this.baseURI + userProfilePic.images_path;
+                  this.isPostInWishlist = isInWishlist;
+                  this.likesCount = likesCount;
+                  this.isPostLiked = isLiked;
+
+              });
             });
           });
+        });
       });
     });
 
@@ -225,6 +242,29 @@ export class CommentsPage {
   removeFromWishlist(){
     this.phpService.deleteWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
       this.isPostInWishlist = false;
+    });
+  }
+
+  // Add Like
+  addLike(){
+    this.phpService.addLike(this.user.uid, this.postId).subscribe(likeInfo => {
+      this.likesCount += 1;
+      this.isPostLiked = true;
+    });
+  }
+
+  // Remove Like
+  removeLike(){
+    this.phpService.deleteLike(this.user.uid, this.postId).subscribe(likeInfo => {
+      this.likesCount -= 1;
+      this.isPostLiked = false;
+    });
+  }
+
+  // Go to Edit Post Page to update the post
+  gotoLikesPage(postId: any) {
+    this.navCtrl.push(DisplayPostLikesPage, {
+      postId
     });
   }
 

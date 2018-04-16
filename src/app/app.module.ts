@@ -30,6 +30,7 @@ import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 import { UserPostsPage } from '../pages/user-posts/user-posts';
 import { MyWishlistPage } from '../pages/my-wishlist/my-wishlist';
 import { UserProfilePage } from '../pages/user-profile/user-profile';
+import { DisplayPostLikesPage } from '../pages/display-post-likes/display-post-likes';
 
 // Native plugins
 import { StatusBar } from '@ionic-native/status-bar';
@@ -59,7 +60,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     EditProfilePage,
     UserPostsPage,
     MyWishlistPage,
-    UserProfilePage
+    UserProfilePage,
+    DisplayPostLikesPage
   ],
   imports: [
     BrowserModule,
@@ -87,7 +89,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     EditProfilePage,
     UserPostsPage,
     MyWishlistPage,
-    UserProfilePage
+    UserProfilePage,
+    DisplayPostLikesPage
   ],
   providers: [
     StatusBar,

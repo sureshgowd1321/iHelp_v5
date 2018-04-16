@@ -45,7 +45,7 @@ export class MyWishlistPage {
     this.isWishListEmpty = false;
   }
 
-  ionViewWillEnter()
+    ionViewWillEnter()
     {  
       this.posts = [];
       this.load(0, 'initialload');
@@ -72,25 +72,38 @@ export class MyWishlistPage {
               this.phpService.getPostInfo(wishObj.PostId).subscribe(postInfo => {
                 this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
                   this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
-                    this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
+                    this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
+                      this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
+                        this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
 
-                        this.posts.push(
-                          {
-                            "id"           : wishObj.PostId,
-                            "post"         : postInfo.post,
-                            "createdDate"  : postInfo.CreatedDate,
-                            "createdById"  : postInfo.CreatedById,
-                            "name"         : userinfo.name,
-                            "email"        : userinfo.email,
-                            "nickname"     : userinfo.nickname,
-                            "city"         : userLocationInfo.City,
-                            "state"        : userLocationInfo.State,
-                            "country"      : userLocationInfo.Country,
-                            "profilePic"   : this.baseURI + userProfilePic.images_path,
-                            "wishId"       : wishObj.id,
-                            "addedToWishlist" : false
+                          // Check post is liked by loggedin User or not
+                          let isPostLiked = false;
+                          if( userLikeInfo === 0 ){
+                          }else{
+                            isPostLiked = true;
                           }
-                        );
+
+                          this.posts.push(
+                            {
+                              "id"           : wishObj.PostId,
+                              "post"         : postInfo.post,
+                              "createdDate"  : postInfo.CreatedDate,
+                              "createdById"  : postInfo.CreatedById,
+                              "name"         : userinfo.name,
+                              "email"        : userinfo.email,
+                              "nickname"     : userinfo.nickname,
+                              "city"         : userLocationInfo.City,
+                              "state"        : userLocationInfo.State,
+                              "country"      : userLocationInfo.Country,
+                              "profilePic"   : this.baseURI + userProfilePic.images_path,
+                              "wishId"       : wishObj.id,
+                              "addedToWishlist" : false,
+                              "likesCount"   : likesCount,
+                              "isPostLiked"  : isPostLiked
+                            }
+                          );
+                        });
+                      });
                     });
                   });
                 });      

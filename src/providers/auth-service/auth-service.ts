@@ -75,7 +75,7 @@ export class AuthServiceProvider {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
-      nickName: '',
+      //nickName: '',
       photoURL: user.photoURL,
       totalStars: 0,
       createdDate: new Date().toISOString(),
@@ -89,12 +89,12 @@ export class AuthServiceProvider {
   }
 
   // Signup with Username & Password
-  signupWithEmailAndPassword(email: string, password: string, name: string, nickName: string, locationId: string) {
+  signupWithEmailAndPassword(email: string, password: string, name: string, locationId: string) { // nickName: string,
     return this.afAuth
     .auth
     .createUserWithEmailAndPassword(email, password)
     .then((newUser) => {
-      this.updateUserDataEmailAndPassword(newUser, name, nickName, locationId)
+      this.updateUserDataEmailAndPassword(newUser, name, locationId)  // nickName, 
     })
     .catch(err => {
       console.log('Something went wrong:',err.message);
@@ -114,14 +114,14 @@ export class AuthServiceProvider {
   }
 
   // Update User Data
-  private updateUserDataEmailAndPassword(user, name: string, nickName: string, locationId: string) {
+  private updateUserDataEmailAndPassword(user, name: string, locationId: string) { // nickName: string, 
     // Sets user data to firestore on login
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
     const data: IUser = {
       uid: user.uid,
       email: user.email,
       displayName: name,
-      nickName: nickName,
+      //nickName: nickName,
      // photoURL: 'https://firebasestorage.googleapis.com/v0/b/cards-unlimited.appspot.com/o/DummyImage.jpg?alt=media&token=87170396-af1c-4e59-8c4c-eb30d78279a2',
       totalStars: 0,
       createdDate: new Date().toISOString(),
@@ -132,7 +132,7 @@ export class AuthServiceProvider {
      // birthDate: null
     }
     userRef.set(data);
-    this.phpService.addNewOnlineUser(user.uid, name, user.email, nickName, locationId);
+    this.phpService.addNewOnlineUser(user.uid, name, user.email, locationId); // nickName, 
   }
 
   // Logout

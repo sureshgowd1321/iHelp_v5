@@ -72,38 +72,54 @@ export class UserPostsPage {
                   this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {
                     
                     this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
+                      
+                      this.phpService.getlikesCount(item.ID).subscribe(likesCount => {
+                        
+                        this.phpService.getlikeInfoPerUser(this.userUId, item.ID).subscribe(userLikeInfo => {
+
+                          this.phpService.getWishlistFromUserId(this.userUId).subscribe(wishlistInfo => {   
+
+                            // Check post is liked by loggedin User or not
+                            let isPostLiked = false;
+                            if( userLikeInfo === 0 ){
+                            }else{
+                              isPostLiked = true;
+                            }
+
+                            // Check post is added to wishlist or not
+                            let isPostInWishlist = false;
+
+                            if( wishlistInfo.length === 0 ){
+                            } else {
+                              wishlistInfo.forEach(wishObj=>{
                     
-                      this.phpService.getWishlistFromUserId(this.userUId).subscribe(wishlistInfo => {   
+                                if(wishObj.PostId === item.ID){
+                                  isPostInWishlist = true;
+                                }    
+                              });
+                            }
 
-                        let isPostInWishlist = false;
-
-                          if( wishlistInfo.length === 0 ){
-                          } else {
-                            wishlistInfo.forEach(wishObj=>{
-                  
-                              if(wishObj.PostId === item.ID){
-                                isPostInWishlist = true;
-                              }    
-                            });
-                          }
-
-                        this.posts.push(
-                          {
-                            "id"           : item.ID,
-                            "post"         : item.post,
-                            "createdDate"  : item.CreatedDate,
-                            "createdById"  : item.CreatedById,
-                            "name"         : userinfo.name,
-                            "email"        : userinfo.email,
-                            "nickname"     : userinfo.nickname,
-                            "city"         : userLocationInfo.City,
-                            "state"        : userLocationInfo.State,
-                            "country"      : userLocationInfo.Country,
-                            "profilePic"   : this.baseURI + userProfilePic.images_path,
-                            "wishId"       : wishlistInfo.id,
-                            "addedToWishlist" : isPostInWishlist
-                          }
-                        );
+                            this.posts.push(
+                              {
+                                "id"           : item.ID,
+                                "post"         : item.post,
+                                "createdDate"  : item.CreatedDate,
+                                "createdById"  : item.CreatedById,
+                                "name"         : userinfo.name,
+                                "email"        : userinfo.email,
+                                "nickname"     : userinfo.nickname,
+                                "city"         : userLocationInfo.City,
+                                "state"        : userLocationInfo.State,
+                                "country"      : userLocationInfo.Country,
+                                "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                "wishId"       : wishlistInfo.id,
+                                "addedToWishlist" : isPostInWishlist,
+                                "likesCount"   : likesCount,
+                                "isPostLiked"  : isPostLiked
+                              }
+                            );
+                          });
+                        });
                       });
                     });
                   });
@@ -222,5 +238,23 @@ export class UserPostsPage {
         ]
       })
       alert.present();
+    }
+
+    // Add Like
+    addLike(postId: any, postItem: any){
+      this.phpService.addLike(this.userUId, postId).subscribe(likeInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].likesCount += 1;
+        this.posts[index].isPostLiked = true;
+      });
+    }
+
+    // Remove Like
+    removeLike(postId: any, postItem: any){
+      this.phpService.deleteLike(this.userUId, postId).subscribe(likeInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].likesCount -= 1;
+        this.posts[index].isPostLiked = false;
+      });
     }
 }

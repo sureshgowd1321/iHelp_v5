@@ -99,14 +99,26 @@ export class PhpServiceProvider {
     .map(response => response.json());
   }
 
+  //Get count of Likes for each post
+  getlikesCount(postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalLikesCountPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  //Get like info per user per post
+  getlikeInfoPerUser(userId: string, postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=likesPerUser&userId=' + userId + '&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  //Get like info per user per post
+  getLikesPerPost(postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalLikesPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
   // Get All Countries
   getAllCountries() {
-  //  let body     : string   = "key=countries",
-        // type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
-        // headers  : any      = new Headers({ 'Content-Type': type}),
-        // options  : any      = new RequestOptions({ headers: headers }),
-       // url      : any      = this.baseURI + "get-all-locations.php?key=countries";
-
     return this.http.get(this.baseURI + 'get-all-locations.php?key=countries')
     .map(response => response.json());
   }
@@ -215,12 +227,12 @@ export class PhpServiceProvider {
   }
 
   // Add New User service
-  addNewOnlineUser(userId, name, email, nickName, locationId)
+  addNewOnlineUser(userId, name, email, locationId)
   {
     let body     : string   = "key=addUser" + 
                               "&userId=" + userId + 
                               "&name=" + name +
-                              "&nickName=" + nickName +
+                              //"&nickName=" + nickName +
                               "&email=" + email +
                               "&locationId=" + locationId +
                               "&totalStars=" + 0 ,
@@ -296,6 +308,32 @@ export class PhpServiceProvider {
   deleteWishlist(userId, postId)
   {
     let body     : string   = "key=deleteWishlist&postId=" + postId + '&userUid=' + userId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Adding Like to a post
+  addLike(userId, postId)
+  {
+      let body     : string   = "key=addLike&postId=" + postId + '&userUid=' + userId,
+          type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+          headers  : any      = new Headers({ 'Content-Type': type}),
+          options  : any      = new RequestOptions({ headers: headers }),
+          url      : any      = this.baseURI + "manage-data.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
+  }
+
+  // Deleting Like
+  deleteLike(userId, postId)
+  {
+    let body     : string   = "key=deleteLike&postId=" + postId + '&userUid=' + userId,
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),

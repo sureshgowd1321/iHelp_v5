@@ -12,6 +12,8 @@ export interface IPosts {
     profilePic   : string;  
     wishId       : number;
     addedToWishlist : boolean;
+    likesCount   : number;
+    isPostLiked  : boolean;
 }
 
 export interface IUser {
@@ -19,7 +21,7 @@ export interface IUser {
     email?            : string;
     photoURL?         : string;
     displayName?      : string;
-    nickName?         : string;
+    //nickName?         : string;
     favoriteColor?    : string;
     totalStars?       : number;
     createdDate?      : string;

@@ -43,6 +43,8 @@ export class HomePage {
     }
 
     ionViewWillEnter()
+    //ionViewDidLoad()
+    //ionViewDidEnter()
     {  
       this.posts = [];
       this.load(0, 'initialload');
@@ -75,37 +77,52 @@ export class HomePage {
                         
                         this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
                           
-                          this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
+                          this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
 
-                              let isPostInWishlist = false;
+                            this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
 
-                              if( wishlistInfo.length === 0 ){
-                              } else {
-                                wishlistInfo.forEach(wishObj=>{
-                      
-                                  if(wishObj.PostId === postInfo.ID){
-                                    isPostInWishlist = true;
-                                  }    
-                                });
-                              }
+                              this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
+
+                                  // Check post is liked by loggedin User or not
+                                  let isPostLiked = false;
+                                  if( userLikeInfo === 0 ){
+                                  }else{
+                                    isPostLiked = true;
+                                  }
+
+                                  // Check post is added to wishlist or not
+                                  let isPostInWishlist = false;
+                                  if( wishlistInfo.length === 0 ){
+                                  } else {
+                                    wishlistInfo.forEach(wishObj=>{
                           
-                              this.posts.push(
-                                {
-                                  "id"           : postInfo.ID,
-                                  "post"         : postInfo.post,
-                                  "createdDate"  : postInfo.CreatedDate,
-                                  "createdById"  : postInfo.CreatedById,
-                                  "name"         : userinfo.name,
-                                  "email"        : userinfo.email,
-                                  "nickname"     : userinfo.nickname,
-                                  "city"         : userLocationInfo.City,
-                                  "state"        : userLocationInfo.State,
-                                  "country"      : userLocationInfo.Country,
-                                  "profilePic"   : this.baseURI + userProfilePic.images_path,
-                                  "wishId"       : wishlistInfo.id,
-                                  "addedToWishlist" : isPostInWishlist
-                                }
-                              );
+                                      if(wishObj.PostId === postInfo.ID){
+                                        isPostInWishlist = true;
+                                      }    
+                                    });
+                                  }
+                              
+                                  this.posts.push(
+                                    {
+                                      "id"           : postInfo.ID,
+                                      "post"         : postInfo.post,
+                                      "createdDate"  : postInfo.CreatedDate,
+                                      "createdById"  : postInfo.CreatedById,
+                                      "name"         : userinfo.name,
+                                      "email"        : userinfo.email,
+                                      "nickname"     : userinfo.nickname,
+                                      "city"         : userLocationInfo.City,
+                                      "state"        : userLocationInfo.State,
+                                      "country"      : userLocationInfo.Country,
+                                      "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                      "wishId"       : wishlistInfo.id,
+                                      "addedToWishlist" : isPostInWishlist,
+                                      "likesCount"   : likesCount,
+                                      "isPostLiked"  : isPostLiked
+                                    }
+                                  );
+                              });
+                            });
                           });
                         });
                       });
@@ -251,6 +268,24 @@ export class HomePage {
       this.phpService.deleteWishlist(this.user.uid, postId).subscribe(wishlistInfo => {
         var index = this.posts.indexOf(postItem);
         this.posts[index].addedToWishlist = false;
+      });
+    }
+
+    // Add Like
+    addLike(postId: any, postItem: any){
+      this.phpService.addLike(this.user.uid, postId).subscribe(likeInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].likesCount += 1;
+        this.posts[index].isPostLiked = true;
+      });
+    }
+
+    // Remove Like
+    removeLike(postId: any, postItem: any){
+      this.phpService.deleteLike(this.user.uid, postId).subscribe(likeInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].likesCount -= 1;
+        this.posts[index].isPostLiked = false;
       });
     }
 } 

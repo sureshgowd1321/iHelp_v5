@@ -52,8 +52,8 @@ export class SignUpPage {
 
       this.signupForm = formBuilder.group({
         name: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
-        nickName: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
-        gender: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
+        //nickName: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
+        gender: ['', Validators.compose([Validators.required, Validators.minLength(1)])],
         city: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
         state: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
         country: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
@@ -138,7 +138,7 @@ export class SignUpPage {
           this.authService.signupWithEmailAndPassword(this.signupForm.value.email, 
                                                       this.signupForm.value.password, 
                                                       this.signupForm.value.name,
-                                                      this.signupForm.value.nickName, 
+                                                      //this.signupForm.value.nickName, 
                                                       locationInfo.ID
                                                     ).then(value => {
               this.loading.dismiss().then( () => {

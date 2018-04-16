@@ -52,7 +52,34 @@
         <ion-card-content (click)="gotoCommentsPage(item.id)" >
             <p>  {{ item.post }} </p>
         </ion-card-content>
-     
+        
+        <ion-item>
+            <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }} Likes  . &nbsp;
+                <ion-icon name="text" icon-left></ion-icon>5 Comments</p>
+        </ion-item>
+
+        <ion-row>
+            <ion-col>
+            <button ion-button icon-left clear small (click)="addLike(item.id, item)" *ngIf="!item.isPostLiked" >
+                <ion-icon name="ios-thumbs-up-outline"></ion-icon>
+                <div>Like</div>
+            </button>
+
+            <button ion-button icon-left clear small (click)="removeLike(item.id, item)" *ngIf="item.isPostLiked">
+                <ion-icon name="thumbs-up"></ion-icon>
+                <div>Like</div>
+            </button>
+
+            </ion-col>
+
+            <ion-col (click)="gotoCommentsPage(item.id)">
+            <button ion-button icon-right clear small >
+                <ion-icon name="text"></ion-icon>
+                <div>Comment</div>
+            </button>
+            </ion-col>
+        </ion-row>
+
     </ion-card> 
 
     <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())" > <!-- *ngIf="hasData" -->

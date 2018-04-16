@@ -49,10 +49,30 @@
       <ion-card-content>
         {{ postObj?.post }}
       </ion-card-content>
-  
+
+      <ion-row>
+        <ion-col>
+          <button ion-button icon-left clear small (click)="addLike()" *ngIf="!isPostLiked" >
+            <ion-icon name="ios-thumbs-up-outline"></ion-icon>
+            <div>Like</div>
+          </button>
+
+          <button ion-button icon-left clear small (click)="removeLike()" *ngIf="isPostLiked" >
+            <ion-icon name="thumbs-up"></ion-icon>
+            <div>Like</div>
+          </button>
+
+        </ion-col>
+      </ion-row>
+
     </ion-card>
+
+        <button ion-button icon-left clear small (click)="gotoLikesPage(postId)" >
+          <ion-icon name="ios-thumbs-up"></ion-icon>
+          <div> <u> {{ likesCount }} Likes </u></div>
+        </button>
   
-     <ion-list *ngIf="comments.length > 0"> <!-- *ngIf="comments?.length > 0"  -->
+     <ion-list *ngIf="comments.length > 0"> <!-- *ngIf="comments?.length > 0"    -->
         <ion-list-header>
             Comments
         </ion-list-header>

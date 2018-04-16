@@ -57,27 +57,26 @@
           </ion-card-content>
 
           <ion-item>
-          <p> <ion-icon name="thumbs-up" icon-left></ion-icon> 10 Likes  . &nbsp;
+          <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }} Likes  . &nbsp;
             <ion-icon name="text" icon-left></ion-icon>5 Comments</p>
           </ion-item>
 
           <ion-row>
             <ion-col>
-              <button ion-button icon-left clear small>
+              <button ion-button icon-left clear small (click)="addLike(item.id, item)" *ngIf="!item.isPostLiked" >
                 <ion-icon name="ios-thumbs-up-outline"></ion-icon>
                 <div>Like</div>
               </button>
-            </ion-col>
 
-            <ion-col>
-              <button ion-button icon-left clear small>
+              <button ion-button icon-left clear small (click)="removeLike(item.id, item)" *ngIf="item.isPostLiked">
                 <ion-icon name="thumbs-up"></ion-icon>
                 <div>Like</div>
               </button>
+
             </ion-col>
 
             <ion-col (click)="gotoCommentsPage(item.id)">
-              <button ion-button icon-left clear small >
+              <button ion-button icon-right clear small >
                 <ion-icon name="text"></ion-icon>
                 <div>Comment</div>
               </button>
@@ -87,7 +86,7 @@
       </ion-card>
 
       <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())" > <!-- *ngIf="hasData" -->
-        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
       </ion-infinite-scroll>
   
   </ion-content>
