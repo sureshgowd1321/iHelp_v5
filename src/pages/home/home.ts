@@ -19,7 +19,8 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
 // Interfaces
 import { IPosts } from '../../providers/interfaces/interface';
-import { IUser } from '../../providers/interfaces/interface';
+
+import {OrderbyPipe} from '../../pipes/orderby/orderby';
 
 @Component({
   selector: 'page-home',
@@ -42,9 +43,8 @@ export class HomePage {
         
     }
 
-    ionViewWillEnter()
-    //ionViewDidLoad()
-    //ionViewDidEnter()
+    //ionViewWillEnter()
+    ionViewDidLoad()
     {  
       this.posts = [];
       this.load(0, 'initialload');
@@ -67,21 +67,17 @@ export class HomePage {
             }else {
               postdata.forEach(postInfo => { 
                   var index = this.checkUniqueId(postInfo.ID);
-                  
+                 // console.log('***Post Id: '+ postInfo.ID);
                   if (index > -1){
                   } else {
                     
                     this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
-
-                      this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
-                        
-                        this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
-                          
+                      this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
+                        this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
                           this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
-
                             this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
-
-                              this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
+                              this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {                                
+                                this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
 
                                   // Check post is liked by loggedin User or not
                                   let isPostLiked = false;
@@ -118,9 +114,11 @@ export class HomePage {
                                       "wishId"       : wishlistInfo.id,
                                       "addedToWishlist" : isPostInWishlist,
                                       "likesCount"   : likesCount,
-                                      "isPostLiked"  : isPostLiked
+                                      "isPostLiked"  : isPostLiked,
+                                      "commentsCount": commentsCount
                                     }
                                   );
+                                });
                               });
                             });
                           });
@@ -136,10 +134,10 @@ export class HomePage {
     }
 
     checkUniqueId(id) {
-
+      console.log('Inside Unique: '+ id);
       // check whether id exists
       var index = this.posts.findIndex(item => item.id === id);
-      
+      console.log('Index: '+ index);
       return index;
     }
 
@@ -153,7 +151,9 @@ export class HomePage {
 
             this.load(latestId, 'scroll');
 
-            resolve();
+            resolve(true);
+
+            //infiniteScroll.complete();
           }, 500);
         })
     }  

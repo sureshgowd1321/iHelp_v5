@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
+import { AngularFirestore } from 'angularfire2/firestore';
 //import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import * as firebase from 'firebase/app'; 
 
@@ -10,7 +10,7 @@ import * as firebase from 'firebase/app';
 import { ImageViewerController } from 'ionic-img-viewer';
 
 //Constants
-import { constants } from '../../constants/constants';
+//import { constants } from '../../constants/constants';
 
 /*
   Generated class for the ProfileDataProvider provider.

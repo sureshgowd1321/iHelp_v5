@@ -42,6 +42,7 @@ export class CommentsPage {
   public isPostInWishlist: boolean;
   public likesCount : number;
   public isPostLiked : boolean;
+  public commentsCount : number;
 
   public comments: IComment[] = [];
 
@@ -67,15 +68,16 @@ export class CommentsPage {
           this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
             this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
               this.phpService.getlikeInfoPerUser(this.user.uid, this.postId).subscribe(userLikeInfo => {
+                this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
 
-                // Check post is liked by loggedin User or not
-                let isLiked = false;
-                if( userLikeInfo === 0 ){
-                }else{
-                  isLiked = true;
-                }
+                  // Check post is liked by loggedin User or not
+                  let isLiked = false;
+                  if( userLikeInfo === 0 ){
+                  }else{
+                    isLiked = true;
+                  }
 
-                // Get Wishlist information
+                  // Get Wishlist information
                   let isInWishlist = false;
 
                   if( wishlistInfo.length === 0 ){
@@ -94,7 +96,8 @@ export class CommentsPage {
                   this.isPostInWishlist = isInWishlist;
                   this.likesCount = likesCount;
                   this.isPostLiked = isLiked;
-
+                  this.commentsCount = commentsCount;
+                });
               });
             });
           });

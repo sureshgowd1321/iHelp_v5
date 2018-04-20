@@ -68,56 +68,54 @@ export class UserPostsPage {
               } else {
                 
                 this.phpService.getUserInfo(item.CreatedById).subscribe(userinfo => {
-
-                  this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {
-                    
-                    this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
-                      
-                      this.phpService.getlikesCount(item.ID).subscribe(likesCount => {
-                        
+                  this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {        
+                    this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                  
+                      this.phpService.getlikesCount(item.ID).subscribe(likesCount => {                       
                         this.phpService.getlikeInfoPerUser(this.userUId, item.ID).subscribe(userLikeInfo => {
-
                           this.phpService.getWishlistFromUserId(this.userUId).subscribe(wishlistInfo => {   
+                            this.phpService.getCountOfComments(item.ID).subscribe(commentsCount => {
 
-                            // Check post is liked by loggedin User or not
-                            let isPostLiked = false;
-                            if( userLikeInfo === 0 ){
-                            }else{
-                              isPostLiked = true;
-                            }
-
-                            // Check post is added to wishlist or not
-                            let isPostInWishlist = false;
-
-                            if( wishlistInfo.length === 0 ){
-                            } else {
-                              wishlistInfo.forEach(wishObj=>{
-                    
-                                if(wishObj.PostId === item.ID){
-                                  isPostInWishlist = true;
-                                }    
-                              });
-                            }
-
-                            this.posts.push(
-                              {
-                                "id"           : item.ID,
-                                "post"         : item.post,
-                                "createdDate"  : item.CreatedDate,
-                                "createdById"  : item.CreatedById,
-                                "name"         : userinfo.name,
-                                "email"        : userinfo.email,
-                                "nickname"     : userinfo.nickname,
-                                "city"         : userLocationInfo.City,
-                                "state"        : userLocationInfo.State,
-                                "country"      : userLocationInfo.Country,
-                                "profilePic"   : this.baseURI + userProfilePic.images_path,
-                                "wishId"       : wishlistInfo.id,
-                                "addedToWishlist" : isPostInWishlist,
-                                "likesCount"   : likesCount,
-                                "isPostLiked"  : isPostLiked
+                              // Check post is liked by loggedin User or not
+                              let isPostLiked = false;
+                              if( userLikeInfo === 0 ){
+                              }else{
+                                isPostLiked = true;
                               }
-                            );
+
+                              // Check post is added to wishlist or not
+                              let isPostInWishlist = false;
+
+                              if( wishlistInfo.length === 0 ){
+                              } else {
+                                wishlistInfo.forEach(wishObj=>{
+                      
+                                  if(wishObj.PostId === item.ID){
+                                    isPostInWishlist = true;
+                                  }    
+                                });
+                              }
+
+                              this.posts.push(
+                                {
+                                  "id"           : item.ID,
+                                  "post"         : item.post,
+                                  "createdDate"  : item.CreatedDate,
+                                  "createdById"  : item.CreatedById,
+                                  "name"         : userinfo.name,
+                                  "email"        : userinfo.email,
+                                  "nickname"     : userinfo.nickname,
+                                  "city"         : userLocationInfo.City,
+                                  "state"        : userLocationInfo.State,
+                                  "country"      : userLocationInfo.Country,
+                                  "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                  "wishId"       : wishlistInfo.id,
+                                  "addedToWishlist" : isPostInWishlist,
+                                  "likesCount"   : likesCount,
+                                  "isPostLiked"  : isPostLiked,
+                                  "commentsCount": commentsCount
+                                }
+                              );
+                            });
                           });
                         });
                       });

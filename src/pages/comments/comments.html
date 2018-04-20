@@ -71,6 +71,11 @@
           <ion-icon name="ios-thumbs-up"></ion-icon>
           <div> <u> {{ likesCount }} Likes </u></div>
         </button>
+
+        <button ion-button icon-left clear small >
+            <ion-icon name="text" icon-left></ion-icon>
+            <div> <u> {{ commentsCount }} comments </u></div>
+          </button>
   
      <ion-list *ngIf="comments.length > 0"> <!-- *ngIf="comments?.length > 0"    -->
         <ion-list-header>

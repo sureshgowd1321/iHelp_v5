@@ -44,6 +44,8 @@ import { PhpServiceProvider } from '../providers/php-service/php-service';
 import { AuthServiceProvider } from '../providers/auth-service/auth-service';
 import { ProfileDataProvider } from '../providers/profile-data/profile-data';
 
+import {OrderbyPipe} from '../pipes/orderby/orderby';
+
 @NgModule({
   declarations: [
     MyApp,
@@ -61,7 +63,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     UserPostsPage,
     MyWishlistPage,
     UserProfilePage,
-    DisplayPostLikesPage
+    DisplayPostLikesPage,
+    OrderbyPipe
   ],
   imports: [
     BrowserModule,

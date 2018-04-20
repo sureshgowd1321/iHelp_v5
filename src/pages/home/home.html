@@ -26,7 +26,7 @@
         </ion-refresher-content>
       </ion-refresher>
 
-       <ion-card *ngFor="let item of posts">  
+       <ion-card *ngFor="let item of posts | orderby:'id'">  
   
           <ion-item>
 
@@ -48,7 +48,7 @@
   
               <a class="text-primary">
                   <h2 (click)="gotoUsersPage(item.createdById)" class="labelStyle"> {{ item.name }} </h2>
-                  <p> {{ item.createdDate }}  </p>   <!-- | date:'MM/dd/yyyy @ h:mma' -->
+                  <p> {{ item.id }} {{ item.createdDate | date: 'MM/dd/yyyy @ h:mma' }}  </p>
               </a>
           </ion-item>
    
@@ -56,9 +56,9 @@
                <p> {{ item.post }} </p>  
           </ion-card-content>
 
-          <ion-item>
+          <ion-item (click)="gotoCommentsPage(item.id)">
           <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }} Likes  . &nbsp;
-            <ion-icon name="text" icon-left></ion-icon>5 Comments</p>
+            <ion-icon name="text" icon-left></ion-icon> {{ item.commentsCount }} Comments</p>
           </ion-item>
 
           <ion-row>

@@ -14,6 +14,7 @@ export interface IPosts {
     addedToWishlist : boolean;
     likesCount   : number;
     isPostLiked  : boolean;
+    commentsCount: number;
 }
 
 export interface IUser {

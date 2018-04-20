@@ -63,9 +63,15 @@ export class PhpServiceProvider {
     .map(response => response.json());
   }
 
-  // Get All Comments
+  // Get All Comments per post
   getAllComments(postId: string) {
-    return this.http.get(this.baseURI + 'get-all-comments.php?postId='+postId)
+    return this.http.get(this.baseURI + 'get-all-comments.php?key=totalCommentsPerPost&postId='+postId)
+    .map(response => response.json());
+  }
+
+  // Get Count of Comments per post
+  getCountOfComments(postId: string) {
+    return this.http.get(this.baseURI + 'get-all-comments.php?key=countOfCommentsPerPost&postId='+postId)
     .map(response => response.json());
   }
 

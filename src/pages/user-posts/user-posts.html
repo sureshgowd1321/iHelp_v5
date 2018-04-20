@@ -53,9 +53,9 @@
             <p>  {{ item.post }} </p>
         </ion-card-content>
         
-        <ion-item>
+        <ion-item (click)="gotoCommentsPage(item.id)">
             <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }} Likes  . &nbsp;
-                <ion-icon name="text" icon-left></ion-icon>5 Comments</p>
+                <ion-icon name="text" icon-left></ion-icon>{{ item.commentsCount }} Comments</p>
         </ion-item>
 
         <ion-row>
