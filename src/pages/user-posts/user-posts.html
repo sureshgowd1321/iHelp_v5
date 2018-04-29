@@ -49,11 +49,11 @@
             </a>
         </ion-item>
  
-        <ion-card-content (click)="gotoCommentsPage(item.id)" >
+        <ion-card-content (click)="gotoCommentsPage(item.id, posts, item)" >
             <p>  {{ item.post }} </p>
         </ion-card-content>
         
-        <ion-item (click)="gotoCommentsPage(item.id)">
+        <ion-item (click)="gotoCommentsPage(item.id, posts, item)">
             <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }} Likes  . &nbsp;
                 <ion-icon name="text" icon-left></ion-icon>{{ item.commentsCount }} Comments</p>
         </ion-item>
@@ -72,7 +72,7 @@
 
             </ion-col>
 
-            <ion-col (click)="gotoCommentsPage(item.id)">
+            <ion-col (click)="gotoCommentsPage(item.id, posts, item)">
             <button ion-button icon-right clear small >
                 <ion-icon name="text"></ion-icon>
                 <div>Comment</div>

@@ -35,6 +35,9 @@ export class MyWishlistPage {
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
   public isWishListEmpty: boolean;
 
+  postId: any;
+  postItem: any;
+
   constructor(public navCtrl: NavController,
               public phpService: PhpServiceProvider,
               public alertCtrl: AlertController,
@@ -150,9 +153,10 @@ export class MyWishlistPage {
     }
 
     // Goto Comments Page
-    gotoCommentsPage(postId: any) {
+    gotoCommentsPage(postId: any, posts: IPosts[], postItem: any) {
+      let updateIndex = 'NoIndex';
       this.navCtrl.push(CommentsPage, {
-        postId
+        postId, posts, postItem, updateIndex
       });
     }
 

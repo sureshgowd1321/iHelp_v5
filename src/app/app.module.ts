@@ -5,7 +5,6 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
-//import { VirtualScrollModule } from 'angular2-virtual-scroll';
 
 // Angular Fire Modules
 import * as firebase from 'firebase/app'; 
@@ -37,7 +36,7 @@ import { DisplayPostLikesPage } from '../pages/display-post-likes/display-post-l
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicImageViewerModule } from 'ionic-img-viewer';
-import { FileTransfer } from '@ionic-native/file-transfer'; // , FileUploadOptions, FileTransferObject
+import { FileTransfer } from '@ionic-native/file-transfer';
 import { Camera } from '@ionic-native/camera';
 
 // Providers
@@ -45,7 +44,7 @@ import { PhpServiceProvider } from '../providers/php-service/php-service';
 import { AuthServiceProvider } from '../providers/auth-service/auth-service';
 import { ProfileDataProvider } from '../providers/profile-data/profile-data';
 
-import {OrderbyPipe} from '../pipes/orderby/orderby';
+import { OrderModule } from 'ngx-order-pipe';
 
 @NgModule({
   declarations: [
@@ -64,8 +63,7 @@ import {OrderbyPipe} from '../pipes/orderby/orderby';
     UserPostsPage,
     MyWishlistPage,
     UserProfilePage,
-    DisplayPostLikesPage,
-    OrderbyPipe
+    DisplayPostLikesPage
   ],
   imports: [
     BrowserModule,
@@ -75,8 +73,8 @@ import {OrderbyPipe} from '../pipes/orderby/orderby';
     AngularFireAuthModule,
     AngularFirestoreModule,
     FormsModule,
-    IonicImageViewerModule
-   // VirtualScrollModule
+    IonicImageViewerModule,
+    OrderModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

@@ -34,6 +34,9 @@ export class UserPostsPage {
   public userUId: string;
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
+  postId: any;
+  postItem: any;
+
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               private profileData: ProfileDataProvider,
@@ -161,9 +164,10 @@ export class UserPostsPage {
     }
 
     // Goto Comments Page
-    gotoCommentsPage(postId: any) {
+    gotoCommentsPage(postId: any, posts: IPosts[], postItem: any) {
+      let updateIndex = 'NoIndex';
       this.navCtrl.push(CommentsPage, {
-        postId
+        postId, posts, postItem, updateIndex
       });
     }
 

@@ -20,6 +20,9 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 // Interfaces
 import { IPosts } from '../../providers/interfaces/interface';
 
+// Order Pipe
+import { OrderPipe } from 'ngx-order-pipe';
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -28,12 +31,15 @@ export class HomePage {
 
     user;
     public posts: IPosts[] = [];
-   // public items: IPosts[] = [];
-    order = "id";
-    ascending = false;
 
+    // Order By Variables
+    order: string = 'id';
+    reverse: boolean = true;
+
+    // HTTP Base URI 
     private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
+    // Pagination Variables
     page = 1;
     maximumPages = 40;
 
@@ -45,7 +51,8 @@ export class HomePage {
                 private profileData: ProfileDataProvider,
                 public actionSheetCtrl: ActionSheetController,
                 public phpService: PhpServiceProvider,
-                public alertCtrl: AlertController) {
+                public alertCtrl: AlertController,
+                private orderPipe: OrderPipe) {
                 
         this.user = firebase.auth().currentUser;  
 
@@ -61,7 +68,7 @@ export class HomePage {
       this.phpService.getPosts(this.page).subscribe(postdata => {
 
         postdata.forEach(postInfo => {
-          console.log('postInfo.ID 1: '+ postInfo.ID );
+
           this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
             this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
               this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
@@ -69,7 +76,7 @@ export class HomePage {
                   this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
                     this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {                                
                       this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
-                       // console.log('postInfo.ID 2: '+ postInfo.ID );
+
                         // Check post is liked by loggedin User or not
                         let isPostLiked = false;
                         if( userLikeInfo === 0 ){
@@ -117,6 +124,7 @@ export class HomePage {
             });
           });
         });
+        this.posts = this.orderPipe.transform(this.posts, 'id');
 
         if (infiniteScroll) {
           infiniteScroll.complete();
@@ -144,123 +152,6 @@ export class HomePage {
     
     }
 
-    /* Retrieve the JSON encoded data from the remote server
-    load(minCount, loadType)
-    {
-      
-      this.phpService.getUserInfo(this.user.uid).subscribe(loggedInUserInfo => {
-
-        this.phpService.getLocationInfo(loggedInUserInfo.PostalCode).subscribe(userLocationInfo => {
-
-          this.phpService.getAllPosts(minCount, loadType, loggedInUserInfo.PostalCode, loggedInUserInfo.PostFilter, 
-                                      userLocationInfo.City, userLocationInfo.State, userLocationInfo.Country )     
-          .subscribe(postdata =>
-          { 
-            if( postdata.length === 0 ){
-            // this.hasData = false;
-            }else {
-              postdata.forEach(postInfo => { 
-                  var index = this.checkUniqueId(postInfo.ID);
-                 // console.log('***Post Id: '+ postInfo.ID);
-                  if (index > -1){
-                  } else {
-                    
-                    this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
-                      this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
-                        this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
-                          this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
-                            this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
-                              this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {                                
-                                this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
-
-                                  // Check post is liked by loggedin User or not
-                                  let isPostLiked = false;
-                                  if( userLikeInfo === 0 ){
-                                  }else{
-                                    isPostLiked = true;
-                                  }
-
-                                  // Check post is added to wishlist or not
-                                  let isPostInWishlist = false;
-                                  if( wishlistInfo.length === 0 ){
-                                  } else {
-                                    wishlistInfo.forEach(wishObj=>{
-                          
-                                      if(wishObj.PostId === postInfo.ID){
-                                        isPostInWishlist = true;
-                                      }    
-                                    });
-                                  }
-                              
-                                  this.posts.push(
-                                    {
-                                      "id"           : postInfo.ID,
-                                      "post"         : postInfo.post,
-                                      "createdDate"  : postInfo.CreatedDate,
-                                      "createdById"  : postInfo.CreatedById,
-                                      "name"         : userinfo.name,
-                                      "email"        : userinfo.email,
-                                      "nickname"     : userinfo.nickname,
-                                      "city"         : userLocationInfo.City,
-                                      "state"        : userLocationInfo.State,
-                                      "country"      : userLocationInfo.Country,
-                                      "profilePic"   : this.baseURI + userProfilePic.images_path,
-                                      "wishId"       : wishlistInfo.id,
-                                      "addedToWishlist" : isPostInWishlist,
-                                      "likesCount"   : likesCount,
-                                      "isPostLiked"  : isPostLiked,
-                                      "commentsCount": commentsCount
-                                    }
-                                  );
-                                });
-                              });
-                            });
-                          });
-                        });
-                      });
-                    });
-                  }
-              });
-            }
-          });
-        });
-      });
-    }
-
-    checkUniqueId(id) {
-      console.log('Inside Unique: '+ id);
-      // check whether id exists
-      var index = this.posts.findIndex(item => item.id === id);
-      console.log('Index: '+ index);
-      return index;
-    } 
-
-    // Infinite scroll functionality
-    doInfinite(): Promise<any> {
-
-      return new Promise((resolve) => {
-          setTimeout(() => {
-            
-            let latestId = this.posts[this.posts.length-1].id;
-
-            this.load(latestId, 'scroll');
-
-            resolve(true);
-
-            //infiniteScroll.complete();
-          }, 500);
-        })
-    }  
-
-    // Pull to Refresh functionality
-    dorefresh(refresher) {
-      this.posts.length = 0;
-      this.load(0, 'initialload');
-      if(refresher != 0)
-        refresher.complete();
-    
-    }*/
-
     // Go to Add post Page to add a post
     gotoAddPost() {
       this.navCtrl.push(AddPostPage);
@@ -280,8 +171,9 @@ export class HomePage {
 
     // Goto Comments Page
     gotoCommentsPage(postId: any, posts: IPosts[], postItem: any) {
+      let updateIndex = 'UpdateIndex';
       this.navCtrl.push(CommentsPage, {
-        postId, posts, postItem
+        postId, posts, postItem, updateIndex
       });
     }
     
@@ -319,7 +211,7 @@ export class HomePage {
     // Action sheet on each post to modify/delete your post
     modifyCardActionSheet(postId: any) {
       let actionSheet = this.actionSheetCtrl.create({
-        //title: 'Modify your album',
+        //title: 'Modify your Post',
         buttons: [
           {
             text: 'Delete',
@@ -382,15 +274,4 @@ export class HomePage {
         this.posts[index].isPostLiked = false;
       });
     }
-
-    // refresh Post
-    // refreshPost(postId: any, postItem: any) {                       
-    //     //this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
-    //     this.phpService.getlikesCount(postId).subscribe(likesCount => {
-    //       var index = this.posts.indexOf(postItem);
-    //       console.log('***Post Like Count: '+ likesCount);
-    //      // this.posts[index].likesCount += 1;
-    //      // this.posts[index].isPostLiked = true;
-    //     });
-    // }
 } 

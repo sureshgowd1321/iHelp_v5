@@ -41,6 +41,7 @@ export class CommentsPage {
   postId: any;
   posts:  IPosts[] = [];
   postItem: any;
+  isIndexed: string;
 
   public postObj : any;
   public userObj : any;
@@ -70,7 +71,7 @@ export class CommentsPage {
     this.postId = this.navParams.get('postId');
     this.posts = this.navParams.get('posts');
     this.postItem = this.navParams.get('postItem');
-
+    this.isIndexed = this.navParams.get('updateIndex');
   }
 
   ionViewWillEnter()
@@ -167,8 +168,11 @@ export class CommentsPage {
       this.loadAllComments(this.postId);
 
       this.commentsCount += 1;
-      var index = this.posts.indexOf(this.postItem);
-      this.posts[index].commentsCount += 1;
+
+      if(this.isIndexed === 'UpdateIndex'){
+        var index = this.posts.indexOf(this.postItem);
+        this.posts[index].commentsCount += 1;
+      }
 
     });
   }
@@ -225,9 +229,11 @@ export class CommentsPage {
                   this.loadAllComments(this.postId);
 
                   this.commentsCount -= 1;
-                  var index = this.posts.indexOf(this.postItem);
-                  this.posts[index].commentsCount -= 1;
 
+                  if(this.isIndexed === 'UpdateIndex'){
+                    var index = this.posts.indexOf(this.postItem);
+                    this.posts[index].commentsCount -= 1;
+                  }
                 });
           }
         }
@@ -262,9 +268,10 @@ export class CommentsPage {
     this.phpService.addWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
       this.isPostInWishlist = true;
 
-      var index = this.posts.indexOf(this.postItem);
-      this.posts[index].addedToWishlist = true;
-
+      if(this.isIndexed === 'UpdateIndex'){
+        var index = this.posts.indexOf(this.postItem);
+        this.posts[index].addedToWishlist = true;
+      }
     });
   }
 
@@ -273,9 +280,10 @@ export class CommentsPage {
     this.phpService.deleteWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
       this.isPostInWishlist = false;
 
-      var index = this.posts.indexOf(this.postItem);
-      this.posts[index].addedToWishlist = false;
-
+      if(this.isIndexed === 'UpdateIndex'){
+        var index = this.posts.indexOf(this.postItem);
+        this.posts[index].addedToWishlist = false;
+      }
     });
   }
 
@@ -286,9 +294,11 @@ export class CommentsPage {
       this.likesCount += 1;
       this.isPostLiked = true;  
 
-      var index = this.posts.indexOf(this.postItem);
-      this.posts[index].likesCount += 1;
-      this.posts[index].isPostLiked = true;
+      if(this.isIndexed === 'UpdateIndex'){
+        var index = this.posts.indexOf(this.postItem);
+        this.posts[index].likesCount += 1;
+        this.posts[index].isPostLiked = true;
+      }
 
     });
   }
@@ -299,9 +309,11 @@ export class CommentsPage {
       this.likesCount -= 1;
       this.isPostLiked = false;
 
-      var index = this.posts.indexOf(this.postItem);
-      this.posts[index].likesCount -= 1;
-      this.posts[index].isPostLiked = false;
+      if(this.isIndexed === 'UpdateIndex'){
+        var index = this.posts.indexOf(this.postItem);
+        this.posts[index].likesCount -= 1;
+        this.posts[index].isPostLiked = false;
+      }
 
     });
   }
