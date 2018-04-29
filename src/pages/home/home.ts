@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'; // , OnInit
+import { Component, Input } from '@angular/core'; // , OnInit
 import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
 import { Http } from '@angular/http';
 import * as firebase from 'firebase/app'; 
@@ -20,8 +20,6 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 // Interfaces
 import { IPosts } from '../../providers/interfaces/interface';
 
-import {OrderbyPipe} from '../../pipes/orderby/orderby';
-
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -30,27 +28,123 @@ export class HomePage {
 
     user;
     public posts: IPosts[] = [];
+   // public items: IPosts[] = [];
+    order = "id";
+    ascending = false;
+
     private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+
+    page = 1;
+    maximumPages = 40;
+
+    postId: any;
+    postItem: any;
 
     constructor(public http : Http, 
                 public navCtrl: NavController,
                 private profileData: ProfileDataProvider,
                 public actionSheetCtrl: ActionSheetController,
                 public phpService: PhpServiceProvider,
-                public alertCtrl: AlertController ) {
+                public alertCtrl: AlertController) {
                 
         this.user = firebase.auth().currentUser;  
-        
+
     }
 
-    //ionViewWillEnter()
-    ionViewDidLoad()
-    {  
-      this.posts = [];
-      this.load(0, 'initialload');
+    ionViewDidLoad(){  
+      this.posts.length = 0;
+      this.page = 1;
+      this.loadPosts();
     }
 
-    // Retrieve the JSON encoded data from the remote server
+    loadPosts(infiniteScroll?){
+      this.phpService.getPosts(this.page).subscribe(postdata => {
+
+        postdata.forEach(postInfo => {
+          console.log('postInfo.ID 1: '+ postInfo.ID );
+          this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
+            this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
+              this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
+                this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
+                  this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
+                    this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {                                
+                      this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
+                       // console.log('postInfo.ID 2: '+ postInfo.ID );
+                        // Check post is liked by loggedin User or not
+                        let isPostLiked = false;
+                        if( userLikeInfo === 0 ){
+                        }else{
+                          isPostLiked = true;
+                        }
+
+                        // Check post is added to wishlist or not
+                        let isPostInWishlist = false;
+                        if( wishlistInfo.length === 0 ){
+                        } else {
+                          wishlistInfo.forEach(wishObj=>{
+                
+                            if(wishObj.PostId === postInfo.ID){
+                              isPostInWishlist = true;
+                            }    
+                          });
+                        }
+
+                        this.posts.push(
+                          {
+                            "id"           : postInfo.ID,
+                            "post"         : postInfo.post,
+                            "createdDate"  : postInfo.CreatedDate,
+                            "createdById"  : postInfo.CreatedById,
+                            "name"         : userinfo.name,
+                            "email"        : userinfo.email,
+                            "nickname"     : userinfo.nickname,
+                            "city"         : userLocationInfo.City,
+                            "state"        : userLocationInfo.State,
+                            "country"      : userLocationInfo.Country,
+                            "profilePic"   : this.baseURI + userProfilePic.images_path,
+                            "wishId"       : wishlistInfo.id,
+                            "addedToWishlist" : isPostInWishlist,
+                            "likesCount"   : likesCount,
+                            "isPostLiked"  : isPostLiked,
+                            "commentsCount": commentsCount
+                          }
+                        );
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+
+        if (infiniteScroll) {
+          infiniteScroll.complete();
+        }
+      });
+    }
+
+    loadMore(infiniteScroll){
+      this.page++;
+
+      this.loadPosts(infiniteScroll);
+
+      if (this.page === this.maximumPages) {
+        infiniteScroll.enable(false);
+      }
+    }
+
+    // Pull to Refresh functionality
+    loadrefresh(refresher) {
+      this.posts.length = 0;
+      this.page = 1;
+      this.loadPosts();
+      if(refresher != 0)
+        refresher.complete();
+    
+    }
+
+    /* Retrieve the JSON encoded data from the remote server
     load(minCount, loadType)
     {
       
@@ -139,7 +233,7 @@ export class HomePage {
       var index = this.posts.findIndex(item => item.id === id);
       console.log('Index: '+ index);
       return index;
-    }
+    } 
 
     // Infinite scroll functionality
     doInfinite(): Promise<any> {
@@ -165,7 +259,7 @@ export class HomePage {
       if(refresher != 0)
         refresher.complete();
     
-    }
+    }*/
 
     // Go to Add post Page to add a post
     gotoAddPost() {
@@ -185,9 +279,9 @@ export class HomePage {
     }
 
     // Goto Comments Page
-    gotoCommentsPage(postId: any) {
+    gotoCommentsPage(postId: any, posts: IPosts[], postItem: any) {
       this.navCtrl.push(CommentsPage, {
-        postId
+        postId, posts, postItem
       });
     }
     
@@ -288,4 +382,15 @@ export class HomePage {
         this.posts[index].isPostLiked = false;
       });
     }
+
+    // refresh Post
+    // refreshPost(postId: any, postItem: any) {                       
+    //     //this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
+    //     this.phpService.getlikesCount(postId).subscribe(likesCount => {
+    //       var index = this.posts.indexOf(postItem);
+    //       console.log('***Post Like Count: '+ likesCount);
+    //      // this.posts[index].likesCount += 1;
+    //      // this.posts[index].isPostLiked = true;
+    //     });
+    // }
 } 

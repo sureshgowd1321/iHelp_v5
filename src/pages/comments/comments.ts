@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, ActionSheetController } from 'ionic-angular';
 
 import { Http } from '@angular/http'; // , Headers, RequestOptions
 import * as firebase from 'firebase/app'; 
@@ -18,6 +18,10 @@ import { IComment } from '../../providers/interfaces/interface';
 // Pages
 import { UserProfilePage } from '../user-profile/user-profile';
 import { DisplayPostLikesPage } from '../display-post-likes/display-post-likes';
+import { HomePage } from '../../pages/home/home';
+
+// Interfaces
+import { IPosts } from '../../providers/interfaces/interface';
 
 /**
  * Generated class for the CommentsPage page.
@@ -35,6 +39,8 @@ export class CommentsPage {
 
   user;
   postId: any;
+  posts:  IPosts[] = [];
+  postItem: any;
 
   public postObj : any;
   public userObj : any;
@@ -56,12 +62,24 @@ export class CommentsPage {
               public http: Http,
               private profileData: ProfileDataProvider,
               public phpService: PhpServiceProvider,
-              public alertCtrl: AlertController ) {
+              public alertCtrl: AlertController,
+              public actionSheetCtrl: ActionSheetController ) {
     
     this.user = firebase.auth().currentUser; 
     
     this.postId = this.navParams.get('postId');
+    this.posts = this.navParams.get('posts');
+    this.postItem = this.navParams.get('postItem');
 
+  }
+
+  ionViewWillEnter()
+  {   
+    this.loadpostInfo();
+    this.loadAllComments(this.postId);
+  }
+
+  loadpostInfo(){
     this.phpService.getPostInfo(this.postId).subscribe(postInfo =>{ 
       this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
         this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
@@ -104,14 +122,8 @@ export class CommentsPage {
         });
       });
     });
-
   }
 
-  ionViewWillEnter()
-  {   
-    this.loadAllComments(this.postId);
-  }
-  
   // Retrieve the JSON encoded data from the remote server
   // Using Angular's Http class and an Observable - then
   // assign this to the items array for rendering to the HTML template
@@ -153,6 +165,11 @@ export class CommentsPage {
     .subscribe(res => {
       this.commentInput = '';
       this.loadAllComments(this.postId);
+
+      this.commentsCount += 1;
+      var index = this.posts.indexOf(this.postItem);
+      this.posts[index].commentsCount += 1;
+
     });
   }
 
@@ -206,6 +223,11 @@ export class CommentsPage {
             this.phpService.deleteComment(commentId)
                 .subscribe(res => {
                   this.loadAllComments(this.postId);
+
+                  this.commentsCount -= 1;
+                  var index = this.posts.indexOf(this.postItem);
+                  this.posts[index].commentsCount -= 1;
+
                 });
           }
         }
@@ -216,6 +238,7 @@ export class CommentsPage {
 
   // Pull to Refresh functionality
   dorefresh(refresher) {
+    this.loadpostInfo();
     this.loadAllComments(this.postId);
     if(refresher != 0)
       refresher.complete();
@@ -238,6 +261,10 @@ export class CommentsPage {
   addToWishlist(){
     this.phpService.addWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
       this.isPostInWishlist = true;
+
+      var index = this.posts.indexOf(this.postItem);
+      this.posts[index].addedToWishlist = true;
+
     });
   }
 
@@ -245,14 +272,24 @@ export class CommentsPage {
   removeFromWishlist(){
     this.phpService.deleteWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
       this.isPostInWishlist = false;
+
+      var index = this.posts.indexOf(this.postItem);
+      this.posts[index].addedToWishlist = false;
+
     });
   }
 
   // Add Like
   addLike(){
+    
     this.phpService.addLike(this.user.uid, this.postId).subscribe(likeInfo => {
       this.likesCount += 1;
-      this.isPostLiked = true;
+      this.isPostLiked = true;  
+
+      var index = this.posts.indexOf(this.postItem);
+      this.posts[index].likesCount += 1;
+      this.posts[index].isPostLiked = true;
+
     });
   }
 
@@ -261,6 +298,11 @@ export class CommentsPage {
     this.phpService.deleteLike(this.user.uid, this.postId).subscribe(likeInfo => {
       this.likesCount -= 1;
       this.isPostLiked = false;
+
+      var index = this.posts.indexOf(this.postItem);
+      this.posts[index].likesCount -= 1;
+      this.posts[index].isPostLiked = false;
+
     });
   }
 

@@ -12,31 +12,41 @@ export class OrderbyPipe implements PipeTransform {
   /**
    * Takes a value and makes it lowercase.
    */
-  transform(array:Array<any>, args?) {
-    // Check if array exists, in this case array contains articles and args is an array that has 1 element : !id
-    if(array) {
-      // get the first element
-      let orderByValue = args[0]
-      let byVal = 1
-      // check if exclamation point 
-      if(orderByValue.charAt(0) == "!") {
-        // reverse the array
-        byVal = -1
-        orderByValue = orderByValue.substring(1)
-      }
-      console.log("byVal",byVal);
-      console.log("orderByValue",orderByValue);
+  transform(array, orderBy, asc = true){
+      console.log('Enter orderby Pipe: '+ array);
+      console.log('orderby id: '+ orderBy);
+      if (!orderBy || orderBy.trim() == ""){
+        return array;
+      } 
 
-      array.sort((a: any, b: any) => {
-        if(a[orderByValue] < b[orderByValue]) {
-          return -1*byVal;
-        } else if (a[orderByValue] > b[orderByValue]) {
-          return 1*byVal;
-        } else {
-          return 0;
-        }
-      });
-      return array;
-    }
+      //ascending
+      if (asc){
+        return Array.from(array).sort((item1: any, item2: any) => { 
+          return this.orderByComparator(item1[orderBy], item2[orderBy]);
+        });
+      }
+      else{
+        //not asc
+        return Array.from(array).sort((item1: any, item2: any) => { 
+          return this.orderByComparator(item2[orderBy], item1[orderBy]);
+        });
+      }
+
+  }
+
+  orderByComparator(a:any, b:any):number{
+
+      if((isNaN(parseFloat(a)) || !isFinite(a)) || (isNaN(parseFloat(b)) || !isFinite(b))){
+        //Isn't a number so lowercase the string to properly compare
+        if(a.toLowerCase() < b.toLowerCase()) return -1;
+        if(a.toLowerCase() > b.toLowerCase()) return 1;
+      }
+      else{
+        //Parse strings as numbers to compare properly
+        if(parseFloat(a) < parseFloat(b)) return -1;
+        if(parseFloat(a) > parseFloat(b)) return 1;
+      }
+
+      return 0; //equal each other
   }
 }

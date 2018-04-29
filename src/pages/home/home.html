@@ -11,14 +11,15 @@
         <button ion-button block color="primary" (click)="gotoAddPost()">
             <ion-icon name="add-circle"></ion-icon>
         </button>
-  
+
       </ion-buttons>
   
     </ion-navbar>
   </ion-header>
   
-  <ion-content > 
-      <ion-refresher (ionRefresh)="dorefresh($event)">
+  <ion-content id="listScroll"> 
+
+      <ion-refresher (ionRefresh)="loadrefresh($event)">
         <ion-refresher-content pullingText="Pull to refresh"
                         pullingIcon="arrow-dropdown"
                         refreshingSpinner="circles"
@@ -26,8 +27,77 @@
         </ion-refresher-content>
       </ion-refresher>
 
-       <ion-card *ngFor="let item of posts | orderby:'id'">  
+      <ion-card *ngFor="let item of posts"> <!-- | orderby:'item.id'   | orderby:order:ascending-->   
+
+        <ion-item>
   
+            <ion-avatar item-left >
+                <img src="{{ item.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)" >
+            </ion-avatar>
+
+            <ion-avatar item-right (click)="modifyCardActionSheet(item.id)" *ngIf="item.createdById == user.uid">
+                <ion-icon name="ios-arrow-down"></ion-icon>
+            </ion-avatar>
+
+            <ion-avatar item-right (click)="addToWishlist(item.id, item)" *ngIf="item.createdById != user.uid && !item.addedToWishlist">
+              <ion-icon name="ios-heart-outline"></ion-icon>
+            </ion-avatar>
+
+            <ion-avatar item-right (click)="removeFromWishlist(item.id, item)" *ngIf="item.createdById != user.uid && item.addedToWishlist">
+              <ion-icon name="ios-heart"></ion-icon>
+            </ion-avatar>
+
+            <a class="text-primary">
+                <h2 (click)="gotoUsersPage(item.createdById)" class="labelStyle"> {{ item.name }} </h2>
+                <p> {{ item.id }} {{ item.createdDate }}  </p> <!--  | date: 'MM/dd/yyyy @ h:mma' -->
+            </a>
+        </ion-item>
+  
+        <ion-card-content (click)="gotoCommentsPage(item.id, posts, item)" >
+              <p> {{ item.post }} </p>  
+        </ion-card-content>
+
+        <ion-item (click)="gotoCommentsPage(item.id, posts, item)">
+        <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }} Likes  . &nbsp;
+          <ion-icon name="text" icon-left></ion-icon> {{ item.commentsCount }} Comments</p>
+        </ion-item>
+
+        <ion-row>
+          <ion-col>
+            <button ion-button icon-left clear small (click)="addLike(item.id, item)" *ngIf="!item.isPostLiked" >
+              <ion-icon name="ios-thumbs-up-outline"></ion-icon>
+              <div>Like</div>
+            </button>
+
+            <button ion-button icon-left clear small (click)="removeLike(item.id, item)" *ngIf="item.isPostLiked">
+              <ion-icon name="thumbs-up"></ion-icon>
+              <div>Like</div>
+            </button>
+
+          </ion-col>
+
+          <ion-col (click)="gotoCommentsPage(item.id, posts, item)">
+            <button ion-button icon-right clear small >
+              <ion-icon name="text"></ion-icon>
+              <div>Comment</div>
+            </button>
+          </ion-col>
+        </ion-row>
+
+    </ion-card>
+
+      <ion-infinite-scroll (ionInfinite)="loadMore($event)" >
+        <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+
+     <!-- <virtual-scroll [items]="posts" (update)="viewPortItems = $event">
+          <div *ngFor="let item of viewPortItems">{{item}}</div>
+        </virtual-scroll>
+        <list-item *ngFor="let item of viewPortItems"> {{item.post}} </list-item>
+        
+
+      <ion-card *ngFor="let item of posts | orderby:'id'">  
+        <ion-card *ngFor="let item of viewPortItems">
           <ion-item>
 
               <ion-avatar item-left >
@@ -85,8 +155,11 @@
 
       </ion-card>
 
-      <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())" > <!-- *ngIf="hasData" -->
+      <div *ngIf="loading" class="loader">Loading...</div>
+      </virtual-scroll>
+
+     <!-- <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())" > <!-- *ngIf="hasData" --
         <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
-      </ion-infinite-scroll>
+      </ion-infinite-scroll> -->
   
   </ion-content>

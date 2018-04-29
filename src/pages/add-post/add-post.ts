@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { Http } from '@angular/http';
+import { IonicPage, NavController } from 'ionic-angular';
 
-//import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import * as firebase from 'firebase/app'; 
 
 //Constants
@@ -12,6 +10,7 @@ import { constants } from '../../constants/constants';
 import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
+import { TabsPage } from '../tabs/tabs';
 /**
  * Generated class for the AddPostPage page.
  *
@@ -37,14 +36,11 @@ export class AddPostPage {
   selectedLocation;
 
   constructor(public navCtrl: NavController, 
-              public navParams: NavParams, 
               private profileData: ProfileDataProvider,
-              //private afs: AngularFirestore,
-              public phpService: PhpServiceProvider,
-              public http : Http ) {
+              public phpService: PhpServiceProvider) {
     
     this.user = firebase.auth().currentUser; 
-    
+
     this.phpService.getUserInfo(this.user.uid).subscribe(userinfo => {
       this.phpService.getUserProfilePic(this.user.uid).subscribe(userProfilePic => {
         this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(locationInfo => {
@@ -68,7 +64,9 @@ export class AddPostPage {
 
     this.phpService.addPost(postDesc, this.user.uid, this.selectedLocation, this.userObj.PostalCode,
                             this.locationObj.City, this.locationObj.State, this.locationObj.Country).subscribe(res => { 
-      this.navCtrl.pop();
+      
+      this.navCtrl.setRoot(TabsPage);
+
     });
   }
 

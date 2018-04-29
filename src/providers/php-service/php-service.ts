@@ -49,6 +49,12 @@ export class PhpServiceProvider {
     .map(response => response.json());
   } 
 
+  // Get All Posts
+  getPosts(page: number) {
+      return this.http.get(this.baseURI + 'get-posts.php?page=' + page)
+      .map(response => response.json());
+    } 
+
   // Get Post Information
   getPostInfo(postId: string) {
     return this.http.get(this.baseURI + 'getDataFromId.php?postId='+postId)

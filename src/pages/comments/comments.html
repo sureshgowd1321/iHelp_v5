@@ -74,41 +74,39 @@
 
         <button ion-button icon-left clear small >
             <ion-icon name="text" icon-left></ion-icon>
-            <div> <u> {{ commentsCount }} comments </u></div>
+            <div> <u> {{ commentsCount }} Comments </u></div>
           </button>
-  
-     <ion-list *ngIf="comments.length > 0"> <!-- *ngIf="comments?.length > 0"    -->
-        <ion-list-header>
-            Comments
-        </ion-list-header>
-  
-        <ion-item-sliding *ngFor="let comment of comments">
-            <ion-item class="item-icon-left" >  <!-- *ngIf="comment?.commentHidden" -->
-              <ion-avatar item-left>
-                  <img src="{{ comment.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)">
-              </ion-avatar>
-              
-            <a class="text-primary">
-              <h2 (click)="gotoUsersPage(comment.commentedBy)" class="labelStyle"> {{comment.name}}</h2>
-              <p> {{comment.commentedDate }} </p>   <!-- |date:'MM/dd/yyyy @ h:mma' -->
-            </a>
-
-          {{comment.comment}}
-  
-            </ion-item>
-  
-            <ion-item-options side="right" >
-              <button color="danger" ion-button (click)="deleteComment(comment.id)" ><ion-icon name="trash"> Delete</ion-icon></button>
-              <!-- <button color="danger" ion-button (click)="hideComment(comment?.commentObj.id)" *ngIf="comment?.commentObj.commentedById != currentUserUid">Hide</button> -->
-             
-              <button danger ion-button (click)="editComment(comment.id, comment.comment)"><ion-icon name="edit">Edit</ion-icon></button>
-            </ion-item-options>
-  
-        </ion-item-sliding>
-  
-    </ion-list>
     
-    <p padding *ngIf="comments.length === 0"> Be the first person to comment </p>
+          <p padding *ngIf="comments.length === 0"> Be the first person to comment </p>
+
+          <ion-list *ngIf="comments.length > 0"> <!-- *ngIf="comments?.length > 0"    -->
+              <ion-list-header>
+                  Comments
+              </ion-list-header>
+        
+              <ion-item-sliding *ngFor="let comment of comments">
+                  <ion-item class="item-icon-left" >  <!-- *ngIf="comment?.commentHidden" -->
+                    <ion-avatar item-left>
+                        <img src="{{ comment.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)">
+                    </ion-avatar>
+                    
+                  <a class="text-primary">
+                    <h2 (click)="gotoUsersPage(comment.commentedBy)" class="labelStyle"> {{comment.name}}</h2>
+                    <p> {{comment.commentedDate }} </p>   <!-- |date:'MM/dd/yyyy @ h:mma' -->
+                  </a>
+
+                    {{comment.comment}}
+        
+                  </ion-item>
+        
+                  <ion-item-options side="right" *ngIf="comment.commentedBy === user.uid" >
+                    <button color="danger" ion-button (click)="deleteComment(comment.id)" ><ion-icon name="trash"> Delete</ion-icon></button>                  
+                    <button danger ion-button (click)="editComment(comment.id, comment.comment)"><ion-icon name="edit">Edit</ion-icon></button>
+                  </ion-item-options>
+        
+              </ion-item-sliding>
+          </ion-list>
+
   </ion-content>
   
   <ion-footer >
@@ -116,6 +114,21 @@
      <div >
       <ion-row class="msg-box">
         <ion-item>
+
+            <!-- <ion-toolbar position="bottom" *ngIf="userIsAdmin">
+
+                <form (ngSubmit)="onSubmit(f)" #f="ngForm" class="message-form">
+            
+                    <ion-badge class="message-form-badge">Admin</ion-badge>
+            
+                    <ion-input type="text" placeholder="Type a message..." ngControl="messageInput"></ion-input>
+                
+                    <button type="submit" small class="message-form-button">Send <ion-icon name="send"></ion-icon></button>
+            
+                </form>
+            
+            </ion-toolbar> -->
+
           <ion-input type="text" placeholder="Write a comment..." [(ngModel)]="commentInput" class="input-bottom"></ion-input>
           <button ion-button item-right (click)="postComment(commentInput)" [disabled]="commentInput?.length < 1" class="ion-send-button"><ion-icon name="send"></ion-icon></button>
         </ion-item>

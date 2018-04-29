@@ -5,6 +5,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
+//import { VirtualScrollModule } from 'angular2-virtual-scroll';
 
 // Angular Fire Modules
 import * as firebase from 'firebase/app'; 
@@ -75,6 +76,7 @@ import {OrderbyPipe} from '../pipes/orderby/orderby';
     AngularFirestoreModule,
     FormsModule,
     IonicImageViewerModule
+   // VirtualScrollModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
