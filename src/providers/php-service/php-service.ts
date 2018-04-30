@@ -38,16 +38,16 @@ export class PhpServiceProvider {
   }
   
   // Get All Posts
-  getAllPosts(minCount: string, loadType: string, postalCode: string, postFilter: string, postCity: string, postState: string, postCountry: string) {
-    return this.http.get(this.baseURI + 'retrieve-data.php?minCount=' + minCount 
-                                      + '&loadType=' + loadType 
-                                      + '&userPostalCode=' + postalCode
-                                      + '&userPostFilter=' + postFilter
-                                      + '&postedCity=' + postCity
-                                      + '&postedState=' + postState
-                                      + '&postedCountry=' + postCountry )
-    .map(response => response.json());
-  } 
+  // getAllPosts(minCount: string, loadType: string, postalCode: string, postFilter: string, postCity: string, postState: string, postCountry: string) {
+  //   return this.http.get(this.baseURI + 'retrieve-data.php?minCount=' + minCount 
+  //                                     + '&loadType=' + loadType 
+  //                                     + '&userPostalCode=' + postalCode
+  //                                     + '&userPostFilter=' + postFilter
+  //                                     + '&postedCity=' + postCity
+  //                                     + '&postedState=' + postState
+  //                                     + '&postedCountry=' + postCountry )
+  //   .map(response => response.json());
+  // } 
 
   // Get All Posts
   getPosts(page: number) {
@@ -62,10 +62,9 @@ export class PhpServiceProvider {
   }
 
   // Get All Posts from User Id
-  getPostsFromUserId(userUid: string, minCount: string, loadType: string) {
+  getPostsFromUserId(page: number, userUid: string) {
     return this.http.get(this.baseURI + 'getPostsFromUserId.php?userUid='+userUid
-                                      + '&loadType=' + loadType
-                                      + '&minCount=' + minCount)
+                                      + '&page=' + page)
     .map(response => response.json());
   }
 
@@ -95,19 +94,14 @@ export class PhpServiceProvider {
 
   // Get Wishlist information from User Id
   getWishlistFromUserId(userUid: string) {
-    let noLoadVar = 'noload';
-    let mincountVar = 0;
-    return this.http.get(this.baseURI + 'getWishlistFromUserId.php?userId=' + userUid
-                                      + '&loadType=' + noLoadVar
-                                      + '&minCount=' + mincountVar)
+    return this.http.get(this.baseURI + 'getWishlistFromUserId.php?userUid=' + userUid)
     .map(response => response.json());
   }
 
   // Get Wishlist information from User Id
-  getMyWishlist(userUid: string, minCount: string, loadType: string) {
-    return this.http.get(this.baseURI + 'getWishlistFromUserId.php?userId=' + userUid
-                                      + '&loadType=' + loadType
-                                      + '&minCount=' + minCount )
+  getMyWishlist(page: number, userUid: string) {
+    return this.http.get(this.baseURI + 'get-my-wishlist.php?userUid=' + userUid
+                                      + '&page=' + page)
     .map(response => response.json());
   }
 

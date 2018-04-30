@@ -15,16 +15,17 @@
 
 <ion-content >
 
-  <!-- <div *ngIf="!isWishListEmpty" >  -->
-    <ion-refresher (ionRefresh)="dorefresh($event)">
-      <ion-refresher-content pullingText="Pull to refresh"
-                      pullingIcon="arrow-dropdown"
-                      refreshingSpinner="circles"
-                      refreshingText="..fetching">
-      </ion-refresher-content>
+    <p padding *ngIf="posts.length === 0"> You haven't added anything to Wishlist </p>
+
+    <ion-refresher (ionRefresh)="loadrefresh($event)">
+        <ion-refresher-content pullingText="Pull to refresh"
+                        pullingIcon="arrow-dropdown"
+                        refreshingSpinner="circles"
+                        refreshingText="..fetching">
+        </ion-refresher-content>
     </ion-refresher>
 
-    <ion-card *ngFor="let item of posts">  
+    <ion-card *ngFor="let item of posts | orderBy: order:reverse:'case-insensitive'">  
     
       <ion-item>
 
@@ -32,13 +33,13 @@
               <img src="{{ item.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)" >
           </ion-avatar>
 
-          <ion-avatar item-right (click)="modifyCardActionSheet(item.id)" >
+          <ion-avatar item-right (click)="modifyCardActionSheet(item.id, item)" >
             <ion-icon name="ios-arrow-down"></ion-icon>
         </ion-avatar>
 
           <a class="text-primary">
               <h2 (click)="gotoUsersPage(item.createdById)" class="labelStyle"> {{ item.name }} </h2>
-              <p> {{ item.createdDate }}  </p>   <!-- | date:'MM/dd/yyyy @ h:mma' -->
+              <p> {{ item.createdDate | date: 'medium'}}  </p>
           </a>
       </ion-item>
 
@@ -53,12 +54,12 @@
 
       <ion-row>
           <ion-col>
-          <button ion-button icon-left clear small (click)="addLike(item.id, item)" *ngIf="item.isPostLiked" >
+          <button ion-button icon-left clear small (click)="addLike(item.id, item)" *ngIf="!item.isPostLiked" >
               <ion-icon name="ios-thumbs-up-outline"></ion-icon>
               <div>Like</div>
           </button>
 
-          <button ion-button icon-left clear small (click)="removeLike(item.id, item)" *ngIf="!item.isPostLiked">
+          <button ion-button icon-left clear small (click)="removeLike(item.id, item)" *ngIf="item.isPostLiked">
               <ion-icon name="thumbs-up"></ion-icon>
               <div>Like</div>
           </button>
@@ -75,8 +76,8 @@
 
     </ion-card> 
     
-    <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())" > <!-- *ngIf="hasData" -->
-      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    <ion-infinite-scroll (ionInfinite)="loadMore($event)" >
+        <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
     </ion-infinite-scroll>
 
  <!-- </div>

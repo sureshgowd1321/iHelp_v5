@@ -15,15 +15,15 @@
 
 <ion-content >
 
-    <ion-refresher (ionRefresh)="dorefresh($event)">
-      <ion-refresher-content pullingText="Pull to refresh"
-                      pullingIcon="arrow-dropdown"
-                      refreshingSpinner="circles"
-                      refreshingText="..fetching">
-      </ion-refresher-content>
+    <ion-refresher (ionRefresh)="loadrefresh($event)">
+        <ion-refresher-content pullingText="Pull to refresh"
+                        pullingIcon="arrow-dropdown"
+                        refreshingSpinner="circles"
+                        refreshingText="..fetching">
+        </ion-refresher-content>
     </ion-refresher>
 
-    <ion-card *ngFor="let item of posts">  
+    <ion-card *ngFor="let item of posts | orderBy: order:reverse:'case-insensitive'">  
   
         <ion-item>
 
@@ -31,21 +31,21 @@
                 <img src="{{ item.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)" >
             </ion-avatar>
 
-            <ion-avatar item-right (click)="modifyCardActionSheet(item.id)" *ngIf="item.createdById == loggedInUser" >
+            <ion-avatar item-right (click)="modifyCardActionSheet(item.id, item)" *ngIf="item.createdById == loggedInUser" >
                 <ion-icon name="ios-arrow-down"></ion-icon>
             </ion-avatar>
 
-            <!-- <ion-avatar item-right (click)="modifyCardActionSheet(item.id)" *ngIf="item.createdById == user.uid">
-                <ion-icon name="ios-arrow-down"></ion-icon>
-            </ion-avatar>
-
-            <ion-avatar item-right (click)="addToWishlist(item.id, item)" *ngIf="item.createdById != user.uid && !item.addedToWishlist">
+            <ion-avatar item-right (click)="addToWishlist(item.id, item)" *ngIf="item.createdById != loggedInUser && !item.addedToWishlist">
                 <ion-icon name="ios-heart-outline"></ion-icon>
-            </ion-avatar> -->
+            </ion-avatar>
+
+            <ion-avatar item-right (click)="removeFromWishlist(item.id, item)" *ngIf="item.createdById != loggedInUser && item.addedToWishlist">
+                <ion-icon name="ios-heart"></ion-icon>
+            </ion-avatar>
 
             <a class="text-primary">
                 <h2> {{ item.name }} </h2>
-                <p> {{ item.createdDate }}  </p>   <!-- | date:'MM/dd/yyyy @ h:mma' -->
+                <p> {{ item.id }} {{ item.createdDate | date: 'medium'}}  </p>
             </a>
         </ion-item>
  
@@ -82,8 +82,8 @@
 
     </ion-card> 
 
-    <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())" > <!-- *ngIf="hasData" -->
-      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    <ion-infinite-scroll (ionInfinite)="loadMore($event)" >
+        <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
     </ion-infinite-scroll>
 
 </ion-content>

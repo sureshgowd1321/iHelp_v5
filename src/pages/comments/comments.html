@@ -41,7 +41,7 @@
   
         <a class="text-primary">
             <h2> {{ userObj?.name }} </h2>
-            <p> {{ postObj?.CreatedDate }}  </p>
+            <p> {{ postObj?.CreatedDate  | date: 'medium'}}  </p>
         </a>
   
       </ion-item>
@@ -79,20 +79,20 @@
     
           <p padding *ngIf="comments.length === 0"> Be the first person to comment </p>
 
-          <ion-list *ngIf="comments.length > 0"> <!-- *ngIf="comments?.length > 0"    -->
+          <ion-list *ngIf="comments.length > 0">
               <ion-list-header>
                   Comments
               </ion-list-header>
         
-              <ion-item-sliding *ngFor="let comment of comments">
-                  <ion-item class="item-icon-left" >  <!-- *ngIf="comment?.commentHidden" -->
+              <ion-item-sliding *ngFor="let comment of comments | orderBy: order:reverse:'case-insensitive'"> <!--  -->
+                  <ion-item class="item-icon-left" >
                     <ion-avatar item-left>
                         <img src="{{ comment.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)">
                     </ion-avatar>
                     
                   <a class="text-primary">
                     <h2 (click)="gotoUsersPage(comment.commentedBy)" class="labelStyle"> {{comment.name}}</h2>
-                    <p> {{comment.commentedDate }} </p>   <!-- |date:'MM/dd/yyyy @ h:mma' -->
+                    <p> {{comment.commentedDate  | date: 'medium'}} </p> 
                   </a>
 
                     {{comment.comment}}

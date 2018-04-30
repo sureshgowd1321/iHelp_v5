@@ -1,3 +1,6 @@
+/**
+ * Generated class for the CommentsPage page.
+ */
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController, ActionSheetController } from 'ionic-angular';
 
@@ -12,7 +15,7 @@ import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
 // Interfaces
-//import { IPosts } from '../../providers/interfaces/interface';
+import { IPosts } from '../../providers/interfaces/interface';
 import { IComment } from '../../providers/interfaces/interface';
 
 // Pages
@@ -20,15 +23,8 @@ import { UserProfilePage } from '../user-profile/user-profile';
 import { DisplayPostLikesPage } from '../display-post-likes/display-post-likes';
 import { HomePage } from '../../pages/home/home';
 
-// Interfaces
-import { IPosts } from '../../providers/interfaces/interface';
-
-/**
- * Generated class for the CommentsPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+// Order Pipe
+import { OrderPipe } from 'ngx-order-pipe';
 
 @IonicPage()
 @Component({
@@ -42,6 +38,7 @@ export class CommentsPage {
   posts:  IPosts[] = [];
   postItem: any;
   isIndexed: string;
+  isRemoveFromSlice: string;
 
   public postObj : any;
   public userObj : any;
@@ -53,8 +50,11 @@ export class CommentsPage {
 
   public comments: IComment[] = [];
 
+  // Order By Variables
+  order: string = 'id';
+  reverse: boolean = false;
+
   commentInput: string;
-  images_path: string;
 
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
@@ -64,7 +64,8 @@ export class CommentsPage {
               private profileData: ProfileDataProvider,
               public phpService: PhpServiceProvider,
               public alertCtrl: AlertController,
-              public actionSheetCtrl: ActionSheetController ) {
+              public actionSheetCtrl: ActionSheetController,
+              private orderPipe: OrderPipe ) {
     
     this.user = firebase.auth().currentUser; 
     
@@ -72,6 +73,7 @@ export class CommentsPage {
     this.posts = this.navParams.get('posts');
     this.postItem = this.navParams.get('postItem');
     this.isIndexed = this.navParams.get('updateIndex');
+    this.isRemoveFromSlice = this.navParams.get('removeFromList');
   }
 
   ionViewWillEnter()
@@ -143,7 +145,7 @@ export class CommentsPage {
               this.phpService.getUserProfilePic(commentObj.commentedBy).subscribe(userProfilePic => {
 
                 this.comments.push({
-                  "id"            : commentObj.Id,
+                  "id"            : commentObj.ID,
                   "postId"        : commentObj.postId,
                   "comment"       : commentObj.comment,
                   "commentedBy"   : commentObj.commentedBy,
@@ -155,6 +157,7 @@ export class CommentsPage {
               });      
             });     
           });
+          this.comments = this.orderPipe.transform(this.comments, 'id');
         }
       });
   }
@@ -283,6 +286,12 @@ export class CommentsPage {
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
         this.posts[index].addedToWishlist = false;
+
+        if(this.isRemoveFromSlice === 'RemoveSlice'){
+          if (index !== -1) {
+            this.posts.splice(index, 1);
+          }
+        }
       }
     });
   }

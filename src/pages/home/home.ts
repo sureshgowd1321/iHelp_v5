@@ -1,4 +1,7 @@
-import { Component, Input } from '@angular/core'; // , OnInit
+/**
+ * Generated class for the Home page.
+ */
+import { Component } from '@angular/core';
 import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
 import { Http } from '@angular/http';
 import * as firebase from 'firebase/app'; 
@@ -29,7 +32,10 @@ import { OrderPipe } from 'ngx-order-pipe';
 })
 export class HomePage {
 
+    // LoggedIn User
     user;
+
+    // List of posts to display
     public posts: IPosts[] = [];
 
     // Order By Variables
@@ -43,6 +49,7 @@ export class HomePage {
     page = 1;
     maximumPages = 40;
 
+    // Variables to pass comments page
     postId: any;
     postItem: any;
 
@@ -178,7 +185,7 @@ export class HomePage {
     }
     
     // Delete the post
-    deletePost(postId: any){
+    deletePost(postId: any, postItem: any){
       let alert = this.alertCtrl.create({
         title: 'Confirm',
         message: 'Are you sure, you want to Delete?',
@@ -189,7 +196,13 @@ export class HomePage {
           },
           {
             text: "Yes",
-            handler: () => { this.phpService.deletePost(postId); }
+            handler: () => { 
+              this.phpService.deletePost(postId); 
+              var index = this.posts.indexOf(postItem);
+              if (index !== -1) {
+                this.posts.splice(index, 1);
+              } 
+            }
           }
         ]
       })
@@ -209,7 +222,7 @@ export class HomePage {
     }
 
     // Action sheet on each post to modify/delete your post
-    modifyCardActionSheet(postId: any) {
+    modifyCardActionSheet(postId: any, postItem: any) {
       let actionSheet = this.actionSheetCtrl.create({
         //title: 'Modify your Post',
         buttons: [
@@ -218,7 +231,7 @@ export class HomePage {
             role: 'destructive',
             handler: () => {
               console.log('Delete clicked: ' + postId);
-              this.deletePost(postId);
+              this.deletePost(postId, postItem);
             }
           },
           {
