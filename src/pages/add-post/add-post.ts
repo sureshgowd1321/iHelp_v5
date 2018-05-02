@@ -1,3 +1,6 @@
+/**
+ * Generated class for the AddPostPage page.
+ */
 import { Component } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
 
@@ -10,13 +13,8 @@ import { constants } from '../../constants/constants';
 import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
+//Pages
 import { TabsPage } from '../tabs/tabs';
-/**
- * Generated class for the AddPostPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 
 @IonicPage()
 @Component({

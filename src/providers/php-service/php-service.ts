@@ -50,8 +50,12 @@ export class PhpServiceProvider {
   // } 
 
   // Get All Posts
-  getPosts(page: number) {
-      return this.http.get(this.baseURI + 'get-posts.php?page=' + page)
+  getPosts(page: number, postFilter: string, postCity: string, postState: string, postCountry: string) {
+      return this.http.get(this.baseURI + 'get-posts.php?page=' + page
+                                        + '&userPostFilter=' + postFilter
+                                        + '&postedCity=' + postCity
+                                        + '&postedState=' + postState
+                                        + '&postedCountry=' + postCountry)
       .map(response => response.json());
     } 
 

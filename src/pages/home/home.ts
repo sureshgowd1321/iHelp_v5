@@ -32,7 +32,7 @@ import { OrderPipe } from 'ngx-order-pipe';
 })
 export class HomePage {
 
-    // LoggedIn User
+    // LoggedIn User Info variables
     user;
 
     // List of posts to display
@@ -62,7 +62,7 @@ export class HomePage {
                 private orderPipe: OrderPipe) {
                 
         this.user = firebase.auth().currentUser;  
-
+        
     }
 
     ionViewDidLoad(){  
@@ -71,71 +71,78 @@ export class HomePage {
       this.loadPosts();
     }
 
+    // Load all posts to display
     loadPosts(infiniteScroll?){
-      this.phpService.getPosts(this.page).subscribe(postdata => {
 
-        postdata.forEach(postInfo => {
+      this.phpService.getUserInfo(this.user.uid).subscribe(loggedInUserInfo => {
+        this.phpService.getLocationInfo(loggedInUserInfo.PostalCode).subscribe(userLocationInfo => {
+          this.phpService.getPosts(this.page, loggedInUserInfo.PostFilter, userLocationInfo.City, 
+                                              userLocationInfo.State, userLocationInfo.Country).subscribe(postdata => {
 
-          this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
-            this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
-              this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
-                this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
-                  this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
-                    this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {                                
-                      this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
+            postdata.forEach(postInfo => {
 
-                        // Check post is liked by loggedin User or not
-                        let isPostLiked = false;
-                        if( userLikeInfo === 0 ){
-                        }else{
-                          isPostLiked = true;
-                        }
+              this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
+                this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
+                  this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
+                    this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
+                      this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
+                        this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {                                
+                          this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
 
-                        // Check post is added to wishlist or not
-                        let isPostInWishlist = false;
-                        if( wishlistInfo.length === 0 ){
-                        } else {
-                          wishlistInfo.forEach(wishObj=>{
-                
-                            if(wishObj.PostId === postInfo.ID){
-                              isPostInWishlist = true;
-                            }    
+                            // Check post is liked by loggedin User or not
+                            let isPostLiked = false;
+                            if( userLikeInfo === 0 ){
+                            }else{
+                              isPostLiked = true;
+                            }
+
+                            // Check post is added to wishlist or not
+                            let isPostInWishlist = false;
+                            if( wishlistInfo.length === 0 ){
+                            } else {
+                              wishlistInfo.forEach(wishObj=>{
+                    
+                                if(wishObj.PostId === postInfo.ID){
+                                  isPostInWishlist = true;
+                                }    
+                              });
+                            }
+
+                            this.posts.push(
+                              {
+                                "id"           : postInfo.ID,
+                                "post"         : postInfo.post,
+                                "createdDate"  : postInfo.CreatedDate,
+                                "createdById"  : postInfo.CreatedById,
+                                "name"         : userinfo.name,
+                                "email"        : userinfo.email,
+                                "nickname"     : userinfo.nickname,
+                                "city"         : userLocationInfo.City,
+                                "state"        : userLocationInfo.State,
+                                "country"      : userLocationInfo.Country,
+                                "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                "wishId"       : wishlistInfo.id,
+                                "addedToWishlist" : isPostInWishlist,
+                                "likesCount"   : likesCount,
+                                "isPostLiked"  : isPostLiked,
+                                "commentsCount": commentsCount
+                              }
+                            );
                           });
-                        }
-
-                        this.posts.push(
-                          {
-                            "id"           : postInfo.ID,
-                            "post"         : postInfo.post,
-                            "createdDate"  : postInfo.CreatedDate,
-                            "createdById"  : postInfo.CreatedById,
-                            "name"         : userinfo.name,
-                            "email"        : userinfo.email,
-                            "nickname"     : userinfo.nickname,
-                            "city"         : userLocationInfo.City,
-                            "state"        : userLocationInfo.State,
-                            "country"      : userLocationInfo.Country,
-                            "profilePic"   : this.baseURI + userProfilePic.images_path,
-                            "wishId"       : wishlistInfo.id,
-                            "addedToWishlist" : isPostInWishlist,
-                            "likesCount"   : likesCount,
-                            "isPostLiked"  : isPostLiked,
-                            "commentsCount": commentsCount
-                          }
-                        );
+                        });
                       });
                     });
                   });
                 });
               });
             });
+            this.posts = this.orderPipe.transform(this.posts, 'id');
+
+            if (infiniteScroll) {
+              infiniteScroll.complete();
+            }
           });
         });
-        this.posts = this.orderPipe.transform(this.posts, 'id');
-
-        if (infiniteScroll) {
-          infiniteScroll.complete();
-        }
       });
     }
 
