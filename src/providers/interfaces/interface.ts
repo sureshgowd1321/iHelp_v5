@@ -15,6 +15,7 @@ export interface IPosts {
     likesCount   : number;
     isPostLiked  : boolean;
     commentsCount: number;
+    postImages   : string;
 }
 
 export interface IUser {

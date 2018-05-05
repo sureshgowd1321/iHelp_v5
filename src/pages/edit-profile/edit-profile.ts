@@ -34,14 +34,11 @@ import { Camera } from '@ionic-native/camera';
 export class EditProfilePage {
 
   user;
-  //public userObj : IUser;
-  //public locationObj: any;
 
   allLocations: ICountries[] = [];
   countries: any = [];
   selectedStates: any = [];
   selectedCities: any = [];
- // public userInt: IUser;
 
   public userCountry: string;
   public userState: string;

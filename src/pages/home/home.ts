@@ -88,46 +88,55 @@ export class HomePage {
                       this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
                         this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {                                
                           this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
+                            this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
 
-                            // Check post is liked by loggedin User or not
-                            let isPostLiked = false;
-                            if( userLikeInfo === 0 ){
-                            }else{
-                              isPostLiked = true;
-                            }
-
-                            // Check post is added to wishlist or not
-                            let isPostInWishlist = false;
-                            if( wishlistInfo.length === 0 ){
-                            } else {
-                              wishlistInfo.forEach(wishObj=>{
-                    
-                                if(wishObj.PostId === postInfo.ID){
-                                  isPostInWishlist = true;
-                                }    
-                              });
-                            }
-
-                            this.posts.push(
-                              {
-                                "id"           : postInfo.ID,
-                                "post"         : postInfo.post,
-                                "createdDate"  : postInfo.CreatedDate,
-                                "createdById"  : postInfo.CreatedById,
-                                "name"         : userinfo.name,
-                                "email"        : userinfo.email,
-                                "nickname"     : userinfo.nickname,
-                                "city"         : userLocationInfo.City,
-                                "state"        : userLocationInfo.State,
-                                "country"      : userLocationInfo.Country,
-                                "profilePic"   : this.baseURI + userProfilePic.images_path,
-                                "wishId"       : wishlistInfo.id,
-                                "addedToWishlist" : isPostInWishlist,
-                                "likesCount"   : likesCount,
-                                "isPostLiked"  : isPostLiked,
-                                "commentsCount": commentsCount
+                              // Check post is liked by loggedin User or not
+                              let isPostLiked = false;
+                              if( userLikeInfo === 0 ){
+                              }else{
+                                isPostLiked = true;
                               }
-                            );
+
+                              // Check post is added to wishlist or not
+                              let isPostInWishlist = false;
+                              if( wishlistInfo.length === 0 ){
+                              } else {
+                                wishlistInfo.forEach(wishObj=>{
+                      
+                                  if(wishObj.PostId === postInfo.ID){
+                                    isPostInWishlist = true;
+                                  }    
+                                });
+                              }
+
+                              // Check each post has Image or not
+                              let postImage;
+                              if(postImages != false){
+                                postImage = this.baseURI + postImages.images_path;
+                              }
+
+                              this.posts.push(
+                                {
+                                  "id"           : postInfo.ID,
+                                  "post"         : postInfo.post,
+                                  "createdDate"  : postInfo.CreatedDate,
+                                  "createdById"  : postInfo.CreatedById,
+                                  "name"         : userinfo.name,
+                                  "email"        : userinfo.email,
+                                  "nickname"     : userinfo.nickname,
+                                  "city"         : userLocationInfo.City,
+                                  "state"        : userLocationInfo.State,
+                                  "country"      : userLocationInfo.Country,
+                                  "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                  "wishId"       : wishlistInfo.id,
+                                  "addedToWishlist" : isPostInWishlist,
+                                  "likesCount"   : likesCount,
+                                  "isPostLiked"  : isPostLiked,
+                                  "commentsCount": commentsCount,
+                                  "postImages"   : postImage
+                                }
+                              );
+                            });
                           });
                         });
                       });
@@ -159,6 +168,7 @@ export class HomePage {
     // Pull to Refresh functionality
     loadrefresh(refresher) {
       this.posts.length = 0;
+      this.posts = [];
       this.page = 1;
       this.loadPosts();
       if(refresher != 0)
@@ -172,9 +182,9 @@ export class HomePage {
     }
 
     // Go to Edit Post Page to update the post
-    gotoEditPostPage(postId: any) {
+    gotoEditPostPage(postId: any, posts: IPosts[], postItem: any) {
       this.navCtrl.push(EditPostPage, {
-        postId
+        postId, posts, postItem
       });
     }
 
@@ -204,7 +214,12 @@ export class HomePage {
           {
             text: "Yes",
             handler: () => { 
+              // Delete Post
               this.phpService.deletePost(postId); 
+
+              // Delete Image of post
+              this.phpService.deleteImage(postId).subscribe(res => {});
+
               var index = this.posts.indexOf(postItem);
               if (index !== -1) {
                 this.posts.splice(index, 1);
@@ -229,7 +244,7 @@ export class HomePage {
     }
 
     // Action sheet on each post to modify/delete your post
-    modifyCardActionSheet(postId: any, postItem: any) {
+    modifyCardActionSheet(postId: any, posts: IPosts[], postItem: any) {
       let actionSheet = this.actionSheetCtrl.create({
         //title: 'Modify your Post',
         buttons: [
@@ -237,15 +252,13 @@ export class HomePage {
             text: 'Delete',
             role: 'destructive',
             handler: () => {
-              console.log('Delete clicked: ' + postId);
               this.deletePost(postId, postItem);
             }
           },
           {
             text: 'Edit',
             handler: () => {
-              console.log('Edit clicked: ' + postId);
-              this.gotoEditPostPage(postId);
+              this.gotoEditPostPage(postId, posts, postItem);
             }
           },
           {

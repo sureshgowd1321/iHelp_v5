@@ -36,18 +36,6 @@ export class PhpServiceProvider {
     return this.http.get(this.baseURI + 'getUserProfilePic.php?userId='+id)
     .map(response => response.json());
   }
-  
-  // Get All Posts
-  // getAllPosts(minCount: string, loadType: string, postalCode: string, postFilter: string, postCity: string, postState: string, postCountry: string) {
-  //   return this.http.get(this.baseURI + 'retrieve-data.php?minCount=' + minCount 
-  //                                     + '&loadType=' + loadType 
-  //                                     + '&userPostalCode=' + postalCode
-  //                                     + '&userPostFilter=' + postFilter
-  //                                     + '&postedCity=' + postCity
-  //                                     + '&postedState=' + postState
-  //                                     + '&postedCountry=' + postCountry )
-  //   .map(response => response.json());
-  // } 
 
   // Get All Posts
   getPosts(page: number, postFilter: string, postCity: string, postState: string, postCountry: string) {
@@ -69,6 +57,12 @@ export class PhpServiceProvider {
   getPostsFromUserId(page: number, userUid: string) {
     return this.http.get(this.baseURI + 'getPostsFromUserId.php?userUid='+userUid
                                       + '&page=' + page)
+    .map(response => response.json());
+  }
+
+  // Get Images from Post
+  getPostImages(id: string) {
+    return this.http.get(this.baseURI + 'get-Post-Images.php?postId='+id)
     .map(response => response.json());
   }
 
@@ -148,28 +142,17 @@ export class PhpServiceProvider {
   }
 
   // Updating existing post
-  updatePost(postDesc, recordID)
+  updatePost(postDesc, recordID, postedLocation, PostalCode, postedCity, postedState, postedCountry)
   {
-     let body       : string = "key=update&post=" + postDesc + "&recordID=" + recordID,
+     let body       : string = "key=update&post=" + postDesc + "&recordID=" + recordID+ '&postedLocation=' + postedLocation + '&postalCode=' + PostalCode + 
+                                '&postedCity='+ postedCity + '&postedState=' + postedState + '&postedCountry=' + postedCountry,
          type       : string = "application/x-www-form-urlencoded; charset=UTF-8",
          headers    : any     = new Headers({ 'Content-Type': type}),
          options    : any     = new RequestOptions({ headers: headers }),
          url        : any     = this.baseURI + "manage-data.php";
 
-     this.http.post(url, body, options)
-     .subscribe(data =>
-     {
-        // If the request was successful notify the user
-        if(data.status === 200)
-        {
-          console.log('Successfully post updated');
-        }
-        // Otherwise let 'em know anyway
-        else
-        {
-           console.log('Something went wrong!');
-        }
-     });
+    return this.http.post(url, body, options)
+              .map(response => response.json());
   }
   
   // Deleting post
@@ -195,6 +178,30 @@ export class PhpServiceProvider {
            console.log('Something went wrong!');
         }
      });
+  }
+
+  // Upload Post Image
+  uploadPostImage(postId){
+    let body     : string   = "postId=" + postId ,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "upload-post-image.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
+  }
+
+  // Delete Post Image
+  deleteImage(postId){
+    let body     : string   = "postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "delete-image.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
   }
 
   // Adding New comments

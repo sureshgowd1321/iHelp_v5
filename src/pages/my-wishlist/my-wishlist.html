@@ -43,8 +43,9 @@
           </a>
       </ion-item>
 
-      <ion-card-content (click)="gotoCommentsPage(item.id, posts, item)" >
-          <p> {{ item.post }} </p>  
+      <ion-card-content  >
+          <p (click)="gotoCommentsPage(item.id, posts, item)"> {{ item.post }} </p>  
+          <p> <img src="{{ item.postImages }}" #imageToView1 (click)="displayImageFullScreen(imageToView1)" *ngIf="item.postImages !== null"> </p>
       </ion-card-content>
 
       <ion-item (click)="gotoCommentsPage(item.id, posts, item)">

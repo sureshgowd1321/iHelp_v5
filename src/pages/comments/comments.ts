@@ -1,7 +1,7 @@
 /**
  * Generated class for the CommentsPage page.
  */
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController, ActionSheetController } from 'ionic-angular';
 
 import { Http } from '@angular/http'; // , Headers, RequestOptions
@@ -33,6 +33,8 @@ import { OrderPipe } from 'ngx-order-pipe';
 })
 export class CommentsPage {
 
+  @ViewChild('myInput') myInput: ElementRef;
+
   user;
   postId: any;
   posts:  IPosts[] = [];
@@ -47,6 +49,7 @@ export class CommentsPage {
   public likesCount : number;
   public isPostLiked : boolean;
   public commentsCount : number;
+  public postImage: string;
 
   public comments: IComment[] = [];
 
@@ -90,34 +93,43 @@ export class CommentsPage {
             this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
               this.phpService.getlikeInfoPerUser(this.user.uid, this.postId).subscribe(userLikeInfo => {
                 this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
+                  this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
 
-                  // Check post is liked by loggedin User or not
-                  let isLiked = false;
-                  if( userLikeInfo === 0 ){
-                  }else{
-                    isLiked = true;
-                  }
+                    // Check post is liked by loggedin User or not
+                    let isLiked = false;
+                    if( userLikeInfo === 0 ){
+                    }else{
+                      isLiked = true;
+                    }
 
-                  // Get Wishlist information
-                  let isInWishlist = false;
+                    // Get Wishlist information
+                    let isInWishlist = false;
 
-                  if( wishlistInfo.length === 0 ){
-                  } else {
-                    wishlistInfo.forEach(wishObj=>{
-          
-                      if(wishObj.PostId === this.postId){
-                        isInWishlist = true;
-                      }    
-                    });
-                  }
+                    if( wishlistInfo.length === 0 ){
+                    } else {
+                      wishlistInfo.forEach(wishObj=>{
+            
+                        if(wishObj.PostId === this.postId){
+                          isInWishlist = true;
+                        }    
+                      });
+                    }
 
-                  this.postObj = postInfo;
-                  this.userObj = userinfo;
-                  this.profilePic = this.baseURI + userProfilePic.images_path;
-                  this.isPostInWishlist = isInWishlist;
-                  this.likesCount = likesCount;
-                  this.isPostLiked = isLiked;
-                  this.commentsCount = commentsCount;
+                    // Check each post has Image or not
+                    let postImage;
+                    if(postImages != false){
+                      postImage = this.baseURI + postImages.images_path;
+                    }
+                    console.log('**COmments Image: '+ postImage);
+                    this.postObj          = postInfo;
+                    this.userObj          = userinfo;
+                    this.profilePic       = this.baseURI + userProfilePic.images_path;
+                    this.isPostInWishlist = isInWishlist;
+                    this.likesCount       = likesCount;
+                    this.isPostLiked      = isLiked;
+                    this.commentsCount    = commentsCount;
+                    this.postImage        = postImage;
+                  });
                 });
               });
             });
@@ -176,6 +188,8 @@ export class CommentsPage {
         var index = this.posts.indexOf(this.postItem);
         this.posts[index].commentsCount += 1;
       }
+
+      this.myInput['_elementRef'].nativeElement.style.height = (16) + 'px';
 
     });
   }
@@ -333,5 +347,13 @@ export class CommentsPage {
       postId
     });
   }
+
+  resize() {
+    //this.myInput.nativeElement.style.height = this.myInput.nativeElement.scrollHeight + 'px';
+    var element = this.myInput['_elementRef'].nativeElement.getElementsByClassName("text-input")[0];
+    var scrollHeight = element.scrollHeight;
+    element.style.height = scrollHeight + 'px';
+    this.myInput['_elementRef'].nativeElement.style.height = (scrollHeight + 16) + 'px';
+  } 
 
 }

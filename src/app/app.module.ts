@@ -7,7 +7,7 @@ import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 
 // Angular Fire Modules
-import * as firebase from 'firebase/app'; 
+import * as firebase from 'firebase/app';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
@@ -100,10 +100,10 @@ import { OrderModule } from 'ngx-order-pipe';
     SplashScreen,
     FileTransfer,
     Camera,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
     PhpServiceProvider,
     AuthServiceProvider,
     ProfileDataProvider
   ]
 })
-export class AppModule {}
+export class AppModule { }
