@@ -80,44 +80,57 @@ export class MyWishlistPage {
               this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
                 this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
                   this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
-                    this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
-                      this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
-                        this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
+                    this.phpService.getdislikesCount(postInfo.ID).subscribe(dislikesCount => {
+                      this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
+                        this.phpService.getDislikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userDislikeInfo => {
+                          this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
+                            this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
 
-                          // Check post is liked by loggedin User or not
-                          let isPostLiked = false;
-                          if( userLikeInfo === 0 ){
-                          }else{
-                            isPostLiked = true;
-                          }
+                              // Check post is liked by loggedin User or not
+                              let isPostLiked = false;
+                              if( userLikeInfo === 0 ){
+                              }else{
+                                isPostLiked = true;
+                              }
 
-                          // Check each post has Image or not
-                          let postImage;
-                          if(postImages != false){
-                            postImage = this.baseURI + postImages.images_path;
-                          }
-    
-                          this.posts.push(
-                            {
-                              "id"           : wishObj.PostId,
-                              "post"         : postInfo.post,
-                              "createdDate"  : postInfo.CreatedDate,
-                              "createdById"  : postInfo.CreatedById,
-                              "name"         : userinfo.name,
-                              "email"        : userinfo.email,
-                              "nickname"     : userinfo.nickname,
-                              "city"         : userLocationInfo.City,
-                              "state"        : userLocationInfo.State,
-                              "country"      : userLocationInfo.Country,
-                              "profilePic"   : this.baseURI + userProfilePic.images_path,
-                              "wishId"       : wishObj.id,
-                              "addedToWishlist" : false,
-                              "likesCount"   : likesCount,
-                              "isPostLiked"  : isPostLiked,
-                              "commentsCount": commentsCount,
-                              "postImages"   : postImage
-                            }
-                          );
+                              // Check post is Disliked by loggedin User or not
+                              let isPostDisliked = false;
+                              if( userDislikeInfo === 0 ){
+                              }else{
+                                isPostDisliked = true;
+                              }
+
+                              // Check each post has Image or not
+                              let postImage;
+                              if(postImages != false){
+                                postImage = this.baseURI + postImages.images_path;
+                              }
+        
+                              this.posts.push(
+                                {
+                                  "id"           : wishObj.PostId,
+                                  "post"         : postInfo.post,
+                                  "createdDate"  : postInfo.CreatedDate,
+                                  "createdById"  : postInfo.CreatedById,
+                                  "name"         : userinfo.name,
+                                  "email"        : userinfo.email,
+                                  "nickname"     : userinfo.nickname,
+                                  "city"         : userLocationInfo.City,
+                                  "state"        : userLocationInfo.State,
+                                  "country"      : userLocationInfo.Country,
+                                  "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                  "wishId"       : wishObj.id,
+                                  "addedToWishlist" : false,
+                                  "likesCount"      : likesCount,
+                                  "dislikesCount"   : dislikesCount,
+                                  "isPostLiked"     : isPostLiked,
+                                  "isPostDisliked"  : isPostDisliked,
+                                  "commentsCount"   : commentsCount,
+                                  "postImages"      : postImage
+                                }
+                              );
+                            });
+                          });
                         });
                       });
                     });
@@ -177,14 +190,6 @@ export class MyWishlistPage {
       this.profileData.displayImageInFullScreen(imageToView);
     }
 
-    // Remove Wishlist
-    // removeFromWishlist(postId: any, postItem: any){
-    //   this.phpService.deleteWishlist(this.user.uid, postId).subscribe(wishlistInfo => {
-    //    // var index = this.posts.indexOf(postItem);
-    //    // this.posts[index].addedToWishlist = false;
-    //   });
-    // }
-
     // Action sheet on each post to modify/delete your post
     modifyCardActionSheet(postId: any, postItem: any) {
       let actionSheet = this.actionSheetCtrl.create({
@@ -217,6 +222,50 @@ export class MyWishlistPage {
         if (index !== -1) {
           this.posts.splice(index, 1);
         }
+      });
+    }
+
+    // Add Like
+    addLike(postId: any, postItem: any){
+      this.phpService.addLike(this.user.uid, postId).subscribe(likeInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].likesCount += 1;
+        this.posts[index].isPostLiked = true;
+
+        this.removeDislike(postId, postItem);
+      });
+    }
+
+    // Remove Like
+    removeLike(postId: any, postItem: any){
+      this.phpService.deleteLike(this.user.uid, postId).subscribe(likeInfo => {
+        var index = this.posts.indexOf(postItem);
+        if( this.posts[index].likesCount > 0 && this.posts[index].isPostLiked === true ){
+          this.posts[index].likesCount -= 1;
+          this.posts[index].isPostLiked = false;
+        }   
+      });
+    }
+
+    // Add Dislike
+    addDislike(postId: any, postItem: any){
+      this.phpService.addDislike(this.user.uid, postId).subscribe(dislikeInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].dislikesCount += 1;
+        this.posts[index].isPostDisliked = true;
+
+        this.removeLike(postId, postItem);
+      });
+    }
+
+    // Remove Dislike
+    removeDislike(postId: any, postItem: any){
+      this.phpService.deleteDislike(this.user.uid, postId).subscribe(dislikeInfo => {
+        var index = this.posts.indexOf(postItem);
+        if( this.posts[index].dislikesCount > 0 && this.posts[index].isPostDisliked === true){
+          this.posts[index].dislikesCount -= 1;
+          this.posts[index].isPostDisliked = false;
+        }  
       });
     }
 

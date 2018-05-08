@@ -38,12 +38,13 @@ export class PhpServiceProvider {
   }
 
   // Get All Posts
-  getPosts(page: number, postFilter: string, postCity: string, postState: string, postCountry: string) {
+  getPosts(page: number, postFilter: string, postCity: string, postState: string, postCountry: string, userUid: string) {
       return this.http.get(this.baseURI + 'get-posts.php?page=' + page
                                         + '&userPostFilter=' + postFilter
                                         + '&postedCity=' + postCity
                                         + '&postedState=' + postState
-                                        + '&postedCountry=' + postCountry)
+                                        + '&postedCountry=' + postCountry
+                                        + '&userUid=' + userUid)
       .map(response => response.json());
     } 
 
@@ -109,15 +110,33 @@ export class PhpServiceProvider {
     .map(response => response.json());
   }
 
+  //Get count of Dislikes for each post
+  getdislikesCount(postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalDislikesCountPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
   //Get like info per user per post
   getlikeInfoPerUser(userId: string, postId: string) {
     return this.http.get(this.baseURI + 'getCountOfLikes.php?key=likesPerUser&userId=' + userId + '&postId=' + postId)
     .map(response => response.json());
   }
 
+  //Get Dislike info per user per post
+  getDislikeInfoPerUser(userId: string, postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=dislikesPerUser&userId=' + userId + '&postId=' + postId)
+    .map(response => response.json());
+  }
+
   //Get like info per user per post
   getLikesPerPost(postId: string) {
     return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalLikesPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  //Get Dislike info per user per post
+  getDislikesPerPost(postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalDislikesPerPost&postId=' + postId)
     .map(response => response.json());
   }
 
@@ -164,20 +183,21 @@ export class PhpServiceProvider {
          options    : any    = new RequestOptions({ headers: headers }),
          url        : any    = this.baseURI + "manage-data.php";
 
-     this.http.post(url, body, options)
-     .subscribe(data =>
-     {
-        // If the request was successful notify the user
-        if(data.status === 200)
-        {
-          console.log('Successfully post deleted');
-        }
-        // Otherwise let 'em know anyway
-        else
-        {
-           console.log('Something went wrong!');
-        }
-     });
+     return this.http.post(url, body, options)
+              .map(response => response.json());
+    //  .subscribe(data =>
+    //  {
+    //     // If the request was successful notify the user
+    //     if(data.status === 200)
+    //     {
+    //       console.log('Successfully post deleted');
+    //     }
+    //     // Otherwise let 'em know anyway
+    //     else
+    //     {
+    //        console.log('Something went wrong!');
+    //     }
+    //  });
   }
 
   // Upload Post Image
@@ -194,11 +214,11 @@ export class PhpServiceProvider {
 
   // Delete Post Image
   deleteImage(postId){
-    let body     : string   = "postId=" + postId,
+    let body     : string   = "key=deleteImagesOfPost&postId=" + postId,
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "delete-image.php";
+        url      : any      = this.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -230,10 +250,62 @@ export class PhpServiceProvider {
                     .map(response => response.json());
   }
 
-  // Deleting comments
+  // Deleting comments from CommentId
   deleteComment(commentId)
   {
     let body     : string   = "key=deleteComment&commentId=" + commentId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Deleting all comments of deleted Post
+  deleteCommentsOfPost(postId)
+  {
+    let body     : string   = "key=deleteCommentsOfPost&postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Deleting all Likes of deleted Post
+  deleteLikesOfPost(postId)
+  {
+    let body     : string   = "key=deleteLikesOfPost&postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Deleting all Dislikes of deleted Post
+  deleteDislikesOfPost(postId)
+  {
+    let body     : string   = "key=deleteDislikesOfPost&postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Deleting all comments of deleted Post
+  deleteWishlistOfPost(postId)
+  {
+    let body     : string   = "key=deleteWishlistOfPost&postId=" + postId,
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
@@ -351,6 +423,32 @@ export class PhpServiceProvider {
   deleteLike(userId, postId)
   {
     let body     : string   = "key=deleteLike&postId=" + postId + '&userUid=' + userId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Adding Dislike to a post
+  addDislike(userId, postId)
+  {
+      let body     : string   = "key=addDislike&postId=" + postId + '&userUid=' + userId,
+          type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+          headers  : any      = new Headers({ 'Content-Type': type}),
+          options  : any      = new RequestOptions({ headers: headers }),
+          url      : any      = this.baseURI + "manage-data.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
+  }
+
+  // Deleting Dislike
+  deleteDislike(userId, postId)
+  {
+    let body     : string   = "key=deleteDislike&postId=" + postId + '&userUid=' + userId,
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),

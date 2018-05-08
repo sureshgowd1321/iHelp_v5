@@ -49,29 +49,41 @@
       </ion-card-content>
 
       <ion-item (click)="gotoCommentsPage(item.id, posts, item)">
-          <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }} Likes  . &nbsp;
-              <ion-icon name="text" icon-left></ion-icon>{{ item.commentsCount }} Comments</p>
+          <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }} . &nbsp;
+              <ion-icon name="thumbs-down" icon-left></ion-icon> {{ item.dislikesCount }}  . &nbsp;
+              <ion-icon name="text" icon-left></ion-icon>{{ item.commentsCount }} </p>
       </ion-item>
 
       <ion-row>
           <ion-col>
-          <button ion-button icon-left clear small (click)="addLike(item.id, item)" *ngIf="!item.isPostLiked" >
-              <ion-icon name="ios-thumbs-up-outline"></ion-icon>
-              <div>Like</div>
-          </button>
+            <button ion-button icon-left clear small (click)="addLike(item.id, item)" *ngIf="!item.isPostLiked" >
+                <ion-icon name="ios-thumbs-up-outline"></ion-icon>
+                <div>Like</div>
+            </button>
 
-          <button ion-button icon-left clear small (click)="removeLike(item.id, item)" *ngIf="item.isPostLiked">
-              <ion-icon name="thumbs-up"></ion-icon>
-              <div>Like</div>
-          </button>
-
+            <button ion-button icon-left clear small (click)="removeLike(item.id, item)" *ngIf="item.isPostLiked">
+                <ion-icon name="thumbs-up"></ion-icon>
+                <div>Like</div>
+            </button>
           </ion-col>
 
+          <ion-col>
+            <button ion-button icon-left clear small (click)="addDislike(item.id, item)" *ngIf="!item.isPostDisliked" >
+                <ion-icon name="ios-thumbs-down-outline"></ion-icon>
+                <div>Dislike</div>
+            </button>
+
+            <button ion-button icon-left clear small (click)="removeDislike(item.id, item)" *ngIf="item.isPostDisliked">
+                <ion-icon name="thumbs-down"></ion-icon>
+                <div>Dislike</div>
+            </button>
+         </ion-col>
+
           <ion-col (click)="gotoCommentsPage(item.id, posts, item)">
-          <button ion-button icon-right clear small >
-              <ion-icon name="text"></ion-icon>
-              <div>Comment</div>
-          </button>
+            <button ion-button icon-right clear small >
+                <ion-icon name="text"></ion-icon>
+                <div>Comment</div>
+            </button>
           </ion-col>
       </ion-row>
 

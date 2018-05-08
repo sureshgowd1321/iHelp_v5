@@ -48,6 +48,7 @@ export class EditPostPage {
   public locationObj : any;
   public profilePic : string;
   selectedLocation;
+  originalSelectedLocation;
 
   posts:  IPosts[] = [];
   postItem: any;
@@ -100,6 +101,7 @@ export class EditPostPage {
                 this.originalPostDesc = postInfo.post;
                 this.locationObj = locationInfo;
                 this.selectedLocation = postInfo.PostedLocation;
+                this.originalSelectedLocation = postInfo.PostedLocation;
                 this.base64Image = postImage;
 
               });
@@ -112,12 +114,11 @@ export class EditPostPage {
   // Edit post method
   updatePost(postDesc: string ) {
 
-    if( this.originalPostDesc === postDesc && this.isImageDeleted === false && this.isImageChanged === false ){
+    if( this.originalPostDesc === postDesc && this.isImageDeleted === false && this.isImageChanged === false && this.selectedLocation === this.originalSelectedLocation){
       // Do Nothing
       this.navCtrl.pop();
 
     }else{
-
       this.phpService.updatePost(postDesc, this.postId, this.selectedLocation, this.userObj.PostalCode,
                                 this.locationObj.City, this.locationObj.State, this.locationObj.Country).subscribe(res => {
 

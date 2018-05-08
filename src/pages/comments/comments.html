@@ -38,8 +38,7 @@
 
       <a class="text-primary">
         <h2> {{ userObj?.name }} </h2>
-        <p> {{ postObj?.CreatedDate }} </p>
-        <!--  | date: 'medium' -->
+        <p> {{ postObj?.CreatedDate | date: 'medium' }} </p>
       </a>
 
     </ion-item>
@@ -61,7 +60,18 @@
           <ion-icon name="thumbs-up"></ion-icon>
           <div>Like</div>
         </button>
+      </ion-col>
 
+      <ion-col>
+        <button ion-button icon-left clear small (click)="addDislike()" *ngIf="!isPostDisliked">
+          <ion-icon name="ios-thumbs-down-outline"></ion-icon>
+          <div>Dislike</div>
+        </button>
+
+        <button ion-button icon-left clear small (click)="removeDislike()" *ngIf="isPostDisliked">
+          <ion-icon name="thumbs-down"></ion-icon>
+          <div>Dislike</div>
+        </button>
       </ion-col>
     </ion-row>
 
@@ -70,9 +80,16 @@
   <button ion-button icon-left clear small (click)="gotoLikesPage(postId)">
     <ion-icon name="ios-thumbs-up"></ion-icon>
     <div>
-      <u> {{ likesCount }} Likes </u>
+      <u> {{ likesCount }} </u>
     </div>
   </button>
+
+  <button ion-button icon-left clear small (click)="gotoDislikesPage(postId)">
+      <ion-icon name="ios-thumbs-down"></ion-icon>
+      <div>
+        <u> {{ dislikesCount }} </u>
+      </div>
+    </button>
 
   <button ion-button icon-left clear small>
     <ion-icon name="text" icon-left></ion-icon>
@@ -97,8 +114,7 @@
 
         <a class="text-primary">
           <h2 (click)="gotoUsersPage(comment.commentedBy)" class="labelStyle"> {{comment.name}}</h2>
-          <p> {{comment.commentedDate }} </p>
-          <!-- | date: 'medium' -->
+          <p> {{comment.commentedDate | date: 'medium' }} </p>
         </a>
 
         {{comment.comment}}

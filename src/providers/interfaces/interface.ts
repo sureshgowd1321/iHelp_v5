@@ -12,10 +12,12 @@ export interface IPosts {
     profilePic   : string;  
     wishId       : number;
     addedToWishlist : boolean;
-    likesCount   : number;
-    isPostLiked  : boolean;
-    commentsCount: number;
-    postImages   : string;
+    likesCount      : number;
+    dislikesCount   : number;
+    isPostLiked     : boolean;
+    isPostDisliked  : boolean;
+    commentsCount   : number;
+    postImages      : string;
 }
 
 export interface IUser {

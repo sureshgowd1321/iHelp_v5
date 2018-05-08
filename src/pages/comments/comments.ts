@@ -21,6 +21,7 @@ import { IComment } from '../../providers/interfaces/interface';
 // Pages
 import { UserProfilePage } from '../user-profile/user-profile';
 import { DisplayPostLikesPage } from '../display-post-likes/display-post-likes';
+import { DisplayPostDislikesPage } from '../display-post-dislikes/display-post-dislikes';
 import { HomePage } from '../../pages/home/home';
 
 // Order Pipe
@@ -48,6 +49,8 @@ export class CommentsPage {
   public isPostInWishlist: boolean;
   public likesCount : number;
   public isPostLiked : boolean;
+  public dislikesCount : number;
+  public isPostDisliked : boolean;
   public commentsCount : number;
   public postImage: string;
 
@@ -91,44 +94,57 @@ export class CommentsPage {
         this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
           this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
             this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
-              this.phpService.getlikeInfoPerUser(this.user.uid, this.postId).subscribe(userLikeInfo => {
-                this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
-                  this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
+              this.phpService.getdislikesCount(postInfo.ID).subscribe(dislikesCount => {
+                this.phpService.getlikeInfoPerUser(this.user.uid, this.postId).subscribe(userLikeInfo => {
+                  this.phpService.getDislikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userDislikeInfo => {
+                  this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
+                    this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
 
-                    // Check post is liked by loggedin User or not
-                    let isLiked = false;
-                    if( userLikeInfo === 0 ){
-                    }else{
-                      isLiked = true;
-                    }
+                        // Check post is liked by loggedin User or not
+                        let isLiked = false;
+                        if( userLikeInfo === 0 ){
+                        }else{
+                          isLiked = true;
+                        }
 
-                    // Get Wishlist information
-                    let isInWishlist = false;
+                        // Check post is liked by loggedin User or not
+                        let isDisliked = false;
+                        if( userDislikeInfo === 0 ){
+                        }else{
+                          isDisliked = true;
+                        }
 
-                    if( wishlistInfo.length === 0 ){
-                    } else {
-                      wishlistInfo.forEach(wishObj=>{
-            
-                        if(wishObj.PostId === this.postId){
-                          isInWishlist = true;
-                        }    
+                        // Get Wishlist information
+                        let isInWishlist = false;
+
+                        if( wishlistInfo.length === 0 ){
+                        } else {
+                          wishlistInfo.forEach(wishObj=>{
+                
+                            if(wishObj.PostId === this.postId){
+                              isInWishlist = true;
+                            }    
+                          });
+                        }
+
+                        // Check each post has Image or not
+                        let postImage;
+                        if(postImages != false){
+                          postImage = this.baseURI + postImages.images_path;
+                        }
+                        console.log('**COmments Image: '+ postImage);
+                        this.postObj          = postInfo;
+                        this.userObj          = userinfo;
+                        this.profilePic       = this.baseURI + userProfilePic.images_path;
+                        this.isPostInWishlist = isInWishlist;
+                        this.likesCount       = likesCount;
+                        this.isPostLiked      = isLiked;
+                        this.dislikesCount       = dislikesCount;
+                        this.isPostDisliked      = isDisliked;
+                        this.commentsCount    = commentsCount;
+                        this.postImage        = postImage;
                       });
-                    }
-
-                    // Check each post has Image or not
-                    let postImage;
-                    if(postImages != false){
-                      postImage = this.baseURI + postImages.images_path;
-                    }
-                    console.log('**COmments Image: '+ postImage);
-                    this.postObj          = postInfo;
-                    this.userObj          = userinfo;
-                    this.profilePic       = this.baseURI + userProfilePic.images_path;
-                    this.isPostInWishlist = isInWishlist;
-                    this.likesCount       = likesCount;
-                    this.isPostLiked      = isLiked;
-                    this.commentsCount    = commentsCount;
-                    this.postImage        = postImage;
+                    });
                   });
                 });
               });
@@ -319,9 +335,11 @@ export class CommentsPage {
 
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
-        this.posts[index].likesCount += 1;
-        this.posts[index].isPostLiked = true;
+        this.posts[index].likesCount = this.likesCount;
+        this.posts[index].isPostLiked =  this.isPostLiked;
       }
+
+      this.removeDislike();
 
     });
   }
@@ -329,21 +347,69 @@ export class CommentsPage {
   // Remove Like
   removeLike(){
     this.phpService.deleteLike(this.user.uid, this.postId).subscribe(likeInfo => {
-      this.likesCount -= 1;
-      this.isPostLiked = false;
-
+      if( this.likesCount > 0 && this.isPostLiked === true){
+        this.likesCount -= 1;
+        this.isPostLiked = false;
+      }
+      
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
-        this.posts[index].likesCount -= 1;
-        this.posts[index].isPostLiked = false;
+        if( this.posts[index].likesCount > 0 ){
+          this.posts[index].likesCount = this.likesCount;
+        }
+        this.posts[index].isPostLiked = this.isPostLiked;
       }
 
     });
   }
 
-  // Go to Edit Post Page to update the post
+  // Add Dislike
+  addDislike(){
+    
+    this.phpService.addDislike(this.user.uid, this.postId).subscribe(dislikeInfo => {
+      this.dislikesCount += 1;
+      this.isPostDisliked = true;  
+
+      if(this.isIndexed === 'UpdateIndex'){
+        var index = this.posts.indexOf(this.postItem);
+        this.posts[index].dislikesCount = this.dislikesCount;
+        this.posts[index].isPostDisliked = this.isPostDisliked;
+      }
+
+      this.removeLike();
+
+    });
+  }
+
+  // Remove Like
+  removeDislike(){
+    this.phpService.deleteDislike(this.user.uid, this.postId).subscribe(dislikeInfo => {
+      if( this.dislikesCount > 0 && this.isPostDisliked === true){
+        this.dislikesCount -= 1;
+        this.isPostDisliked = false;
+      }
+
+      if(this.isIndexed === 'UpdateIndex'){
+        var index = this.posts.indexOf(this.postItem);
+        if( this.posts[index].dislikesCount > 0 ){
+          this.posts[index].dislikesCount = this.dislikesCount;
+        }
+        this.posts[index].isPostDisliked = this.isPostDisliked;
+      }
+
+    });
+  }
+
+  // Go to likes Page to see the liked users
   gotoLikesPage(postId: any) {
     this.navCtrl.push(DisplayPostLikesPage, {
+      postId
+    });
+  }
+
+  // Go to dislikes Page to see the liked users
+  gotoDislikesPage(postId: any) {
+    this.navCtrl.push(DisplayPostDislikesPage, {
       postId
     });
   }

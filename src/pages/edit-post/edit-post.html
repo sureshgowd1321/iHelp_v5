@@ -30,7 +30,7 @@
         <a class="text-primary">
             <h2 >  {{ userObj?.name }} </h2>
         </a>
-        <p> {{ postObj?.CreatedDate }} </p>
+        <p> {{ postObj?.CreatedDate | date: 'medium' }} </p>
     </ion-item>
 
     <ion-item class="no-scroll">
