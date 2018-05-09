@@ -25,7 +25,6 @@ export interface IUser {
     email?            : string;
     photoURL?         : string;
     displayName?      : string;
-    //nickName?         : string;
     favoriteColor?    : string;
     totalStars?       : number;
     createdDate?      : string;
@@ -34,6 +33,7 @@ export interface IUser {
     state?            : string;
     country?          : string;
     birthDate?        : Date;
+    gender?           : string;
 }
 
 export interface IComment {

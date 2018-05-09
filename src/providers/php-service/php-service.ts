@@ -38,13 +38,14 @@ export class PhpServiceProvider {
   }
 
   // Get All Posts
-  getPosts(page: number, postFilter: string, postCity: string, postState: string, postCountry: string, userUid: string) {
+  getPosts(page: number, postFilter: string, postCity: string, postState: string, postCountry: string, userUid: string, createdDate: string) {
       return this.http.get(this.baseURI + 'get-posts.php?page=' + page
                                         + '&userPostFilter=' + postFilter
                                         + '&postedCity=' + postCity
                                         + '&postedState=' + postState
                                         + '&postedCountry=' + postCountry
-                                        + '&userUid=' + userUid)
+                                        + '&userUid=' + userUid
+                                        + '&userCreatedDate=' + createdDate)
       .map(response => response.json());
     } 
 
@@ -316,12 +317,12 @@ export class PhpServiceProvider {
   }
 
   // Add New User service
-  addNewOnlineUser(userId, name, email, locationId)
+  addNewOnlineUser(userId, name, email, locationId, gender)
   {
     let body     : string   = "key=addUser" + 
                               "&userId=" + userId + 
                               "&name=" + name +
-                              //"&nickName=" + nickName +
+                              "&gender=" + gender +
                               "&email=" + email +
                               "&locationId=" + locationId +
                               "&totalStars=" + 0 ,
@@ -337,7 +338,7 @@ export class PhpServiceProvider {
       //If the request was successful notify the user
       if(data.status === 200)
       {
-          console.log('***Add User Success:');
+          console.log('***Add User Success:' + data);
       }
       // Otherwise let 'em know anyway
       else
@@ -364,11 +365,12 @@ export class PhpServiceProvider {
   }
 
   // Update User Data
-  updateUserData(userId, updatedName, locId)
+  updateUserData(userId, updatedName, updatedGender, locId)
   {
     let body     : string   = "key=updateUserData" + 
                               "&userId=" + userId + 
                               "&userName=" + updatedName + 
+                              "&gender=" + updatedGender + 
                               "&locationId=" + locId ,
 
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",

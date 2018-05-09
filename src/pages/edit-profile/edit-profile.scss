@@ -41,4 +41,20 @@ page-edit-profile {
         background-position: center center;
         background-size: contain;
     }
+
+    .profilebutton {
+        z-index: 2;
+        position: absolute;
+        left: 65%;
+        top: 8%;
+        margin: auto;
+    }
+    .profilepic {
+        border:1px solid rgb(161, 32, 32);
+        width: 65%;
+        height: 65%;
+    }
+    .profilepic-border {
+        position: relative;
+    }
 }

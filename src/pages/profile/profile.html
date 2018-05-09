@@ -33,40 +33,33 @@
 
     
  <div>
-  <!-- Display Name (click)="updateName()"-->
+  <!-- Display Name -->
   <ion-item >
     <ion-grid>
       <ion-row>
-        <ion-col width-50 class="labelStyle">
+        <ion-col width-30 class="labelStyle">
           Name
         </ion-col>
         <ion-col >
             {{nameVar}}
-           <!-- {{ user?.displayName }}  -->
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-item>
 
-   <!-- Display Nickname 
-   <ion-item (click)="updateNickName()">
+  <!-- Display Gender-->
+  <ion-item >
     <ion-grid>
       <ion-row>
-        <ion-col width-50 class="labelStyle">
-          Nickname
+        <ion-col width-30 class="labelStyle">
+          Gender
         </ion-col>
         <ion-col >
-            {{userInfo?.nickname}}
-         <!-- {{ (userObj | async)?.nickName }} 
+            {{genderVar}}
         </ion-col>
-        <!-- <ion-col class="placeholder-profile" *ngIf="(userObj | async)?.nickName == null">
-          <span>
-            Tap here to edit.
-          </span>
-        </ion-col> 
       </ion-row>
     </ion-grid>
-  </ion-item> -->
+  </ion-item>
 
   <!-- Display Date of Birth 
   <ion-item>

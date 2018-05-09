@@ -43,7 +43,6 @@ export class SignUpPage {
 
   constructor(public navCtrl: NavController, 
               public firebaseAuth: AngularFireAuth, 
-              //private afs: AngularFirestore,
               public formBuilder: FormBuilder, 
               public loadingCtrl: LoadingController, 
               public alertCtrl: AlertController, 
@@ -83,14 +82,6 @@ export class SignUpPage {
       });
     }); 
   }
-
-  // checkUniqueId(id) {
-
-  //   // check whether id exists
-  //   var index = this.countries.findIndex(item => item === id);
-    
-  //   return index;
-  // }
 
   // Set State values based on selected country
   setStateValues() {
@@ -138,8 +129,8 @@ export class SignUpPage {
           this.authService.signupWithEmailAndPassword(this.signupForm.value.email, 
                                                       this.signupForm.value.password, 
                                                       this.signupForm.value.name,
-                                                      //this.signupForm.value.nickName, 
-                                                      locationInfo.ID
+                                                      locationInfo.ID,
+                                                      this.signupForm.value.gender,
                                                     ).then(value => {
               this.loading.dismiss().then( () => {
                 this.navCtrl.setRoot(TabsPage);
@@ -152,10 +143,6 @@ export class SignUpPage {
         this.signupForm.value.email = this.signupForm.value.password = '';
       });
     }
-  }
-
-  initializeCountries(){
-    
   }
 
   goToLoginPage(): void {

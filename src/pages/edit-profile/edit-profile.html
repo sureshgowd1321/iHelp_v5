@@ -9,43 +9,38 @@
   <ion-navbar>
     <ion-title>Edit Profile</ion-title>
 
-    <ion-buttons end>
-      
+    <ion-buttons end>      
       <button ion-button icon-only color="primary" (click)="goToProfilePage()">
           Done
-      </button>
-     
+      </button>    
     </ion-buttons>
 
   </ion-navbar>
 
 </ion-header>
 
-
 <ion-content >
     
   <div class="background">
-    <!-- Fab to display Camera to take picture from Mobile Camera -->
-    <ion-fab left top>
-      <button ion-fab color="primary" (click)="takePicture()">
-            <ion-icon name="md-camera"></ion-icon>
-        </button>
-    </ion-fab>
-  
-    <!-- Fab to display Gallery to Select Image from Mobile Gallery  -->
-    <ion-fab right top>
-      <button ion-fab color="secondary" (click)="selectFromGallery()">
-            <ion-icon name="image"></ion-icon>
-        </button>
-    </ion-fab> 
 
-    <!-- Display Image -->
-    <img src="{{ userProfilePic }}" class="roung-img" #imageToView (click)="displayImageFullScreen(imageToView)"> 
+    <div class="item profilepic-border" align="center">
+      <ion-icon  name="camera" class="button profilebutton icon ion-camera" (click)="editPictureOptions()"></ion-icon>
+      <img src="{{ userProfilePic }}" class="roung-img" #imageToView (click)="displayImageFullScreen(imageToView)">
+    </div>
+
   </div>
     <ion-item>
       <ion-label color="primary">Name</ion-label>
       <ion-input type="string" [(ngModel)]="updatedName" ></ion-input>
-  </ion-item>
+    </ion-item>
+
+    <ion-item>
+      <ion-label color="primary">Gender</ion-label>
+      <ion-select [(ngModel)]="updatedGender">
+        <ion-option value="Male">Male</ion-option>
+        <ion-option value="Female">Female</ion-option>
+      </ion-select>
+    </ion-item>
 
     <ion-item >
       <ion-grid>
@@ -63,7 +58,6 @@
     <ion-list-header>
         <h6 class="locHeader">Update Your location</h6> 
       </ion-list-header>
-    <!-- <h6 class="locHeader">  Update Your location </h6> -->
 
     <ion-item>
       <ion-label color="primary">Country</ion-label>

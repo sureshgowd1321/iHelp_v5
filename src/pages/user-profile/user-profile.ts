@@ -32,6 +32,8 @@ export class UserProfilePage {
   emailVar: string;
   userProfilePic: string;
   userUid: string;
+  gender: string;
+
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public navCtrl: NavController, 
@@ -52,6 +54,7 @@ export class UserProfilePage {
           this.userUid = userinfo.userUid;
           this.nameVar = userinfo.name;
           this.emailVar = userinfo.email;
+          this.gender = userinfo.Gender;
           this.countryVar = locationinfo.Country;
           this.stateVar = locationinfo.State;
           this.cityVar = locationinfo.City;

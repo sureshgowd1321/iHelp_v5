@@ -9,8 +9,6 @@ import { TabsPage } from '../tabs/tabs';
 import { SignUpPage } from '../sign-up/sign-up';
 import { ResetPasswordPage } from '../reset-password/reset-password';
 
-import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
-
 /**
  * Generated class for the LoginPage page.
  *
@@ -33,8 +31,7 @@ export class LoginPage {
               public formBuilder: FormBuilder, 
               private firebaseAuth: AngularFireAuth,
               public alertCtrl: AlertController, 
-              public loadingCtrl: LoadingController, 
-              private authService: AuthServiceProvider) {
+              public loadingCtrl: LoadingController) {
 
     this.loginForm = formBuilder.group({
       email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
@@ -42,36 +39,6 @@ export class LoginPage {
       Validators.required])]
     });
   }
-  
-  googleLogin() {
-    this.authService.googleLogin().then(value => {
-        this.navCtrl.setRoot(TabsPage);
-    });
-  }
-
-  facebookLogin() {
-    this.authService.facebookLogin().then(value => {
-        this.navCtrl.setRoot(TabsPage);
-    });
-  }
-
-  // // Login
-  // login() {
-  //   if (!this.loginForm.valid) {
-  //     console.log(this.loginForm.value);
-  //   } else {
-  //     this.authService.loginWithEmailAndPassword(this.loginForm.value.email, this.loginForm.value.password).then(value => {
-  //       this.loading.dismiss().then( () => {
-  //         this.navCtrl.setRoot(TabsPage);
-  //       });
-  //   });
-  //     this.loading = this.loadingCtrl.create();
-  //     this.loading.present();
-
-  //     this.loginForm.value.email = this.loginForm.value.password = '';
-
-  //   }
-  // }
 
   // Login
   login() {
@@ -118,6 +85,36 @@ export class LoginPage {
   // Goto Reset password page
 	goToResetPassword(): void {
 	  this.navCtrl.push(ResetPasswordPage);
-	}
+  }
+  
+  // googleLogin() {
+  //   this.authService.googleLogin().then(value => {
+  //       this.navCtrl.setRoot(TabsPage);
+  //   });
+  // }
+
+  // facebookLogin() {
+  //   this.authService.facebookLogin().then(value => {
+  //       this.navCtrl.setRoot(TabsPage);
+  //   });
+  // }
+
+  // // Login
+  // login() {
+  //   if (!this.loginForm.valid) {
+  //     console.log(this.loginForm.value);
+  //   } else {
+  //     this.authService.loginWithEmailAndPassword(this.loginForm.value.email, this.loginForm.value.password).then(value => {
+  //       this.loading.dismiss().then( () => {
+  //         this.navCtrl.setRoot(TabsPage);
+  //       });
+  //   });
+  //     this.loading = this.loadingCtrl.create();
+  //     this.loading.present();
+
+  //     this.loginForm.value.email = this.loginForm.value.password = '';
+
+  //   }
+  // }
 
 }

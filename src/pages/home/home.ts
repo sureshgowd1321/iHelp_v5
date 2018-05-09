@@ -77,8 +77,8 @@ export class HomePage {
       this.phpService.getUserInfo(this.user.uid).subscribe(loggedInUserInfo => {
         this.phpService.getLocationInfo(loggedInUserInfo.PostalCode).subscribe(userLocationInfo => {
           this.phpService.getPosts(this.page, loggedInUserInfo.PostFilter, userLocationInfo.City, 
-                                    userLocationInfo.State, userLocationInfo.Country, this.user.uid).subscribe(postdata => {
-
+                                    userLocationInfo.State, userLocationInfo.Country, this.user.uid, loggedInUserInfo.CreatedDate).subscribe(postdata => {
+                                      
             postdata.forEach(postInfo => {
 
               this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
