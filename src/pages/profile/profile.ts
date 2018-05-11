@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, App, AlertController, LoadingController, NavController } from 'ionic-angular';
 import { Http } from '@angular/http';
 
-//import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { AngularFireAuth } from 'angularfire2/auth';
-//import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
 //Constants
@@ -34,9 +32,9 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 export class ProfilePage {
 
   user;
-  public userInfo: any;
 
   nameVar: string;
+  genderVar: string;
   cityVar: string;
   stateVar: string;
   countryVar: string;
@@ -66,8 +64,9 @@ export class ProfilePage {
     this.phpService.getUserInfo(this.user.uid).subscribe(userinfo => {
       this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(locationinfo => {
         this.phpService.getUserProfilePic(this.user.uid).subscribe(userProfilePic => {
-          
+
           this.userUid = userinfo.userUid;
+          this.genderVar = userinfo.Gender;
           this.nameVar = userinfo.name;
           this.emailVar = userinfo.email;
           this.countryVar = locationinfo.Country;

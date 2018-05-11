@@ -38,4 +38,17 @@ page-comments {
         min-height: 35px !important;
         height: 80%;
     }
+
+    .ion-input {
+        display: block;
+        width: auto;
+    }
+
+    #myInput {
+        width: calc(100% - 10px);
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        white-space: normal
+    }
 }

@@ -36,18 +36,18 @@ export class PhpServiceProvider {
     return this.http.get(this.baseURI + 'getUserProfilePic.php?userId='+id)
     .map(response => response.json());
   }
-  
+
   // Get All Posts
-  getAllPosts(minCount: string, loadType: string, postalCode: string, postFilter: string, postCity: string, postState: string, postCountry: string) {
-    return this.http.get(this.baseURI + 'retrieve-data.php?minCount=' + minCount 
-                                      + '&loadType=' + loadType 
-                                      + '&userPostalCode=' + postalCode
-                                      + '&userPostFilter=' + postFilter
-                                      + '&postedCity=' + postCity
-                                      + '&postedState=' + postState
-                                      + '&postedCountry=' + postCountry )
-    .map(response => response.json());
-  } 
+  getPosts(page: number, postFilter: string, postCity: string, postState: string, postCountry: string, userUid: string, createdDate: string) {
+      return this.http.get(this.baseURI + 'get-posts.php?page=' + page
+                                        + '&userPostFilter=' + postFilter
+                                        + '&postedCity=' + postCity
+                                        + '&postedState=' + postState
+                                        + '&postedCountry=' + postCountry
+                                        + '&userUid=' + userUid
+                                        + '&userCreatedDate=' + createdDate)
+      .map(response => response.json());
+    } 
 
   // Get Post Information
   getPostInfo(postId: string) {
@@ -56,16 +56,27 @@ export class PhpServiceProvider {
   }
 
   // Get All Posts from User Id
-  getPostsFromUserId(userUid: string, minCount: string, loadType: string) {
+  getPostsFromUserId(page: number, userUid: string) {
     return this.http.get(this.baseURI + 'getPostsFromUserId.php?userUid='+userUid
-                                      + '&loadType=' + loadType
-                                      + '&minCount=' + minCount)
+                                      + '&page=' + page)
     .map(response => response.json());
   }
 
-  // Get All Comments
+  // Get Images from Post
+  getPostImages(id: string) {
+    return this.http.get(this.baseURI + 'get-Post-Images.php?postId='+id)
+    .map(response => response.json());
+  }
+
+  // Get All Comments per post
   getAllComments(postId: string) {
-    return this.http.get(this.baseURI + 'get-all-comments.php?postId='+postId)
+    return this.http.get(this.baseURI + 'get-all-comments.php?key=totalCommentsPerPost&postId='+postId)
+    .map(response => response.json());
+  }
+
+  // Get Count of Comments per post
+  getCountOfComments(postId: string) {
+    return this.http.get(this.baseURI + 'get-all-comments.php?key=countOfCommentsPerPost&postId='+postId)
     .map(response => response.json());
   }
 
@@ -81,14 +92,57 @@ export class PhpServiceProvider {
     .map(response => response.json());
   }
 
+  // Get Wishlist information from User Id
+  getWishlistFromUserId(userUid: string) {
+    return this.http.get(this.baseURI + 'getWishlistFromUserId.php?userUid=' + userUid)
+    .map(response => response.json());
+  }
+
+  // Get Wishlist information from User Id
+  getMyWishlist(page: number, userUid: string) {
+    return this.http.get(this.baseURI + 'get-my-wishlist.php?userUid=' + userUid
+                                      + '&page=' + page)
+    .map(response => response.json());
+  }
+
+  //Get count of Likes for each post
+  getlikesCount(postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalLikesCountPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  //Get count of Dislikes for each post
+  getdislikesCount(postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalDislikesCountPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  //Get like info per user per post
+  getlikeInfoPerUser(userId: string, postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=likesPerUser&userId=' + userId + '&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  //Get Dislike info per user per post
+  getDislikeInfoPerUser(userId: string, postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=dislikesPerUser&userId=' + userId + '&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  //Get like info per user per post
+  getLikesPerPost(postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalLikesPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  //Get Dislike info per user per post
+  getDislikesPerPost(postId: string) {
+    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalDislikesPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
   // Get All Countries
   getAllCountries() {
-  //  let body     : string   = "key=countries",
-        // type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
-        // headers  : any      = new Headers({ 'Content-Type': type}),
-        // options  : any      = new RequestOptions({ headers: headers }),
-       // url      : any      = this.baseURI + "get-all-locations.php?key=countries";
-
     return this.http.get(this.baseURI + 'get-all-locations.php?key=countries')
     .map(response => response.json());
   }
@@ -108,28 +162,17 @@ export class PhpServiceProvider {
   }
 
   // Updating existing post
-  updatePost(postDesc, recordID)
+  updatePost(postDesc, recordID, postedLocation, PostalCode, postedCity, postedState, postedCountry)
   {
-     let body       : string = "key=update&post=" + postDesc + "&recordID=" + recordID,
+     let body       : string = "key=update&post=" + postDesc + "&recordID=" + recordID+ '&postedLocation=' + postedLocation + '&postalCode=' + PostalCode + 
+                                '&postedCity='+ postedCity + '&postedState=' + postedState + '&postedCountry=' + postedCountry,
          type       : string = "application/x-www-form-urlencoded; charset=UTF-8",
          headers    : any     = new Headers({ 'Content-Type': type}),
          options    : any     = new RequestOptions({ headers: headers }),
          url        : any     = this.baseURI + "manage-data.php";
 
-     this.http.post(url, body, options)
-     .subscribe(data =>
-     {
-        // If the request was successful notify the user
-        if(data.status === 200)
-        {
-          console.log('Successfully post updated');
-        }
-        // Otherwise let 'em know anyway
-        else
-        {
-           console.log('Something went wrong!');
-        }
-     });
+    return this.http.post(url, body, options)
+              .map(response => response.json());
   }
   
   // Deleting post
@@ -141,20 +184,45 @@ export class PhpServiceProvider {
          options    : any    = new RequestOptions({ headers: headers }),
          url        : any    = this.baseURI + "manage-data.php";
 
-     this.http.post(url, body, options)
-     .subscribe(data =>
-     {
-        // If the request was successful notify the user
-        if(data.status === 200)
-        {
-          console.log('Successfully post deleted');
-        }
-        // Otherwise let 'em know anyway
-        else
-        {
-           console.log('Something went wrong!');
-        }
-     });
+     return this.http.post(url, body, options)
+              .map(response => response.json());
+    //  .subscribe(data =>
+    //  {
+    //     // If the request was successful notify the user
+    //     if(data.status === 200)
+    //     {
+    //       console.log('Successfully post deleted');
+    //     }
+    //     // Otherwise let 'em know anyway
+    //     else
+    //     {
+    //        console.log('Something went wrong!');
+    //     }
+    //  });
+  }
+
+  // Upload Post Image
+  uploadPostImage(postId){
+    let body     : string   = "postId=" + postId ,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "upload-post-image.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
+  }
+
+  // Delete Post Image
+  deleteImage(postId){
+    let body     : string   = "key=deleteImagesOfPost&postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
   }
 
   // Adding New comments
@@ -183,7 +251,7 @@ export class PhpServiceProvider {
                     .map(response => response.json());
   }
 
-  // Deleting comments
+  // Deleting comments from CommentId
   deleteComment(commentId)
   {
     let body     : string   = "key=deleteComment&commentId=" + commentId,
@@ -196,13 +264,65 @@ export class PhpServiceProvider {
                 .map(response => response.json());
   }
 
+  // Deleting all comments of deleted Post
+  deleteCommentsOfPost(postId)
+  {
+    let body     : string   = "key=deleteCommentsOfPost&postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Deleting all Likes of deleted Post
+  deleteLikesOfPost(postId)
+  {
+    let body     : string   = "key=deleteLikesOfPost&postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Deleting all Dislikes of deleted Post
+  deleteDislikesOfPost(postId)
+  {
+    let body     : string   = "key=deleteDislikesOfPost&postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Deleting all comments of deleted Post
+  deleteWishlistOfPost(postId)
+  {
+    let body     : string   = "key=deleteWishlistOfPost&postId=" + postId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
   // Add New User service
-  addNewOnlineUser(userId, name, email, nickName, locationId)
+  addNewOnlineUser(userId, name, email, locationId, gender)
   {
     let body     : string   = "key=addUser" + 
                               "&userId=" + userId + 
                               "&name=" + name +
-                              "&nickName=" + nickName +
+                              "&gender=" + gender +
                               "&email=" + email +
                               "&locationId=" + locationId +
                               "&totalStars=" + 0 ,
@@ -218,7 +338,7 @@ export class PhpServiceProvider {
       //If the request was successful notify the user
       if(data.status === 200)
       {
-          console.log('***Add User Success:');
+          console.log('***Add User Success:' + data);
       }
       // Otherwise let 'em know anyway
       else
@@ -245,11 +365,12 @@ export class PhpServiceProvider {
   }
 
   // Update User Data
-  updateUserData(userId, updatedName, locId)
+  updateUserData(userId, updatedName, updatedGender, locId)
   {
     let body     : string   = "key=updateUserData" + 
                               "&userId=" + userId + 
                               "&userName=" + updatedName + 
+                              "&gender=" + updatedGender + 
                               "&locationId=" + locId ,
 
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
@@ -259,6 +380,84 @@ export class PhpServiceProvider {
 
     return this.http.post(url, body, options)
                   .map(response => response.json());
+  }
+
+  // Adding New Wishlist
+  addWishlist(userId, postId)
+  {
+      let body     : string   = "key=addWishlist&postId=" + postId + '&userUid=' + userId,
+          type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+          headers  : any      = new Headers({ 'Content-Type': type}),
+          options  : any      = new RequestOptions({ headers: headers }),
+          url      : any      = this.baseURI + "manage-data.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
+  }
+
+  // Deleting Wishlist
+  deleteWishlist(userId, postId)
+  {
+    let body     : string   = "key=deleteWishlist&postId=" + postId + '&userUid=' + userId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Adding Like to a post
+  addLike(userId, postId)
+  {
+      let body     : string   = "key=addLike&postId=" + postId + '&userUid=' + userId,
+          type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+          headers  : any      = new Headers({ 'Content-Type': type}),
+          options  : any      = new RequestOptions({ headers: headers }),
+          url      : any      = this.baseURI + "manage-data.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
+  }
+
+  // Deleting Like
+  deleteLike(userId, postId)
+  {
+    let body     : string   = "key=deleteLike&postId=" + postId + '&userUid=' + userId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
+  }
+
+  // Adding Dislike to a post
+  addDislike(userId, postId)
+  {
+      let body     : string   = "key=addDislike&postId=" + postId + '&userUid=' + userId,
+          type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+          headers  : any      = new Headers({ 'Content-Type': type}),
+          options  : any      = new RequestOptions({ headers: headers }),
+          url      : any      = this.baseURI + "manage-data.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
+  }
+
+  // Deleting Dislike
+  deleteDislike(userId, postId)
+  {
+    let body     : string   = "key=deleteDislike&postId=" + postId + '&userUid=' + userId,
+        type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+        headers  : any      = new Headers({ 'Content-Type': type}),
+        options  : any      = new RequestOptions({ headers: headers }),
+        url      : any      = this.baseURI + "manage-data.php";
+
+    return this.http.post(url, body, options)
+                .map(response => response.json());
   }
 
 }

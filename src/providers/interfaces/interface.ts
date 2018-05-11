@@ -9,7 +9,15 @@ export interface IPosts {
     city         : string;
     state        : string;
     country      : string;
-    profilePic   : string;
+    profilePic   : string;  
+    wishId       : number;
+    addedToWishlist : boolean;
+    likesCount      : number;
+    dislikesCount   : number;
+    isPostLiked     : boolean;
+    isPostDisliked  : boolean;
+    commentsCount   : number;
+    postImages      : string;
 }
 
 export interface IUser {
@@ -17,7 +25,6 @@ export interface IUser {
     email?            : string;
     photoURL?         : string;
     displayName?      : string;
-    nickName?         : string;
     favoriteColor?    : string;
     totalStars?       : number;
     createdDate?      : string;
@@ -26,6 +33,7 @@ export interface IUser {
     state?            : string;
     country?          : string;
     birthDate?        : Date;
+    gender?           : string;
 }
 
 export interface IComment {

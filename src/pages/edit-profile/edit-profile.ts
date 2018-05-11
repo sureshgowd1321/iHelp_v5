@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, AlertController, ActionSheetController } from 'ionic-angular';
 import { Http } from '@angular/http';
 
 import * as firebase from 'firebase/app';
@@ -12,7 +12,6 @@ import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
 // Interfaces
-import { IUser } from '../../providers/interfaces/interface';
 import { ICountries } from '../../providers/interfaces/interface';
 
 // Native Plugins
@@ -34,14 +33,11 @@ import { Camera } from '@ionic-native/camera';
 export class EditProfilePage {
 
   user;
-  //public userObj : IUser;
-  //public locationObj: any;
 
   allLocations: ICountries[] = [];
   countries: any = [];
   selectedStates: any = [];
   selectedCities: any = [];
- // public userInt: IUser;
 
   public userCountry: string;
   public userState: string;
@@ -52,6 +48,7 @@ export class EditProfilePage {
   public selectedState: string;
   public selectedCity: string;
   public updatedName: string;
+  public updatedGender: string;
 
   private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
@@ -62,10 +59,11 @@ export class EditProfilePage {
               private transfer: FileTransfer,
               private camera: Camera,
               public loadingCtrl: LoadingController,
-              private profileData: ProfileDataProvider) {
+              private profileData: ProfileDataProvider,
+              public alertCtrl: AlertController,
+              public actionSheetCtrl: ActionSheetController) {
 
     this.user = firebase.auth().currentUser; 
-    
     
   }
 
@@ -77,6 +75,7 @@ export class EditProfilePage {
         this.phpService.getUserProfilePic(this.user.uid).subscribe(userProfilePic => {
 
           this.updatedName = userinfo.name;
+          this.updatedGender = userinfo.Gender;
           this.userCountry = locationinfo.Country;
           this.userState = locationinfo.State;
           this.userCity = locationinfo.City;
@@ -150,7 +149,7 @@ export class EditProfilePage {
 
   goToProfilePage(): void {
     this.phpService.getLocationId(this.selectedCity, this.selectedState, this.selectedCountry).subscribe(locationInfo => {
-        this.phpService.updateUserData(this.user.uid, this.updatedName, locationInfo.ID).subscribe(locationInfo => {
+        this.phpService.updateUserData(this.user.uid, this.updatedName, this.updatedGender, locationInfo.ID).subscribe(locationInfo => {
           this.navCtrl.pop();
         });
     });
@@ -255,6 +254,36 @@ export class EditProfilePage {
   // Display Image in Full Screen  
 	displayImageFullScreen(imageToView) {
 		this.profileData.displayImageInFullScreen(imageToView);
+  }
+
+  // Action sheet to display options on selecting profile picture
+  editPictureOptions() {
+    let actionSheet = this.actionSheetCtrl.create({
+      buttons: [
+        {
+          text: 'Take Picture',
+          role: 'destructive',
+          handler: () => {
+            this.takePicture();
+          }
+        },
+        {
+          text: 'Select From Gallery',
+          handler: () => {
+            this.selectFromGallery();
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
   }
 
 }

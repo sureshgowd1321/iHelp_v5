@@ -45,56 +45,13 @@ export class AuthServiceProvider {
     })
   }
 
-  // Google Provider Login
-  googleLogin() {
-    const provider = new firebase.auth.GoogleAuthProvider()
-    return this.oAuthLogin(provider);
-  }
-
-  // Facebook Provider Login
-  facebookLogin() {
-    const provider = new firebase.auth.FacebookAuthProvider()
-    return this.oAuthLogin(provider);
-  }
-
-  // oAuth Login
-  private oAuthLogin(provider) {
-    return this.afAuth.auth.signInWithPopup(provider)
-      .then((credential) => {
-
-        this.updateUserData(credential.user);
-
-      })
-  }
-  
-  // Update User Data
-  private updateUserData(user) {
-    // Sets user data to firestore on login
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
-    const data: IUser = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      nickName: '',
-      photoURL: user.photoURL,
-      totalStars: 0,
-      createdDate: new Date().toISOString(),
-      displayPostsFrom: 'world',
-      city: '',
-      country: '',
-      birthDate: null
-    }
-    userRef.set(data);
-   // this.phpService.addNewOnlineUser(user.uid, user.displayName, user.email, user.photoURL);
-  }
-
   // Signup with Username & Password
-  signupWithEmailAndPassword(email: string, password: string, name: string, nickName: string, locationId: string) {
+  signupWithEmailAndPassword(email: string, password: string, name: string, locationId: string, gender: string) {
     return this.afAuth
     .auth
     .createUserWithEmailAndPassword(email, password)
     .then((newUser) => {
-      this.updateUserDataEmailAndPassword(newUser, name, nickName, locationId)
+      this.updateUserDataEmailAndPassword(newUser, name, locationId, gender)
     })
     .catch(err => {
       console.log('Something went wrong:',err.message);
@@ -114,25 +71,19 @@ export class AuthServiceProvider {
   }
 
   // Update User Data
-  private updateUserDataEmailAndPassword(user, name: string, nickName: string, locationId: string) {
+  private updateUserDataEmailAndPassword(user, name: string, locationId: string, gender: string) {
     // Sets user data to firestore on login
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
     const data: IUser = {
-      uid: user.uid,
-      email: user.email,
-      displayName: name,
-      nickName: nickName,
-     // photoURL: 'https://firebasestorage.googleapis.com/v0/b/cards-unlimited.appspot.com/o/DummyImage.jpg?alt=media&token=87170396-af1c-4e59-8c4c-eb30d78279a2',
-      totalStars: 0,
-      createdDate: new Date().toISOString(),
-      //displayPostsFrom: 'world',
-      //city: city,
-      //state: state,
-     // country: country,
-     // birthDate: null
+      uid         : user.uid,
+      email       : user.email,
+      displayName : name,
+      gender      : gender,  
+      totalStars  : 0,
+      createdDate : new Date().toISOString()
     }
     userRef.set(data);
-    this.phpService.addNewOnlineUser(user.uid, name, user.email, nickName, locationId);
+    this.phpService.addNewOnlineUser(user.uid, name, user.email, locationId, gender);
   }
 
   // Logout
@@ -141,5 +92,48 @@ export class AuthServiceProvider {
       .auth
       .signOut();
   }
+
+  // Google Provider Login
+  // googleLogin() {
+  //   const provider = new firebase.auth.GoogleAuthProvider()
+  //   return this.oAuthLogin(provider);
+  // }
+
+  // Facebook Provider Login
+  // facebookLogin() {
+  //   const provider = new firebase.auth.FacebookAuthProvider()
+  //   return this.oAuthLogin(provider);
+  // }
+
+  // oAuth Login
+  // private oAuthLogin(provider) {
+  //   return this.afAuth.auth.signInWithPopup(provider)
+  //     .then((credential) => {
+
+  //       this.updateUserData(credential.user);
+
+  //     })
+  // }
+
+  // Update User Data
+  // private updateUserData(user) {
+  //   // Sets user data to firestore on login
+  //   const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+  //   const data: IUser = {
+  //     uid: user.uid,
+  //     email: user.email,
+  //     displayName: user.displayName,
+  //     //nickName: '',
+  //     photoURL: user.photoURL,
+  //     totalStars: 0,
+  //     createdDate: new Date().toISOString(),
+  //     displayPostsFrom: 'world',
+  //     city: '',
+  //     country: '',
+  //     birthDate: null
+  //   }
+  //   userRef.set(data);
+  //  // this.phpService.addNewOnlineUser(user.uid, user.displayName, user.email, user.photoURL);
+  // }
 
 }

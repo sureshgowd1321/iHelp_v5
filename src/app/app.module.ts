@@ -7,7 +7,7 @@ import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 
 // Angular Fire Modules
-import * as firebase from 'firebase/app'; 
+import * as firebase from 'firebase/app';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
@@ -28,18 +28,24 @@ import { CommentsPage } from '../pages/comments/comments';
 import { FilterPostsPage } from '../pages/filter-posts/filter-posts';
 import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 import { UserPostsPage } from '../pages/user-posts/user-posts';
+import { MyWishlistPage } from '../pages/my-wishlist/my-wishlist';
+import { UserProfilePage } from '../pages/user-profile/user-profile';
+import { DisplayPostLikesPage } from '../pages/display-post-likes/display-post-likes';
+import { DisplayPostDislikesPage } from '../pages/display-post-dislikes/display-post-dislikes';
 
 // Native plugins
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicImageViewerModule } from 'ionic-img-viewer';
-import { FileTransfer } from '@ionic-native/file-transfer'; // , FileUploadOptions, FileTransferObject
+import { FileTransfer } from '@ionic-native/file-transfer';
 import { Camera } from '@ionic-native/camera';
 
 // Providers
 import { PhpServiceProvider } from '../providers/php-service/php-service';
 import { AuthServiceProvider } from '../providers/auth-service/auth-service';
 import { ProfileDataProvider } from '../providers/profile-data/profile-data';
+
+import { OrderModule } from 'ngx-order-pipe';
 
 @NgModule({
   declarations: [
@@ -55,7 +61,11 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     CommentsPage,
     FilterPostsPage,
     EditProfilePage,
-    UserPostsPage
+    UserPostsPage,
+    MyWishlistPage,
+    UserProfilePage,
+    DisplayPostLikesPage,
+    DisplayPostDislikesPage
   ],
   imports: [
     BrowserModule,
@@ -65,7 +75,8 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     AngularFireAuthModule,
     AngularFirestoreModule,
     FormsModule,
-    IonicImageViewerModule
+    IonicImageViewerModule,
+    OrderModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -81,17 +92,21 @@ import { ProfileDataProvider } from '../providers/profile-data/profile-data';
     CommentsPage,
     FilterPostsPage,
     EditProfilePage,
-    UserPostsPage
+    UserPostsPage,
+    MyWishlistPage,
+    UserProfilePage,
+    DisplayPostLikesPage,
+    DisplayPostDislikesPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     FileTransfer,
     Camera,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
     PhpServiceProvider,
     AuthServiceProvider,
     ProfileDataProvider
   ]
 })
-export class AppModule {}
+export class AppModule { }

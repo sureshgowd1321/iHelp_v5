@@ -1,10 +1,9 @@
-import { Component } from '@angular/core'; // , OnInit
+/**
+ * Generated class for the Home page.
+ */
+import { Component } from '@angular/core';
 import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
 import { Http } from '@angular/http';
-
-//import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app'; 
 
 //Pages
@@ -12,6 +11,7 @@ import { AddPostPage } from '../add-post/add-post';
 import { EditPostPage } from '../edit-post/edit-post';
 import { CommentsPage } from '../comments/comments';
 import { FilterPostsPage } from '../filter-posts/filter-posts';
+import { UserProfilePage } from '../user-profile/user-profile';
 
 //Constants
 import { constants } from '../../constants/constants';
@@ -22,7 +22,9 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
 // Interfaces
 import { IPosts } from '../../providers/interfaces/interface';
-import { IUser } from '../../providers/interfaces/interface';
+
+// Order Pipe
+import { OrderPipe } from 'ngx-order-pipe';
 
 @Component({
   selector: 'page-home',
@@ -30,118 +32,158 @@ import { IUser } from '../../providers/interfaces/interface';
 })
 export class HomePage {
 
+    // LoggedIn User Info variables
     user;
-    userDoc: AngularFirestoreDocument<IUser>;
-    userObj: Observable<IUser>;
 
+    // List of posts to display
     public posts: IPosts[] = [];
 
+    // Order By Variables
+    order: string = 'id';
+    reverse: boolean = true;
+
+    // HTTP Base URI 
     private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
+    // Pagination Variables
+    page = 1;
+    maximumPages = 40;
+
+    // Variables to pass comments page
+    postId: any;
+    postItem: any;
+
     constructor(public http : Http, 
-                public navCtrl: NavController, 
-                private afs: AngularFirestore, 
+                public navCtrl: NavController,
                 private profileData: ProfileDataProvider,
                 public actionSheetCtrl: ActionSheetController,
                 public phpService: PhpServiceProvider,
-                public alertCtrl: AlertController ) {
+                public alertCtrl: AlertController,
+                private orderPipe: OrderPipe) {
                 
-        this.user = firebase.auth().currentUser; 
-        console.log('**This User: '+ this.user.uid);
-                  
-        this.userDoc = this.afs.doc('users/'+this.user.uid);
-        this.userObj = this.userDoc.valueChanges();    
+        this.user = firebase.auth().currentUser;  
         
     }
 
-    ionViewWillEnter()
-    {  
-      this.posts = [];
-      this.load(0, 'initialload');
+    ionViewDidLoad(){  
+      this.posts.length = 0;
+      this.page = 1;
+      this.loadPosts();
     }
 
-    // Retrieve the JSON encoded data from the remote server
-    // Using Angular's Http class and an Observable - then
-    // assign this to the items array for rendering to the HTML template
-    load(minCount, loadType)
-    {
-      
+    // Load all posts to display
+    loadPosts(infiniteScroll?){
+
       this.phpService.getUserInfo(this.user.uid).subscribe(loggedInUserInfo => {
-
         this.phpService.getLocationInfo(loggedInUserInfo.PostalCode).subscribe(userLocationInfo => {
+          this.phpService.getPosts(this.page, loggedInUserInfo.PostFilter, userLocationInfo.City, 
+                                    userLocationInfo.State, userLocationInfo.Country, this.user.uid, loggedInUserInfo.CreatedDate).subscribe(postdata => {
+                                      
+            postdata.forEach(postInfo => {
 
-          this.phpService.getAllPosts(minCount, loadType, loggedInUserInfo.PostalCode, loggedInUserInfo.PostFilter, 
-                                      userLocationInfo.City, userLocationInfo.State, userLocationInfo.Country )     
-          .subscribe(data =>
-          { 
-            if( data.length === 0 ){
-            // this.hasData = false;
-            }else {
-              data.forEach(item=>{ 
-                  var index = this.checkUniqueId(item.ID);
-                  
-                  if (index > -1){
-                  } else {
-                    
-                    this.phpService.getUserInfo(item.CreatedById).subscribe(userinfo => {
+              this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
+                this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
+                  this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
+                    this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
+                      this.phpService.getdislikesCount(postInfo.ID).subscribe(dislikesCount => {
+                        this.phpService.getlikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userLikeInfo => {
+                          this.phpService.getDislikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userDislikeInfo => {
+                            this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {                                
+                              this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
+                                this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
 
-                      this.phpService.getUserProfilePic(item.CreatedById).subscribe(userProfilePic => {
-                        
-                        this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {
-                        
-                          this.posts.push(
-                            {
-                              "id"           : item.ID,
-                              "post"         : item.post,
-                              "createdDate"  : item.CreatedDate,
-                              "createdById"  : item.CreatedById,
-                              "name"         : userinfo.name,
-                              "email"        : userinfo.email,
-                              "nickname"     : userinfo.nickname,
-                              "city"         : userLocationInfo.City,
-                              "state"        : userLocationInfo.State,
-                              "country"      : userLocationInfo.Country,
-                              "profilePic"   : this.baseURI + userProfilePic.images_path
-                            }
-                          );
+                                  // Check post is liked by loggedin User or not
+                                  let isPostLiked = false;
+                                  if( userLikeInfo === 0 ){
+                                  }else{
+                                    isPostLiked = true;
+                                  }
+
+                                  // Check post is Disliked by loggedin User or not
+                                  let isPostDisliked = false;
+                                  if( userDislikeInfo === 0 ){
+                                  }else{
+                                    isPostDisliked = true;
+                                  }
+
+                                  // Check post is added to wishlist or not
+                                  let isPostInWishlist = false;
+                                  if( wishlistInfo.length === 0 ){
+                                  } else {
+                                    wishlistInfo.forEach(wishObj=>{
+                          
+                                      if(wishObj.PostId === postInfo.ID){
+                                        isPostInWishlist = true;
+                                      }    
+                                    });
+                                  }
+
+                                  // Check each post has Image or not
+                                  let postImage;
+                                  if(postImages != false){
+                                    postImage = this.baseURI + postImages.images_path;
+                                  }
+
+                                  this.posts.push(
+                                    {
+                                      "id"           : postInfo.ID,
+                                      "post"         : postInfo.post,
+                                      "createdDate"  : postInfo.CreatedDate,
+                                      "createdById"  : postInfo.CreatedById,
+                                      "name"         : userinfo.name,
+                                      "email"        : userinfo.email,
+                                      "nickname"     : userinfo.nickname,
+                                      "city"         : userLocationInfo.City,
+                                      "state"        : userLocationInfo.State,
+                                      "country"      : userLocationInfo.Country,
+                                      "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                      "wishId"       : wishlistInfo.id,
+                                      "addedToWishlist" : isPostInWishlist,
+                                      "likesCount"      : likesCount,
+                                      "dislikesCount"   : dislikesCount,
+                                      "isPostLiked"     : isPostLiked,
+                                      "isPostDisliked"  : isPostDisliked,
+                                      "commentsCount"   : commentsCount,
+                                      "postImages"      : postImage
+                                    }
+                                  );
+                                });
+                              });
+                            });
+                          });
                         });
                       });
                     });
-                  }
+                  });
+                });
               });
+            });
+            this.posts = this.orderPipe.transform(this.posts, 'id');
+
+            if (infiniteScroll) {
+              infiniteScroll.complete();
             }
           });
         });
       });
     }
 
-    checkUniqueId(id) {
+    loadMore(infiniteScroll){
+      this.page++;
 
-      // check whether id exists
-      var index = this.posts.findIndex(item => item.id === id);
-      
-      return index;
+      this.loadPosts(infiniteScroll);
+
+      if (this.page === this.maximumPages) {
+        infiniteScroll.enable(false);
+      }
     }
 
-    // Infinite scroll functionality
-    doInfinite(): Promise<any> {
-
-      return new Promise((resolve) => {
-          setTimeout(() => {
-            
-            let latestId = this.posts[this.posts.length-1].id;
-
-            this.load(latestId, 'scroll');
-
-            resolve();
-          }, 500);
-        })
-    }  
-
     // Pull to Refresh functionality
-    dorefresh(refresher) {
+    loadrefresh(refresher) {
       this.posts.length = 0;
-      this.load(0, 'initialload');
+      this.posts = [];
+      this.page = 1;
+      this.loadPosts();
       if(refresher != 0)
         refresher.complete();
     
@@ -153,9 +195,9 @@ export class HomePage {
     }
 
     // Go to Edit Post Page to update the post
-    gotoEditPostPage(postId: any) {
+    gotoEditPostPage(postId: any, posts: IPosts[], postItem: any) {
       this.navCtrl.push(EditPostPage, {
-        postId
+        postId, posts, postItem
       });
     }
 
@@ -163,9 +205,17 @@ export class HomePage {
     gotoFilterPostPage() {
       this.navCtrl.push(FilterPostsPage);
     }
+
+    // Goto Comments Page
+    gotoCommentsPage(postId: any, posts: IPosts[], postItem: any) {
+      let updateIndex = 'UpdateIndex';
+      this.navCtrl.push(CommentsPage, {
+        postId, posts, postItem, updateIndex
+      });
+    }
     
     // Delete the post
-    deletePost(postId: any){
+    deletePost(postId: any, postItem: any){
       let alert = this.alertCtrl.create({
         title: 'Confirm',
         message: 'Are you sure, you want to Delete?',
@@ -176,7 +226,33 @@ export class HomePage {
           },
           {
             text: "Yes",
-            handler: () => { this.phpService.deletePost(postId); }
+            handler: () => { 
+
+              // Delete Comments of this post
+              this.phpService.deleteCommentsOfPost(postId).subscribe(res => {
+                // Delete Likes of this post
+                this.phpService.deleteLikesOfPost(postId).subscribe(res => {
+                  // Delete Dislikes of this post
+                  this.phpService.deleteDislikesOfPost(postId).subscribe(res => {
+                    // Delete Wishlist of this post
+                    this.phpService.deleteWishlistOfPost(postId).subscribe(res => {
+                      // Delete Image of post
+                      this.phpService.deleteImage(postId).subscribe(res => {
+                        // Delete Post
+                        this.phpService.deletePost(postId).subscribe(res => {
+
+                          var index = this.posts.indexOf(postItem);
+                          if (index !== -1) {
+                            this.posts.splice(index, 1);
+                          }
+
+                        });
+                      });      
+                    });     
+                  });
+                }); 
+              });
+            }
           }
         ]
       })
@@ -184,9 +260,9 @@ export class HomePage {
     }
 
     // Goto Comments Page
-    gotoCommentsPage(postId: any) {
-      this.navCtrl.push(CommentsPage, {
-        postId
+    gotoUsersPage(userId: any) {
+      this.navCtrl.push(UserProfilePage, {
+        userId
       });
     }
 
@@ -196,23 +272,21 @@ export class HomePage {
     }
 
     // Action sheet on each post to modify/delete your post
-    modifyCardActionSheet(postId: any) {
+    modifyCardActionSheet(postId: any, posts: IPosts[], postItem: any) {
       let actionSheet = this.actionSheetCtrl.create({
-        //title: 'Modify your album',
+        //title: 'Modify your Post',
         buttons: [
           {
             text: 'Delete',
             role: 'destructive',
             handler: () => {
-              console.log('Delete clicked: ' + postId);
-              this.deletePost(postId);
+              this.deletePost(postId, postItem);
             }
           },
           {
             text: 'Edit',
             handler: () => {
-              console.log('Edit clicked: ' + postId);
-              this.gotoEditPostPage(postId);
+              this.gotoEditPostPage(postId, posts, postItem);
             }
           },
           {
@@ -228,4 +302,63 @@ export class HomePage {
       actionSheet.present();
     }
 
-}
+    // Add Wishlist
+    addToWishlist(postId: any, postItem: any){
+      this.phpService.addWishlist(this.user.uid, postId).subscribe(wishlistInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].addedToWishlist = true;
+      });
+    }
+
+    // Remove Wishlist
+    removeFromWishlist(postId: any, postItem: any){
+      this.phpService.deleteWishlist(this.user.uid, postId).subscribe(wishlistInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].addedToWishlist = false;
+      });
+    }
+
+    // Add Like
+    addLike(postId: any, postItem: any){
+      this.phpService.addLike(this.user.uid, postId).subscribe(likeInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].likesCount += 1;
+        this.posts[index].isPostLiked = true;
+
+        this.removeDislike(postId, postItem);
+      });
+    }
+
+    // Remove Like
+    removeLike(postId: any, postItem: any){
+      this.phpService.deleteLike(this.user.uid, postId).subscribe(likeInfo => {
+        var index = this.posts.indexOf(postItem);
+        if( this.posts[index].likesCount > 0 && this.posts[index].isPostLiked === true ){
+          this.posts[index].likesCount -= 1;
+          this.posts[index].isPostLiked = false;
+        }     
+      });
+    }
+
+    // Add Dislike
+    addDislike(postId: any, postItem: any){
+      this.phpService.addDislike(this.user.uid, postId).subscribe(dislikeInfo => {
+        var index = this.posts.indexOf(postItem);
+        this.posts[index].dislikesCount += 1;
+        this.posts[index].isPostDisliked = true;
+
+        this.removeLike(postId, postItem);
+      });
+    }
+
+    // Remove Dislike
+    removeDislike(postId: any, postItem: any){
+      this.phpService.deleteDislike(this.user.uid, postId).subscribe(dislikeInfo => {
+        var index = this.posts.indexOf(postItem);
+        if( this.posts[index].dislikesCount > 0 && this.posts[index].isPostDisliked === true){
+          this.posts[index].dislikesCount -= 1;
+          this.posts[index].isPostDisliked = false;
+        }
+      });
+    }
+} 
