@@ -186,19 +186,6 @@ export class PhpServiceProvider {
 
      return this.http.post(url, body, options)
               .map(response => response.json());
-    //  .subscribe(data =>
-    //  {
-    //     // If the request was successful notify the user
-    //     if(data.status === 200)
-    //     {
-    //       console.log('Successfully post deleted');
-    //     }
-    //     // Otherwise let 'em know anyway
-    //     else
-    //     {
-    //        console.log('Something went wrong!');
-    //     }
-    //  });
   }
 
   // Upload Post Image
@@ -458,6 +445,19 @@ export class PhpServiceProvider {
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
+  }
+
+  // Adding New Location
+  addNewLocation(country, state, city)
+  {
+      let body     : string   = "key=addNewLocation&country=" + country + '&state=' + state + '&city=' + city,
+          type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
+          headers  : any      = new Headers({ 'Content-Type': type}),
+          options  : any      = new RequestOptions({ headers: headers }),
+          url      : any      = this.baseURI + "manage-data.php";
+
+      return this.http.post(url, body, options)
+                  .map(response => response.json());
   }
 
 }

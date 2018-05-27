@@ -18,6 +18,9 @@ import { ICountries } from '../../providers/interfaces/interface';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { Camera } from '@ionic-native/camera';
 
+//Pages
+import { AddNewLocationPage } from '../add-new-location/add-new-location';
+
 /**
  * Generated class for the EditProfilePage page.
  *
@@ -284,6 +287,11 @@ export class EditProfilePage {
     });
 
     actionSheet.present();
+  }
+
+  // Go to Add New Location Page to add new location
+  gotoAddNewLocationPage() {
+    this.navCtrl.push(AddNewLocationPage);
   }
 
 }

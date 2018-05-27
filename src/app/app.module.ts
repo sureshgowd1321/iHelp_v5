@@ -32,6 +32,7 @@ import { MyWishlistPage } from '../pages/my-wishlist/my-wishlist';
 import { UserProfilePage } from '../pages/user-profile/user-profile';
 import { DisplayPostLikesPage } from '../pages/display-post-likes/display-post-likes';
 import { DisplayPostDislikesPage } from '../pages/display-post-dislikes/display-post-dislikes';
+import { AddNewLocationPage } from '../pages/add-new-location/add-new-location';
 
 // Native plugins
 import { StatusBar } from '@ionic-native/status-bar';
@@ -65,7 +66,8 @@ import { OrderModule } from 'ngx-order-pipe';
     MyWishlistPage,
     UserProfilePage,
     DisplayPostLikesPage,
-    DisplayPostDislikesPage
+    DisplayPostDislikesPage,
+    AddNewLocationPage
   ],
   imports: [
     BrowserModule,
@@ -96,7 +98,8 @@ import { OrderModule } from 'ngx-order-pipe';
     MyWishlistPage,
     UserProfilePage,
     DisplayPostLikesPage,
-    DisplayPostDislikesPage
+    DisplayPostDislikesPage,
+    AddNewLocationPage
   ],
   providers: [
     StatusBar,

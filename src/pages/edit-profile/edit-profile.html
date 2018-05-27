@@ -56,8 +56,8 @@
     </ion-item>
 
     <ion-list-header>
-        <h6 class="locHeader">Update Your location</h6> 
-      </ion-list-header>
+      <h6 class="locHeader">Update Your location</h6> 
+    </ion-list-header>
 
     <ion-item>
       <ion-label color="primary">Country</ion-label>
@@ -79,5 +79,9 @@
           <ion-option *ngFor="let city of selectedCities">{{city}} </ion-option>
       </ion-select>
     </ion-item> 
+
+    <button ion-button color="primary" (click)="gotoAddNewLocationPage()">
+      Add New Location
+    </button> 
 
 </ion-content>
