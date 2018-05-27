@@ -19,6 +19,9 @@ import { ICountries } from '../../providers/interfaces/interface';
 import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 
+//Pages
+import { AddNewLocationPage } from '../add-new-location/add-new-location';
+
 /**
  * Generated class for the SignUpPage page.
  *
@@ -147,5 +150,10 @@ export class SignUpPage {
 
   goToLoginPage(): void {
 	  this.navCtrl.pop();
+  }
+
+  // Go to Add New Location Page to add new location
+  gotoAddNewLocationPage() {
+    this.navCtrl.push(AddNewLocationPage);
   }
 }

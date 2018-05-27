@@ -7,23 +7,23 @@
 <ion-header>
 
   <ion-navbar>
-    <!-- <ion-title>Add Your Location</ion-title> -->
+    <ion-title>Add Your Location</ion-title>
 
-    <ion-buttons end>      
+    <!-- <ion-buttons end>      
       <button ion-button icon-only color="primary" (click)="goBack()">
           Add
       </button>    
-    </ion-buttons>
+    </ion-buttons> -->
   </ion-navbar>
 
 </ion-header>
 
 <ion-content class="background">
     <ion-card class="card-display">
-        <ion-card-header>
+        <!-- <ion-card-header>
             <h1> Add Your Location </h1>
-        </ion-card-header>
-    </ion-card>
+        </ion-card-header> -->
+    
 
     <ion-card-content class="no-scroll">
         <form [formGroup]="newLocationForm" (submit)="addNewLocation()" novalidate>
@@ -53,11 +53,11 @@
                 </ion-item>
 
                 <button ion-button color="primary" block outline type="submit"> 
-                    Add your city
+                    Add your location
                 </button>
-
 
             </ion-list>
         </form>
     </ion-card-content>
+  </ion-card>
 </ion-content>
