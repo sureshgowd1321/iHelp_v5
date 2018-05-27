@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 // Providers
@@ -24,7 +24,8 @@ export class AddNewLocationPage {
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               public formBuilder: FormBuilder,
-              public phpService: PhpServiceProvider) {
+              public phpService: PhpServiceProvider,
+              public alertCtrl: AlertController) {
 
       this.newLocationForm = formBuilder.group({
         country: ['', Validators.compose([Validators.minLength(1), Validators.required])],
@@ -38,6 +39,16 @@ export class AddNewLocationPage {
 
     if (!this.newLocationForm.valid) {
       console.log(this.newLocationForm.value);
+      let alert = this.alertCtrl.create({
+        message: 'Please enter valid location',
+        buttons: [
+          {
+            text: "Ok",
+            role: 'cancel'
+          }
+        ]
+      });
+      alert.present();
     } else {
       this.phpService.addNewLocation(this.newLocationForm.value.country, this.newLocationForm.value.state, this.newLocationForm.value.city).subscribe(newLocationInfo => {
         this.navCtrl.pop();
