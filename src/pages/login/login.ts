@@ -47,7 +47,7 @@ export class LoginPage {
 
       if(!this.loginForm.value.email){
         let alert = this.alertCtrl.create({
-          message: 'Please enter Username',
+          message: 'Please enter valid Email',
           buttons: [
             {
               text: "Ok",
@@ -56,11 +56,18 @@ export class LoginPage {
           ]
         });
         alert.present();
-      }else if(){
-        
+      }else if(!this.loginForm.value.password){
+        let alert = this.alertCtrl.create({
+          message: 'Please enter valid password',
+          buttons: [
+            {
+              text: "Ok",
+              role: 'cancel'
+            }
+          ]
+        });
+        alert.present();
       }
-      
-
     } else {
     this.firebaseAuth
       .auth
