@@ -58,7 +58,7 @@ export class EditPostPage {
   public isImageDeleted: boolean;
   public isImageChanged: boolean;
 
-  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
@@ -91,12 +91,12 @@ export class EditPostPage {
                 // Check each post has Image or not
                 let postImage = null;
                 if(postImages != false){
-                  postImage = this.baseURI + postImages.images_path;
+                  postImage = constants.baseURI + postImages.images_path;
                 }
 
                 this.postObj = postInfo;
                 this.userObj = userinfo;
-                this.profilePic = this.baseURI + userProfilePic.images_path;
+                this.profilePic = constants.baseURI + userProfilePic.images_path;
                 this.postDesc = postInfo.post;
                 this.originalPostDesc = postInfo.post;
                 this.locationObj = locationInfo;
@@ -254,7 +254,7 @@ export class EditPostPage {
       headers: {}
     }
 
-    fileTransfer.upload(this.base64Image, this.baseURI+'upload-post-image.php', options_file)
+    fileTransfer.upload(this.base64Image, constants.baseURI+'upload-post-image.php', options_file)
       .then((data) => {
       // success
       console.log("success Camera: "+data.response);

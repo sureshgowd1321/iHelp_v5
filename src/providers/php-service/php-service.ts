@@ -14,7 +14,7 @@ import { constants } from '../../constants/constants';
 @Injectable()
 export class PhpServiceProvider {
 
-  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   headers: Headers;
   options: RequestOptions;
@@ -27,19 +27,19 @@ export class PhpServiceProvider {
 
   // Get User Info
   getUserInfo(id: string){
-    return this.http.get(this.baseURI + 'getUserInfoFromId.php?userId='+id)
+    return this.http.get(constants.baseURI + 'getUserInfoFromId.php?userId='+id)
     .map(response => response.json());
   }
 
   // Get User Profile Picture
   getUserProfilePic(id: string) {
-    return this.http.get(this.baseURI + 'getUserProfilePic.php?userId='+id)
+    return this.http.get(constants.baseURI + 'getUserProfilePic.php?userId='+id)
     .map(response => response.json());
   }
 
   // Get All Posts
   getPosts(page: number, postFilter: string, postCity: string, postState: string, postCountry: string, userUid: string, createdDate: string) {
-      return this.http.get(this.baseURI + 'get-posts.php?page=' + page
+      return this.http.get(constants.baseURI + 'get-posts.php?page=' + page
                                         + '&userPostFilter=' + postFilter
                                         + '&postedCity=' + postCity
                                         + '&postedState=' + postState
@@ -51,99 +51,104 @@ export class PhpServiceProvider {
 
   // Get Post Information
   getPostInfo(postId: string) {
-    return this.http.get(this.baseURI + 'getDataFromId.php?postId='+postId)
+    return this.http.get(constants.baseURI + 'getDataFromId.php?postId='+postId)
     .map(response => response.json());
   }
 
   // Get All Posts from User Id
   getPostsFromUserId(page: number, userUid: string) {
-    return this.http.get(this.baseURI + 'getPostsFromUserId.php?userUid='+userUid
+    return this.http.get(constants.baseURI + 'getPostsFromUserId.php?userUid='+userUid
                                       + '&page=' + page)
     .map(response => response.json());
   }
 
   // Get Images from Post
   getPostImages(id: string) {
-    return this.http.get(this.baseURI + 'get-Post-Images.php?postId='+id)
+    return this.http.get(constants.baseURI + 'get-Post-Images.php?postId='+id)
     .map(response => response.json());
   }
 
   // Get All Comments per post
   getAllComments(postId: string) {
-    return this.http.get(this.baseURI + 'get-all-comments.php?key=totalCommentsPerPost&postId='+postId)
+    return this.http.get(constants.baseURI + 'get-all-comments.php?key=totalCommentsPerPost&postId='+postId)
     .map(response => response.json());
   }
 
   // Get Count of Comments per post
   getCountOfComments(postId: string) {
-    return this.http.get(this.baseURI + 'get-all-comments.php?key=countOfCommentsPerPost&postId='+postId)
+    return this.http.get(constants.baseURI + 'get-all-comments.php?key=countOfCommentsPerPost&postId='+postId)
     .map(response => response.json());
   }
 
   // Get Location from Location Id
   getLocationInfo(locationId: string) {
-    return this.http.get(this.baseURI + 'getLocationsFromId.php?locationId='+locationId)
+    return this.http.get(constants.baseURI + 'getLocationsFromId.php?locationId='+locationId)
     .map(response => response.json());
   }
 
   // Get Location Id from Locations
   getLocationId(city: string, state: string, country: string) {
-    return this.http.get(this.baseURI + 'getLocationIdFromLocations.php?city=' + city + '&state=' + state + '&country=' + country )
+    return this.http.get(constants.baseURI + 'getLocationIdFromLocations.php?city=' + city + '&state=' + state + '&country=' + country )
     .map(response => response.json());
   }
 
   // Get Wishlist information from User Id
   getWishlistFromUserId(userUid: string) {
-    return this.http.get(this.baseURI + 'getWishlistFromUserId.php?userUid=' + userUid)
+    return this.http.get(constants.baseURI + 'getWishlistFromUserId.php?userUid=' + userUid)
     .map(response => response.json());
   }
 
   // Get Wishlist information from User Id
   getMyWishlist(page: number, userUid: string) {
-    return this.http.get(this.baseURI + 'get-my-wishlist.php?userUid=' + userUid
+    return this.http.get(constants.baseURI + 'get-my-wishlist.php?userUid=' + userUid
                                       + '&page=' + page)
     .map(response => response.json());
   }
 
   //Get count of Likes for each post
   getlikesCount(postId: string) {
-    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalLikesCountPerPost&postId=' + postId)
+    return this.http.get(constants.baseURI + 'getCountOfLikes.php?key=totalLikesCountPerPost&postId=' + postId)
     .map(response => response.json());
   }
 
   //Get count of Dislikes for each post
   getdislikesCount(postId: string) {
-    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalDislikesCountPerPost&postId=' + postId)
+    return this.http.get(constants.baseURI + 'getCountOfLikes.php?key=totalDislikesCountPerPost&postId=' + postId)
     .map(response => response.json());
   }
 
   //Get like info per user per post
   getlikeInfoPerUser(userId: string, postId: string) {
-    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=likesPerUser&userId=' + userId + '&postId=' + postId)
+    return this.http.get(constants.baseURI + 'getCountOfLikes.php?key=likesPerUser&userId=' + userId + '&postId=' + postId)
     .map(response => response.json());
   }
 
   //Get Dislike info per user per post
   getDislikeInfoPerUser(userId: string, postId: string) {
-    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=dislikesPerUser&userId=' + userId + '&postId=' + postId)
+    return this.http.get(constants.baseURI + 'getCountOfLikes.php?key=dislikesPerUser&userId=' + userId + '&postId=' + postId)
     .map(response => response.json());
   }
 
   //Get like info per user per post
   getLikesPerPost(postId: string) {
-    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalLikesPerPost&postId=' + postId)
+    return this.http.get(constants.baseURI + 'getCountOfLikes.php?key=totalLikesPerPost&postId=' + postId)
+    .map(response => response.json());
+  }
+
+  getLikes(postId: string) {
+    return this.http.get(constants.baseURI + 'getCountOfLikes.php?key=totalLikes&postId=' + postId)
     .map(response => response.json());
   }
 
   //Get Dislike info per user per post
   getDislikesPerPost(postId: string) {
-    return this.http.get(this.baseURI + 'getCountOfLikes.php?key=totalDislikesPerPost&postId=' + postId)
+    return this.http.get(constants.baseURI + 'getCountOfLikes.php?key=totalDislikesPerPost&postId=' + postId)
     .map(response => response.json());
   }
 
   // Get All Countries
   getAllCountries() {
-    return this.http.get(this.baseURI + 'get-all-locations.php?key=countries')
+    return this.http.get(constants.baseURI + 'get-all-locations.php?key=countries')
     .map(response => response.json());
   }
 
@@ -155,7 +160,7 @@ export class PhpServiceProvider {
           type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
           headers  : any      = new Headers({ 'Content-Type': type}),
           options  : any      = new RequestOptions({ headers: headers }),
-          url      : any      = this.baseURI + "manage-data.php";
+          url      : any      = constants.baseURI + "manage-data.php";
 
       return this.http.post(url, body, options)
                   .map(response => response.json());
@@ -169,7 +174,7 @@ export class PhpServiceProvider {
          type       : string = "application/x-www-form-urlencoded; charset=UTF-8",
          headers    : any     = new Headers({ 'Content-Type': type}),
          options    : any     = new RequestOptions({ headers: headers }),
-         url        : any     = this.baseURI + "manage-data.php";
+         url        : any     = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
               .map(response => response.json());
@@ -182,7 +187,7 @@ export class PhpServiceProvider {
          type       : string = "application/x-www-form-urlencoded; charset=UTF-8",
          headers    : any    = new Headers({ 'Content-Type': type}),
          options    : any    = new RequestOptions({ headers: headers }),
-         url        : any    = this.baseURI + "manage-data.php";
+         url        : any    = constants.baseURI + "manage-data.php";
 
      return this.http.post(url, body, options)
               .map(response => response.json());
@@ -194,7 +199,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "upload-post-image.php";
+        url      : any      = constants.baseURI + "upload-post-image.php";
 
       return this.http.post(url, body, options)
                   .map(response => response.json());
@@ -206,7 +211,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -219,7 +224,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -232,7 +237,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
         return this.http.post(url, body, options)
                     .map(response => response.json());
@@ -245,7 +250,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -258,7 +263,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -271,7 +276,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -284,7 +289,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -297,7 +302,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -317,7 +322,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     this.http.post(url, body, options)
     .subscribe((data) =>
@@ -345,7 +350,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                   .map(response => response.json());
@@ -363,7 +368,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                   .map(response => response.json());
@@ -376,7 +381,7 @@ export class PhpServiceProvider {
           type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
           headers  : any      = new Headers({ 'Content-Type': type}),
           options  : any      = new RequestOptions({ headers: headers }),
-          url      : any      = this.baseURI + "manage-data.php";
+          url      : any      = constants.baseURI + "manage-data.php";
 
       return this.http.post(url, body, options)
                   .map(response => response.json());
@@ -389,7 +394,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -402,7 +407,7 @@ export class PhpServiceProvider {
           type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
           headers  : any      = new Headers({ 'Content-Type': type}),
           options  : any      = new RequestOptions({ headers: headers }),
-          url      : any      = this.baseURI + "manage-data.php";
+          url      : any      = constants.baseURI + "manage-data.php";
 
       return this.http.post(url, body, options)
                   .map(response => response.json());
@@ -415,7 +420,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -428,7 +433,7 @@ export class PhpServiceProvider {
           type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
           headers  : any      = new Headers({ 'Content-Type': type}),
           options  : any      = new RequestOptions({ headers: headers }),
-          url      : any      = this.baseURI + "manage-data.php";
+          url      : any      = constants.baseURI + "manage-data.php";
 
       return this.http.post(url, body, options)
                   .map(response => response.json());
@@ -441,7 +446,7 @@ export class PhpServiceProvider {
         type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
         headers  : any      = new Headers({ 'Content-Type': type}),
         options  : any      = new RequestOptions({ headers: headers }),
-        url      : any      = this.baseURI + "manage-data.php";
+        url      : any      = constants.baseURI + "manage-data.php";
 
     return this.http.post(url, body, options)
                 .map(response => response.json());
@@ -454,7 +459,7 @@ export class PhpServiceProvider {
           type     : string   = "application/x-www-form-urlencoded; charset=UTF-8",
           headers  : any      = new Headers({ 'Content-Type': type}),
           options  : any      = new RequestOptions({ headers: headers }),
-          url      : any      = this.baseURI + "manage-data.php";
+          url      : any      = constants.baseURI + "manage-data.php";
 
       return this.http.post(url, body, options)
                   .map(response => response.json());

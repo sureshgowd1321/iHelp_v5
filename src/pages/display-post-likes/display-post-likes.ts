@@ -33,7 +33,7 @@ export class DisplayPostLikesPage {
 
   postId: string;
   likes: likesInfo[] = [];
-  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
@@ -50,23 +50,31 @@ export class DisplayPostLikesPage {
   loadLikes(){
     this.likes = [];
 
-    this.phpService.getLikesPerPost(this.postId).subscribe(likedUserInfo => {
-      if( likedUserInfo.length === 0 ){
-        // this.hasData = false;
-        }else {
-          likedUserInfo.forEach(like=>{
-            this.phpService.getUserInfo(like.UserUid).subscribe(userinfo => {
-              this.phpService.getUserProfilePic(like.UserUid).subscribe(userProfilePic => {
-                  this.likes.push({
-                    "userId"     : like.UserUid,
-                    "userName"   : userinfo.name,
-                    "profilePic" : this.baseURI + userProfilePic.images_path
-                  });
+    this.phpService.getLikes(this.postId).subscribe(likedUserInfo => {
+      this.likes.push({
+                "userId"     : likedUserInfo.likes.UserUid,
+                "userName"   : likedUserInfo.users.name,
+                "profilePic" : null
               });
-            });
-          });
-        }
     });
+
+    // this.phpService.getLikesPerPost(this.postId).subscribe(likedUserInfo => {
+    //   if( likedUserInfo.length === 0 ){
+    //     // this.hasData = false;
+    //     }else {
+    //       likedUserInfo.forEach(like=>{
+    //         this.phpService.getUserInfo(like.UserUid).subscribe(userinfo => {
+    //           this.phpService.getUserProfilePic(like.UserUid).subscribe(userProfilePic => {
+    //               this.likes.push({
+    //                 "userId"     : like.UserUid,
+    //                 "userName"   : userinfo.name,
+    //                 "profilePic" : constants.baseURI + userProfilePic.images_path
+    //               });
+    //           });
+    //         });
+    //       });
+    //     }
+    // });
   }
 
   // Goto Comments Page

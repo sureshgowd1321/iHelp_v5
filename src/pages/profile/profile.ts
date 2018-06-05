@@ -42,7 +42,7 @@ export class ProfilePage {
   userProfilePic: string;
   userUid: string;
 
-  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public _app: App, 
               public http : Http,
@@ -72,7 +72,7 @@ export class ProfilePage {
           this.countryVar = locationinfo.Country;
           this.stateVar = locationinfo.State;
           this.cityVar = locationinfo.City;
-          this.userProfilePic = this.baseURI + userProfilePic.images_path;
+          this.userProfilePic = constants.baseURI + userProfilePic.images_path;
 
         });
       }); 

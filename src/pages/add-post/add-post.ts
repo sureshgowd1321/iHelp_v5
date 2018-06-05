@@ -33,7 +33,7 @@ export class AddPostPage {
   @ViewChild('myInput') myInput: ElementRef;
 
   user;
-  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
   public userObj : any;
   public locationObj : any;
   public profilePic : string;
@@ -56,14 +56,14 @@ export class AddPostPage {
     this.user = firebase.auth().currentUser; 
     this.base64Image = null;
     this.postDesc = '';
-
+    console.log('***User UID: '+ this.user.uid);
     this.phpService.getUserInfo(this.user.uid).subscribe(userinfo => {
       this.phpService.getUserProfilePic(this.user.uid).subscribe(userProfilePic => {
         this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(locationInfo => {
           
           this.locationObj = locationInfo;
           this.userObj = userinfo;
-          this.profilePic = this.baseURI + userProfilePic.images_path;
+          this.profilePic = constants.baseURI + userProfilePic.images_path;
 
         });
       });
@@ -182,7 +182,7 @@ export class AddPostPage {
       headers: {}
     }
 
-    fileTransfer.upload(this.base64Image, this.baseURI+'upload-post-image.php', options_file)
+    fileTransfer.upload(this.base64Image, constants.baseURI+'upload-post-image.php', options_file)
       .then((data) => {
       // success
       this.navCtrl.setRoot(TabsPage);

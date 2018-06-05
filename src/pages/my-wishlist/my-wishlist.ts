@@ -36,7 +36,7 @@ export class MyWishlistPage {
   public posts: IPosts[] = [];
 
   // HTTP Base URI 
-  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   // Variables to pass comments page
   postId: any;
@@ -103,7 +103,7 @@ export class MyWishlistPage {
                               // Check each post has Image or not
                               let postImage;
                               if(postImages != false){
-                                postImage = this.baseURI + postImages.images_path;
+                                postImage = constants.baseURI + postImages.images_path;
                               }
         
                               this.posts.push(
@@ -118,7 +118,7 @@ export class MyWishlistPage {
                                   "city"         : userLocationInfo.City,
                                   "state"        : userLocationInfo.State,
                                   "country"      : userLocationInfo.Country,
-                                  "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                  "profilePic"   : constants.baseURI + userProfilePic.images_path,
                                   "wishId"       : wishObj.id,
                                   "addedToWishlist" : false,
                                   "likesCount"      : likesCount,

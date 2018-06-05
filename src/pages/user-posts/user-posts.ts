@@ -32,7 +32,7 @@ export class UserPostsPage {
   public loggedInUser;
   public posts: IPosts[] = [];
   public userUId: string;
-  private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   // Variables to pass comments page
   postId: any;
@@ -114,7 +114,7 @@ export class UserPostsPage {
                             // Check each post has Image or not
                             let postImage;
                             if(postImages != false){
-                              postImage = this.baseURI + postImages.images_path;
+                              postImage = constants.baseURI + postImages.images_path;
                             }
 
                             this.posts.push(
@@ -129,7 +129,7 @@ export class UserPostsPage {
                                 "city"         : userLocationInfo.City,
                                 "state"        : userLocationInfo.State,
                                 "country"      : userLocationInfo.Country,
-                                "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                "profilePic"   : constants.baseURI + userProfilePic.images_path,
                                 "wishId"       : wishlistInfo.id,
                                 "addedToWishlist" : isPostInWishlist,
                                 "likesCount"      : likesCount,

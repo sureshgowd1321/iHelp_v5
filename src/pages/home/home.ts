@@ -43,7 +43,7 @@ export class HomePage {
     reverse: boolean = true;
 
     // HTTP Base URI 
-    private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
+    //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
     // Pagination Variables
     page = 1;
@@ -78,9 +78,9 @@ export class HomePage {
         this.phpService.getLocationInfo(loggedInUserInfo.PostalCode).subscribe(userLocationInfo => {
           this.phpService.getPosts(this.page, loggedInUserInfo.PostFilter, userLocationInfo.City, 
                                     userLocationInfo.State, userLocationInfo.Country, this.user.uid, loggedInUserInfo.CreatedDate).subscribe(postdata => {
-                                      
+            console.log('***Get Posts Response 1: ' + postdata);                          
             postdata.forEach(postInfo => {
-
+              console.log('***Get Posts Response postInfo 2: ' + postInfo);  
               this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
                 this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {                        
                   this.phpService.getLocationInfo(userinfo.PostalCode).subscribe(userLocationInfo => {                         
@@ -121,7 +121,7 @@ export class HomePage {
                                   // Check each post has Image or not
                                   let postImage;
                                   if(postImages != false){
-                                    postImage = this.baseURI + postImages.images_path;
+                                    postImage = constants.baseURI + postImages.images_path;
                                   }
 
                                   this.posts.push(
@@ -136,7 +136,7 @@ export class HomePage {
                                       "city"         : userLocationInfo.City,
                                       "state"        : userLocationInfo.State,
                                       "country"      : userLocationInfo.Country,
-                                      "profilePic"   : this.baseURI + userProfilePic.images_path,
+                                      "profilePic"   : constants.baseURI + userProfilePic.images_path,
                                       "wishId"       : wishlistInfo.id,
                                       "addedToWishlist" : isPostInWishlist,
                                       "likesCount"      : likesCount,
@@ -159,7 +159,7 @@ export class HomePage {
               });
             });
             this.posts = this.orderPipe.transform(this.posts, 'id');
-
+            console.log('***Get Posts this.posts 3: ' + this.posts);
             if (infiniteScroll) {
               infiniteScroll.complete();
             }
