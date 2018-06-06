@@ -49,6 +49,16 @@ export class PhpServiceProvider {
       .map(response => response.json());
     } 
 
+  getAllPosts(userUid: string, page: number, postFilter: string, postCity: string, postState: string, postCountry: string){
+    return this.http.get(constants.baseURI + 'get-all-posts.php?userUid='+userUid
+                                          + '&page=' + page
+                                          + '&userPostFilter=' + postFilter
+                                          + '&postedCity=' + postCity
+                                          + '&postedState=' + postState
+                                          + '&postedCountry=' + postCountry)
+      .map(response => response.json());
+  }
+
   // Get Post Information
   getPostInfo(postId: string) {
     return this.http.get(constants.baseURI + 'getDataFromId.php?postId='+postId)
