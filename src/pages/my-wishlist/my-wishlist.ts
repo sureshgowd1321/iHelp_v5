@@ -6,7 +6,7 @@ import { IonicPage, NavController, AlertController, ActionSheetController } from
 import * as firebase from 'firebase/app'; 
 
 // Interfaces
-import { IPosts } from '../../providers/interfaces/interface';
+import { IAllPosts } from '../../providers/interfaces/interface';
 
 //Constants
 import { constants } from '../../constants/constants';
@@ -33,7 +33,7 @@ export class MyWishlistPage {
   user;
 
   // List of posts to display
-  public posts: IPosts[] = [];
+  public posts: IAllPosts[] = [];
 
   // HTTP Base URI 
   //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
@@ -71,7 +71,37 @@ export class MyWishlistPage {
     // Using Angular's Http class and an Observable - then
     // assign this to the items array for rendering to the HTML template
     loadPosts(infiniteScroll?){
-      this.phpService.getMyWishlist(this.page, this.user.uid).subscribe(wishlist => {
+
+      this.phpService.getMyWishlist(this.page, this.user.uid).subscribe(postdata => {
+        postdata.forEach(postInfo => {
+
+          // Check each post has Image or not
+          let postImage;
+          if(postInfo.images_path != null){
+            postImage = constants.baseURI + postInfo.images_path;
+          }
+
+          this.posts.push(
+            {
+              "id"            : postInfo.id,
+              "post"          : postInfo.post,
+              "createdDate"   : postInfo.CreatedDate,
+              "name"          : postInfo.name,
+              "profilePic"    : constants.baseURI + postInfo.ProfilePicURL,
+              "createdById"   : postInfo.CreatedById,
+              "postImages"    : postImage,
+              "likesCount"    : postInfo.likesCount,
+              "dislikesCount" : postInfo.dislikesCount,
+              "commentsCount" : postInfo.commentsCount,
+              "isPostLiked"   : postInfo.isLiked,
+              "isPostDisliked": postInfo.isdisLiked,
+              "isWished"      : 1
+            }
+          );
+        });
+      });
+
+      /*this.phpService.getMyWishlist(this.page, this.user.uid).subscribe(wishlist => {
   
         wishlist.forEach(wishObj => {
           
@@ -145,14 +175,17 @@ export class MyWishlistPage {
         if (infiniteScroll) {
           infiniteScroll.complete();
         }
-      });
+      });*/
     }
   
     loadMore(infiniteScroll){
       this.page++;
-  
-      this.loadPosts(infiniteScroll);
-  
+      
+      setTimeout(() => {
+        this.loadPosts(infiniteScroll);
+        infiniteScroll.complete();
+      }, 500);
+
       if (this.page === this.maximumPages) {
         infiniteScroll.enable(false);
       }
@@ -169,7 +202,7 @@ export class MyWishlistPage {
     }
 
     // Goto Comments Page
-    gotoCommentsPage(postId: any, posts: IPosts[], postItem: any) {
+    gotoCommentsPage(postId: any, posts: IAllPosts[], postItem: any) {
       let updateIndex = 'UpdateIndex';
       let removeFromList = 'RemoveSlice';
 
@@ -230,7 +263,7 @@ export class MyWishlistPage {
       this.phpService.addLike(this.user.uid, postId).subscribe(likeInfo => {
         var index = this.posts.indexOf(postItem);
         this.posts[index].likesCount += 1;
-        this.posts[index].isPostLiked = true;
+        //this.posts[index].isPostLiked = true;
 
         this.removeDislike(postId, postItem);
       });
@@ -240,10 +273,10 @@ export class MyWishlistPage {
     removeLike(postId: any, postItem: any){
       this.phpService.deleteLike(this.user.uid, postId).subscribe(likeInfo => {
         var index = this.posts.indexOf(postItem);
-        if( this.posts[index].likesCount > 0 && this.posts[index].isPostLiked === true ){
-          this.posts[index].likesCount -= 1;
-          this.posts[index].isPostLiked = false;
-        }   
+        // if( this.posts[index].likesCount > 0 && this.posts[index].isPostLiked === true ){
+        //   this.posts[index].likesCount -= 1;
+        //   this.posts[index].isPostLiked = false;
+        // }   
       });
     }
 
@@ -252,7 +285,7 @@ export class MyWishlistPage {
       this.phpService.addDislike(this.user.uid, postId).subscribe(dislikeInfo => {
         var index = this.posts.indexOf(postItem);
         this.posts[index].dislikesCount += 1;
-        this.posts[index].isPostDisliked = true;
+        //this.posts[index].isPostDisliked = true;
 
         this.removeLike(postId, postItem);
       });
@@ -262,10 +295,10 @@ export class MyWishlistPage {
     removeDislike(postId: any, postItem: any){
       this.phpService.deleteDislike(this.user.uid, postId).subscribe(dislikeInfo => {
         var index = this.posts.indexOf(postItem);
-        if( this.posts[index].dislikesCount > 0 && this.posts[index].isPostDisliked === true){
-          this.posts[index].dislikesCount -= 1;
-          this.posts[index].isPostDisliked = false;
-        }  
+        // if( this.posts[index].dislikesCount > 0 && this.posts[index].isPostDisliked === true){
+        //   this.posts[index].dislikesCount -= 1;
+        //   this.posts[index].isPostDisliked = false;
+        // }  
       });
     }
 

@@ -21,7 +21,7 @@ import { PhpServiceProvider } from '../../providers/php-service/php-service';
 import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 
 // Interfaces
-import { IPosts } from '../../providers/interfaces/interface';
+//import { IPosts } from '../../providers/interfaces/interface';
 import { IAllPosts } from '../../providers/interfaces/interface';
 
 // Order Pipe
@@ -35,13 +35,13 @@ export class HomePage {
 
     // LoggedIn User Info variables
     user;
-    userFilter;
-    userCity;
-    userState;
-    userCountry;
+    // userFilter;
+    // userCity;
+    // userState;
+    // userCountry;
 
     // List of posts to display
-    public posts: IPosts[] = [];
+    //public posts: IPosts[] = [];
     public allPosts: IAllPosts[] = [];
 
     // Order By Variables
@@ -66,16 +66,16 @@ export class HomePage {
                 
         this.user = firebase.auth().currentUser;  
         
-        this.phpService.getUserInfo(this.user.uid).subscribe(loggedInUserInfo => {
+        /*this.phpService.getUserInfo(this.user.uid).subscribe(loggedInUserInfo => {
           this.userFilter = loggedInUserInfo.PostFilter,
           this.userCity = loggedInUserInfo.City,
           this.userState = loggedInUserInfo.State,
           this.userCountry = loggedInUserInfo.Country
-        });
+        });*/
     }
 
     ionViewDidLoad(){  
-      this.posts.length = 0;
+      this.allPosts.length = 0;
       this.page = 1;
       this.loadPosts();
     }
@@ -83,7 +83,7 @@ export class HomePage {
     // Load all posts to display
     loadPosts(infiniteScroll?){
 
-      this.phpService.getAllPosts(this.user.uid, this.page, this.userFilter, this.userCity, this.userState, this.userCountry).subscribe(postdata => {
+      this.phpService.getAllPosts(this.user.uid, this.page).subscribe(postdata => {
         postdata.forEach(postInfo => {
 
           // Check each post has Image or not
@@ -209,7 +209,10 @@ export class HomePage {
     loadMore(infiniteScroll){
       this.page++;
 
-      this.loadPosts(infiniteScroll);
+      setTimeout(() => {
+        this.loadPosts(infiniteScroll);
+        infiniteScroll.complete();
+      }, 500);
 
       if (this.page === this.maximumPages) {
         infiniteScroll.enable(false);
@@ -218,8 +221,8 @@ export class HomePage {
 
     // Pull to Refresh functionality
     loadrefresh(refresher) {
-      this.posts.length = 0;
-      this.posts = [];
+      this.allPosts.length = 0;
+      this.allPosts = [];
       this.page = 1;
       this.loadPosts();
       if(refresher != 0)
@@ -233,7 +236,7 @@ export class HomePage {
     }
 
     // Go to Edit Post Page to update the post
-    gotoEditPostPage(postId: any, posts: IPosts[], postItem: any) {
+    gotoEditPostPage(postId: any, posts: IAllPosts[], postItem: any) {
       this.navCtrl.push(EditPostPage, {
         postId, posts, postItem
       });
@@ -245,7 +248,7 @@ export class HomePage {
     }
 
     // Goto Comments Page
-    gotoCommentsPage(postId: any, posts: IPosts[], postItem: any) {
+    gotoCommentsPage(postId: any, posts: IAllPosts[], postItem: any) {
       let updateIndex = 'UpdateIndex';
       this.navCtrl.push(CommentsPage, {
         postId, posts, postItem, updateIndex
@@ -279,9 +282,9 @@ export class HomePage {
                         // Delete Post
                         this.phpService.deletePost(postId).subscribe(res => {
 
-                          var index = this.posts.indexOf(postItem);
+                          var index = this.allPosts.indexOf(postItem);
                           if (index !== -1) {
-                            this.posts.splice(index, 1);
+                            this.allPosts.splice(index, 1);
                           }
 
                         });
@@ -310,7 +313,7 @@ export class HomePage {
     }
 
     // Action sheet on each post to modify/delete your post
-    modifyCardActionSheet(postId: any, posts: IPosts[], postItem: any) {
+    modifyCardActionSheet(postId: any, posts: IAllPosts[], postItem: any) {
       let actionSheet = this.actionSheetCtrl.create({
         //title: 'Modify your Post',
         buttons: [
@@ -343,25 +346,25 @@ export class HomePage {
     // Add Wishlist
     addToWishlist(postId: any, postItem: any){
       this.phpService.addWishlist(this.user.uid, postId).subscribe(wishlistInfo => {
-        var index = this.posts.indexOf(postItem);
-        this.posts[index].addedToWishlist = true;
+        var index = this.allPosts.indexOf(postItem);
+        //this.allPosts[index].addedToWishlist = true;
       });
     }
 
     // Remove Wishlist
     removeFromWishlist(postId: any, postItem: any){
       this.phpService.deleteWishlist(this.user.uid, postId).subscribe(wishlistInfo => {
-        var index = this.posts.indexOf(postItem);
-        this.posts[index].addedToWishlist = false;
+        var index = this.allPosts.indexOf(postItem);
+        //this.allPosts[index].addedToWishlist = false;
       });
     }
 
     // Add Like
     addLike(postId: any, postItem: any){
       this.phpService.addLike(this.user.uid, postId).subscribe(likeInfo => {
-        var index = this.posts.indexOf(postItem);
-        this.posts[index].likesCount += 1;
-        this.posts[index].isPostLiked = true;
+        var index = this.allPosts.indexOf(postItem);
+        this.allPosts[index].likesCount += 1;
+        //this.allPosts[index].isPostLiked = true;
 
         this.removeDislike(postId, postItem);
       });
@@ -370,20 +373,20 @@ export class HomePage {
     // Remove Like
     removeLike(postId: any, postItem: any){
       this.phpService.deleteLike(this.user.uid, postId).subscribe(likeInfo => {
-        var index = this.posts.indexOf(postItem);
-        if( this.posts[index].likesCount > 0 && this.posts[index].isPostLiked === true ){
-          this.posts[index].likesCount -= 1;
-          this.posts[index].isPostLiked = false;
-        }     
+        var index = this.allPosts.indexOf(postItem);
+        // if( this.allPosts[index].likesCount > 0 && this.allPosts[index].isPostLiked === true ){
+        //   this.allPosts[index].likesCount -= 1;
+        //   this.allPosts[index].isPostLiked = false;
+        // }     
       });
     }
 
     // Add Dislike
     addDislike(postId: any, postItem: any){
       this.phpService.addDislike(this.user.uid, postId).subscribe(dislikeInfo => {
-        var index = this.posts.indexOf(postItem);
-        this.posts[index].dislikesCount += 1;
-        this.posts[index].isPostDisliked = true;
+        var index = this.allPosts.indexOf(postItem);
+        this.allPosts[index].dislikesCount += 1;
+        //this.allPosts[index].isPostDisliked = true;
 
         this.removeLike(postId, postItem);
       });
@@ -392,11 +395,11 @@ export class HomePage {
     // Remove Dislike
     removeDislike(postId: any, postItem: any){
       this.phpService.deleteDislike(this.user.uid, postId).subscribe(dislikeInfo => {
-        var index = this.posts.indexOf(postItem);
-        if( this.posts[index].dislikesCount > 0 && this.posts[index].isPostDisliked === true){
-          this.posts[index].dislikesCount -= 1;
-          this.posts[index].isPostDisliked = false;
-        }
+        var index = this.allPosts.indexOf(postItem);
+        // if( this.allPosts[index].dislikesCount > 0 && this.allPosts[index].isPostDisliked === true){
+        //   this.allPosts[index].dislikesCount -= 1;
+        //   this.allPosts[index].isPostDisliked = false;
+        // }
       });
     }
 } 

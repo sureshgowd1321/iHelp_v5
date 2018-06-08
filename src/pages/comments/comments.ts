@@ -17,6 +17,7 @@ import { ProfileDataProvider } from '../../providers/profile-data/profile-data';
 // Interfaces
 import { IPosts } from '../../providers/interfaces/interface';
 import { IComment } from '../../providers/interfaces/interface';
+import { IComments } from '../../providers/interfaces/interface';
 
 // Pages
 import { UserProfilePage } from '../user-profile/user-profile';
@@ -43,26 +44,24 @@ export class CommentsPage {
   isIndexed: string;
   isRemoveFromSlice: string;
 
-  public postObj : any;
-  public userObj : any;
-  public profilePic : string;
-  public isPostInWishlist: boolean;
-  public likesCount : number;
-  public isPostLiked : boolean;
-  public dislikesCount : number;
-  public isPostDisliked : boolean;
-  public commentsCount : number;
-  public postImage: string;
+  // public postObj : any;
+  // public userObj : any;
+  // public profilePic : string;
+  // public isPostInWishlist: boolean;
+  // public likesCount : number;
+  // public isPostLiked : boolean;
+  // public dislikesCount : number;
+  // public isPostDisliked : boolean;
+  // public commentsCount : number;
+  // public postImage: string;
 
-  public comments: IComment[] = [];
+  public comments: IComments[] = [];
 
   // Order By Variables
   order: string = 'id';
   reverse: boolean = false;
 
   commentInput: string;
-
-  //private baseURI   : string  = "http://"+constants.IPAddress+"/ionic-php-mysql/";
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
@@ -84,110 +83,142 @@ export class CommentsPage {
 
   ionViewWillEnter()
   {   
-    this.loadpostInfo();
+    this.comments.length = 0;
+    //this.loadpostInfo();
     this.loadAllComments(this.postId);
   }
 
-  loadpostInfo(){
-    this.phpService.getPostInfo(this.postId).subscribe(postInfo =>{ 
-      this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
-        this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
-          this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
-            this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
-              this.phpService.getdislikesCount(postInfo.ID).subscribe(dislikesCount => {
-                this.phpService.getlikeInfoPerUser(this.user.uid, this.postId).subscribe(userLikeInfo => {
-                  this.phpService.getDislikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userDislikeInfo => {
-                  this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
-                    this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
+  // loadpostInfo(){
+  //   this.phpService.getPostInfo(this.postId).subscribe(postInfo =>{ 
+  //     this.phpService.getUserInfo(postInfo.CreatedById).subscribe(userinfo => {
+  //       this.phpService.getUserProfilePic(postInfo.CreatedById).subscribe(userProfilePic => {
+  //         this.phpService.getWishlistFromUserId(this.user.uid).subscribe(wishlistInfo => {   
+  //           this.phpService.getlikesCount(postInfo.ID).subscribe(likesCount => {
+  //             this.phpService.getdislikesCount(postInfo.ID).subscribe(dislikesCount => {
+  //               this.phpService.getlikeInfoPerUser(this.user.uid, this.postId).subscribe(userLikeInfo => {
+  //                 this.phpService.getDislikeInfoPerUser(this.user.uid, postInfo.ID).subscribe(userDislikeInfo => {
+  //                 this.phpService.getCountOfComments(postInfo.ID).subscribe(commentsCount => {
+  //                   this.phpService.getPostImages(postInfo.ID).subscribe(postImages => {
 
-                        // Check post is liked by loggedin User or not
-                        let isLiked = false;
-                        if( userLikeInfo === 0 ){
-                        }else{
-                          isLiked = true;
-                        }
+  //                       // Check post is liked by loggedin User or not
+  //                       let isLiked = false;
+  //                       if( userLikeInfo === 0 ){
+  //                       }else{
+  //                         isLiked = true;
+  //                       }
 
-                        // Check post is liked by loggedin User or not
-                        let isDisliked = false;
-                        if( userDislikeInfo === 0 ){
-                        }else{
-                          isDisliked = true;
-                        }
+  //                       // Check post is liked by loggedin User or not
+  //                       let isDisliked = false;
+  //                       if( userDislikeInfo === 0 ){
+  //                       }else{
+  //                         isDisliked = true;
+  //                       }
 
-                        // Get Wishlist information
-                        let isInWishlist = false;
+  //                       // Get Wishlist information
+  //                       let isInWishlist = false;
 
-                        if( wishlistInfo.length === 0 ){
-                        } else {
-                          wishlistInfo.forEach(wishObj=>{
+  //                       if( wishlistInfo.length === 0 ){
+  //                       } else {
+  //                         wishlistInfo.forEach(wishObj=>{
                 
-                            if(wishObj.PostId === this.postId){
-                              isInWishlist = true;
-                            }    
-                          });
-                        }
+  //                           if(wishObj.PostId === this.postId){
+  //                             isInWishlist = true;
+  //                           }    
+  //                         });
+  //                       }
 
-                        // Check each post has Image or not
-                        let postImage;
-                        if(postImages != false){
-                          postImage = constants.baseURI + postImages.images_path;
-                        }
-                        console.log('**COmments Image: '+ postImage);
-                        this.postObj          = postInfo;
-                        this.userObj          = userinfo;
-                        this.profilePic       = constants.baseURI + userProfilePic.images_path;
-                        this.isPostInWishlist = isInWishlist;
-                        this.likesCount       = likesCount;
-                        this.isPostLiked      = isLiked;
-                        this.dislikesCount       = dislikesCount;
-                        this.isPostDisliked      = isDisliked;
-                        this.commentsCount    = commentsCount;
-                        this.postImage        = postImage;
-                      });
-                    });
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  }
+  //                       // Check each post has Image or not
+  //                       let postImage;
+  //                       if(postImages != false){
+  //                         postImage = constants.baseURI + postImages.images_path;
+  //                       }
+  //                       console.log('**COmments Image: '+ postImage);
+  //                       this.postObj          = postInfo;
+  //                       this.userObj          = userinfo;
+  //                       this.profilePic       = constants.baseURI + userProfilePic.images_path;
+  //                       this.isPostInWishlist = isInWishlist;
+  //                       this.likesCount       = likesCount;
+  //                       this.isPostLiked      = isLiked;
+  //                       this.dislikesCount       = dislikesCount;
+  //                       this.isPostDisliked      = isDisliked;
+  //                       this.commentsCount    = commentsCount;
+  //                       this.postImage        = postImage;
+  //                     });
+  //                   });
+  //                 });
+  //               });
+  //             });
+  //           });
+  //         });
+  //       });
+  //     });
+  //   });
+  // }
 
   // Retrieve the JSON encoded data from the remote server
   // Using Angular's Http class and an Observable - then
   // assign this to the items array for rendering to the HTML template
   loadAllComments(postId)
   {
-    this.comments = [];
 
-   this.phpService.getAllComments(postId).subscribe(commentsInfo => {
+    this.phpService.getAllComments(postId, this.user.uid).subscribe(commentsdata => {
+      commentsdata.forEach(comment => {
 
-        if( commentsInfo.length === 0 ){
-          console.log('***Empty Comments');
-        } else {
-          commentsInfo.forEach(commentObj=>{
-
-            this.phpService.getUserInfo(commentObj.commentedBy).subscribe(userinfo => {
-              this.phpService.getUserProfilePic(commentObj.commentedBy).subscribe(userProfilePic => {
-
-                this.comments.push({
-                  "id"            : commentObj.ID,
-                  "postId"        : commentObj.postId,
-                  "comment"       : commentObj.comment,
-                  "commentedBy"   : commentObj.commentedBy,
-                  "commentedDate" : commentObj.commentedDate,
-                  "name"          : userinfo.name,
-                  "nickname"      : userinfo.nickname,
-                  "profilePic"    : constants.baseURI + userProfilePic.images_path
-                });
-              });      
-            });     
-          });
-          this.comments = this.orderPipe.transform(this.comments, 'id');
+        // Check each post has Image or not
+        let postImage;
+        if(comment.postimg != null){
+          postImage = constants.baseURI + comment.postimg;
         }
+
+        this.comments.push({
+          "postId"        : comment.postId,
+          "postImage"     : postImage,
+          "postByName"    : comment.postbyname,
+          "postedByProfilePic" : constants.baseURI + comment.postUserProfilepic,
+          "post"          : comment.post,
+          "postedDate"    : comment.posteddate,
+          "postedById"    : comment.postedby,
+          "comment"       : comment.comment,
+          "commentedById"   : comment.commentedBy,
+          "commentedDate" : comment.commentedDate,
+          "commentedByName" : comment.commentedbyname,
+          "commentedByProfilePic" : constants.baseURI + comment.commentedbypic,
+          "likesCount"    : comment.likesCount,
+          "dislikesCount"    : comment.dislikesCount,
+          "commentsCount"    : comment.commentsCount,
+          "isLiked"        : comment.isLiked,
+          "isdisLiked"    : comment.isdisLiked,
+          "isWished"    : comment.isWished
+        });
       });
+    });
+
+  //  this.phpService.getAllComments(postId).subscribe(commentsInfo => {
+
+  //       if( commentsInfo.length === 0 ){
+  //         console.log('***Empty Comments');
+  //       } else {
+  //         commentsInfo.forEach(commentObj=>{
+
+  //           this.phpService.getUserInfo(commentObj.commentedBy).subscribe(userinfo => {
+  //             this.phpService.getUserProfilePic(commentObj.commentedBy).subscribe(userProfilePic => {
+
+  //               this.comments.push({
+  //                 "id"            : commentObj.ID,
+  //                 "postId"        : commentObj.postId,
+  //                 "comment"       : commentObj.comment,
+  //                 "commentedBy"   : commentObj.commentedBy,
+  //                 "commentedDate" : commentObj.commentedDate,
+  //                 "name"          : userinfo.name,
+  //                 "nickname"      : userinfo.nickname,
+  //                 "profilePic"    : constants.baseURI + userProfilePic.images_path
+  //               });
+  //             });      
+  //           });     
+  //         });
+  //         this.comments = this.orderPipe.transform(this.comments, 'id');
+  //       }
+  //     });
   }
 
   // Add Comments
@@ -277,7 +308,7 @@ export class CommentsPage {
 
   // Pull to Refresh functionality
   dorefresh(refresher) {
-    this.loadpostInfo();
+    //this.loadpostInfo();
     this.loadAllComments(this.postId);
     if(refresher != 0)
       refresher.complete();

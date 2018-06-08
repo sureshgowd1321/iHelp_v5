@@ -25,8 +25,6 @@
   
   <ion-content id="listScroll"> 
 
-    <!-- <p padding *ngIf="posts.length === 0"> No Posts. You can add new posts with in your location. </p> -->
-
       <ion-refresher (ionRefresh)="loadrefresh($event)">
         <ion-refresher-content pullingText="Pull to refresh"
                         pullingIcon="arrow-dropdown"
@@ -34,7 +32,6 @@
                         refreshingText="..fetching">
         </ion-refresher-content>
       </ion-refresher>
-      <!-- <div *ngIf="posts.length === 0"> No Posts </div> -->
      
       <ion-card *ngFor="let item of allPosts" >
         
@@ -43,7 +40,7 @@
                 <img src="{{ item.profilePic }}" #imageToView (click)="displayImageFullScreen(imageToView)" >
             </ion-avatar>
             
-            <ion-avatar item-right (click)="modifyCardActionSheet(item.id, posts, item)" *ngIf="item.createdById == user.uid">
+            <ion-avatar item-right (click)="modifyCardActionSheet(item.id, allPosts, item)" *ngIf="item.createdById == user.uid">
               <ion-icon name="ios-arrow-down"></ion-icon>
             </ion-avatar>
 
@@ -62,10 +59,10 @@
         </ion-item>
 
         <ion-card-content  >
-            <p (click)="gotoCommentsPage(item.id, posts, item)"> {{ item.post }} </p>  
+            <p (click)="gotoCommentsPage(item.id, allPosts, item)"> {{ item.post }} </p>  
             <p> <img src="{{ item.postImages }}" #imageToView1 (click)="displayImageFullScreen(imageToView1)" *ngIf="item.postImages !== null"> </p>
 
-            <ion-item (click)="gotoCommentsPage(item.id, posts, item)">
+            <ion-item (click)="gotoCommentsPage(item.id, allPosts, item)">
             <p> <ion-icon name="thumbs-up" icon-left></ion-icon> {{ item.likesCount }}  . &nbsp;
               <ion-icon name="thumbs-down" icon-left></ion-icon> {{ item.dislikesCount }}  . &nbsp;
               <ion-icon name="text" icon-left></ion-icon> {{ item.commentsCount }} </p>
@@ -97,7 +94,7 @@
             </button>
           </ion-col>
   
-          <ion-col (click)="gotoCommentsPage(item.id, posts, item)">
+          <ion-col (click)="gotoCommentsPage(item.id, allPosts, item)">
             <button ion-button icon-right clear small >
               <ion-icon name="text"></ion-icon>
               <div>Comment</div>
