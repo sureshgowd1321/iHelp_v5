@@ -39,8 +39,8 @@ export class EditProfilePage {
 
   allLocations: ICountries[] = [];
   countries: any = [];
-  selectedStates: any = [];
-  selectedCities: any = [];
+  states: any = [];
+  cities: any = [];
 
   public userCountry: string;
   public userState: string;
@@ -92,7 +92,34 @@ export class EditProfilePage {
       }); 
     });
    
-    this.phpService.getAllCountries().subscribe(countriesInfo => {
+    this.countries.length = 0;
+    this.states.length = 0;
+    this.cities.length = 0;
+
+    this.phpService.getCountries()
+      .subscribe(countries => {
+      countries.forEach(countryObj=>{
+        this.countries.push(countryObj.Country);
+      });
+    });
+
+   /* if( this.signupForm.value.country != null ){
+      this.phpService.getStates(this.signupForm.value.country.trim()).subscribe(states => {
+        states.forEach(stateObj=>{
+          this.states.push(stateObj.State);
+        });
+      });
+    }
+
+    if( this.signupForm.value.state != null ){
+      this.phpService.getCities(this.signupForm.value.state.trim()).subscribe(cities => {
+      cities.forEach(cityObj=>{
+        this.cities.push(cityObj.City);
+      });
+    });
+    }*/
+
+    /*this.phpService.getAllCountries().subscribe(countriesInfo => {
       countriesInfo.forEach(countryObj=>{
 
         this.allLocations.push({
@@ -109,15 +136,26 @@ export class EditProfilePage {
           this.countries.push(countryObj.Country);   
         }
       });
-    }); 
+    }); */
   }
 
   // Set State values based on selected country
   setStateValues() {
-      this.selectedStates.length = 0;
-      this.selectedCities.length = 0;
+      this.states.length = 0;
+      this.cities.length = 0;
       this.selectedState = '';
       this.selectedCity = '';
+
+      this.loading = this.loadingCtrl.create();
+      this.loading.present();
+
+      this.cities.length = 0;
+
+      this.phpService.getStates(this.signupForm.value.country.trim()).finally(() => this.loading.dismiss()).subscribe(states => {
+        states.forEach(stateObj=>{
+          this.states.push(stateObj.State);
+        });
+      });
 
       this.allLocations.forEach(stateObj => {
         if(stateObj.country === this.selectedCountry.trim()){

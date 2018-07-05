@@ -229,7 +229,7 @@ export class CommentsPage {
       this.commentInput = '';
       this.loadAllComments(this.postId);
 
-      this.commentsCount += 1;
+     // this.comments.commentsCount += 1;
 
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
@@ -292,7 +292,7 @@ export class CommentsPage {
                 .subscribe(res => {
                   this.loadAllComments(this.postId);
 
-                  this.commentsCount -= 1;
+                 // this.commentsCount -= 1;
 
                   if(this.isIndexed === 'UpdateIndex'){
                     var index = this.posts.indexOf(this.postItem);
@@ -330,7 +330,7 @@ export class CommentsPage {
   // Add Wishlist
   addToWishlist(){
     this.phpService.addWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
-      this.isPostInWishlist = true;
+     // this.isPostInWishlist = true;
 
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
@@ -342,7 +342,7 @@ export class CommentsPage {
   // Remove Wishlist
   removeFromWishlist(){
     this.phpService.deleteWishlist(this.user.uid, this.postId).subscribe(wishlistInfo => {
-      this.isPostInWishlist = false;
+    //  this.isPostInWishlist = false;
 
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
@@ -361,13 +361,13 @@ export class CommentsPage {
   addLike(){
     
     this.phpService.addLike(this.user.uid, this.postId).subscribe(likeInfo => {
-      this.likesCount += 1;
-      this.isPostLiked = true;  
+    //  this.likesCount += 1;
+    //  this.isPostLiked = true;  
 
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
-        this.posts[index].likesCount = this.likesCount;
-        this.posts[index].isPostLiked =  this.isPostLiked;
+      //  this.posts[index].likesCount = this.likesCount;
+      //  this.posts[index].isPostLiked =  this.isPostLiked;
       }
 
       this.removeDislike();
@@ -378,17 +378,17 @@ export class CommentsPage {
   // Remove Like
   removeLike(){
     this.phpService.deleteLike(this.user.uid, this.postId).subscribe(likeInfo => {
-      if( this.likesCount > 0 && this.isPostLiked === true){
-        this.likesCount -= 1;
-        this.isPostLiked = false;
-      }
+   //   if( this.likesCount > 0 && this.isPostLiked === true){
+     //   this.likesCount -= 1;
+    //    this.isPostLiked = false;
+   //   }
       
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
         if( this.posts[index].likesCount > 0 ){
-          this.posts[index].likesCount = this.likesCount;
+      //    this.posts[index].likesCount = this.likesCount;
         }
-        this.posts[index].isPostLiked = this.isPostLiked;
+     //   this.posts[index].isPostLiked = this.isPostLiked;
       }
 
     });
@@ -398,13 +398,13 @@ export class CommentsPage {
   addDislike(){
     
     this.phpService.addDislike(this.user.uid, this.postId).subscribe(dislikeInfo => {
-      this.dislikesCount += 1;
-      this.isPostDisliked = true;  
+    //  this.dislikesCount += 1;
+   //   this.isPostDisliked = true;  
 
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
-        this.posts[index].dislikesCount = this.dislikesCount;
-        this.posts[index].isPostDisliked = this.isPostDisliked;
+    //    this.posts[index].dislikesCount = this.dislikesCount;
+    //    this.posts[index].isPostDisliked = this.isPostDisliked;
       }
 
       this.removeLike();
@@ -415,17 +415,17 @@ export class CommentsPage {
   // Remove Like
   removeDislike(){
     this.phpService.deleteDislike(this.user.uid, this.postId).subscribe(dislikeInfo => {
-      if( this.dislikesCount > 0 && this.isPostDisliked === true){
+   /*   if( this.dislikesCount > 0 && this.isPostDisliked === true){
         this.dislikesCount -= 1;
         this.isPostDisliked = false;
-      }
+      }*/
 
       if(this.isIndexed === 'UpdateIndex'){
         var index = this.posts.indexOf(this.postItem);
         if( this.posts[index].dislikesCount > 0 ){
-          this.posts[index].dislikesCount = this.dislikesCount;
+    //      this.posts[index].dislikesCount = this.dislikesCount;
         }
-        this.posts[index].isPostDisliked = this.isPostDisliked;
+ //       this.posts[index].isPostDisliked = this.isPostDisliked;
       }
 
     });

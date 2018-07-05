@@ -159,6 +159,24 @@ export class PhpServiceProvider {
     .map(response => response.json());
   }
 
+  // Get Locations
+  getCountries() {
+    return this.http.get(constants.baseURI + 'get-locations.php?key=country')
+    .map(response => response.json());
+  }
+
+  // Get States
+  getStates(selectedCountry) {
+    return this.http.get(constants.baseURI + 'get-locations.php?key=state&selectedValue=' + selectedCountry)
+    .map(response => response.json());
+  }
+
+  // Get Cities
+  getCities(selectedState) {
+    return this.http.get(constants.baseURI + 'get-locations.php?key=city&selectedValue=' + selectedState)
+    .map(response => response.json());
+  }
+
   // Adding New Post
   addPost(postDesc, userId, postedLocation, PostalCode, postedCity, postedState, postedCountry)
   {

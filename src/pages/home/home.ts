@@ -95,8 +95,8 @@ export class HomePage {
           this.allPosts.push(
             {
               "id"            : postInfo.ID,
-              "post"          : postInfo.post,
-              "createdDate"   : postInfo.CreatedDate,
+              "post"          : postInfo.post.replace("&#39;", "'").replace("&#34;", "\""),
+              "createdDate"   : postInfo.PostedDate,
               "name"          : postInfo.name,
               "profilePic"    : constants.baseURI + postInfo.ProfilePicURL,
               "createdById"   : postInfo.CreatedById,

@@ -39,10 +39,9 @@ export class SignUpPage {
   public signupForm;
   loading: any;
 
-  allLocations: ICountries[] = [];
   countries: any = [];
-  selectedStates: any = [];
-  selectedCities: any = [];
+  states: any = [];
+  cities: any = [];
 
   constructor(public navCtrl: NavController, 
               public firebaseAuth: AngularFireAuth, 
@@ -66,7 +65,35 @@ export class SignUpPage {
 
   ionViewWillEnter()
   {  
-    this.phpService.getAllCountries().subscribe(countriesInfo => {
+
+    this.countries.length = 0;
+    this.states.length = 0;
+    this.cities.length = 0;
+
+    this.phpService.getCountries()
+      .subscribe(countries => {
+      countries.forEach(countryObj=>{
+        this.countries.push(countryObj.Country);
+      });
+    });
+
+    if( this.signupForm.value.country != null ){
+      this.phpService.getStates(this.signupForm.value.country.trim()).subscribe(states => {
+        states.forEach(stateObj=>{
+          this.states.push(stateObj.State);
+        });
+      });
+    }
+
+    if( this.signupForm.value.state != null ){
+      this.phpService.getCities(this.signupForm.value.state.trim()).subscribe(cities => {
+      cities.forEach(cityObj=>{
+        this.cities.push(cityObj.City);
+      });
+    });
+    }
+
+    /*this.phpService.getAllCountries().subscribe(countriesInfo => {
       countriesInfo.forEach(countryObj=>{
 
         this.allLocations.push({
@@ -83,15 +110,24 @@ export class SignUpPage {
           this.countries.push(countryObj.Country);   
         }
       });
-    }); 
+    }); */
   }
 
   // Set State values based on selected country
   setStateValues() {
-      this.selectedStates.length = 0;
-      this.selectedCities.length = 0;
 
-      this.allLocations.forEach(stateObj => {
+    this.loading = this.loadingCtrl.create();
+    this.loading.present();
+
+    this.cities.length = 0;
+
+    this.phpService.getStates(this.signupForm.value.country.trim()).finally(() => this.loading.dismiss()).subscribe(states => {
+      states.forEach(stateObj=>{
+        this.states.push(stateObj.State);
+      });
+    });
+
+    /*  this.allLocations.forEach(stateObj => {
         if(stateObj.country === this.signupForm.value.country.trim()){
 
           var index = this.selectedStates.findIndex(item => item === stateObj.state);
@@ -101,12 +137,22 @@ export class SignUpPage {
             this.selectedStates.push(stateObj.state);   
           }          
         }
-      });     
+      });  */   
   }
 
   // Set Cities based in selected state
   setCityValues() {
-    this.selectedCities.length = 0;
+
+    this.loading = this.loadingCtrl.create();
+    this.loading.present();
+
+    this.phpService.getCities(this.signupForm.value.state.trim()).finally(() => this.loading.dismiss()).subscribe(cities => {
+      cities.forEach(cityObj=>{
+        this.cities.push(cityObj.City);
+      });
+    });
+
+    /*this.selectedCities.length = 0;
 
     this.allLocations.forEach(cityObj => {
       if(cityObj.state === this.signupForm.value.state.trim()){
@@ -118,7 +164,7 @@ export class SignUpPage {
           this.selectedCities.push(cityObj.city);   
         }          
       }
-    });     
+    });    */ 
   }
 
   // Signup using Email And password

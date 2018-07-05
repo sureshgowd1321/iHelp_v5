@@ -41,21 +41,21 @@
                   <ion-item>
                     <ion-label color="primary">Country</ion-label>
                     <ion-select #country formControlName="country" (ionChange)="setStateValues()" >
-                        <ion-option *ngFor="let country of countries">{{country}} </ion-option>
+                        <ion-option *ngFor="let country of countries" >{{country}} </ion-option>
                     </ion-select>
                   </ion-item>
 
                   <ion-item>
                     <ion-label color="primary">State</ion-label>
                     <ion-select #state formControlName="state" (ionChange)="setCityValues()">
-                        <ion-option *ngFor="let state of selectedStates">{{state}} </ion-option>
+                        <ion-option *ngFor="let state of states">{{state}} </ion-option>
                     </ion-select>
                   </ion-item>
 
                   <ion-item>
                     <ion-label color="primary">City</ion-label>
                     <ion-select #city formControlName="city" >
-                        <ion-option *ngFor="let city of selectedCities">{{city}} </ion-option>
+                        <ion-option *ngFor="let city of cities">{{city}} </ion-option>
                     </ion-select>
                   </ion-item>
 
